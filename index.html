@@ -1,0 +1,1718 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BDN Town Meeting Simulator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Oswald:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --paper: #f4eed8;
+  --paper2: #ece5c7;
+  --ink: #1c1209;
+  --red: #8b1a1a;
+  --blue: #1a3a6b;
+  --green: #2d5a27;
+  --gold: #c8960c;
+  --rust: #7a3a1a;
+  --aged: #c9b98a;
+  --shadow: rgba(0,0,0,0.3);
+  --cream: #fdf6e3;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;background:#1a110a;}
+body{
+  font-family:'Courier Prime',monospace;
+  display:flex;align-items:flex-start;justify-content:center;
+  padding:16px;
+  background:#1a110a;
+  background-image:radial-gradient(ellipse at 50% 0%, #3a2010 0%, #1a110a 70%);
+  min-height:100vh;
+}
+#wrap{
+  width:100%;max-width:800px;
+  background:var(--paper);
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E");
+  border:4px solid var(--ink);
+  box-shadow:6px 6px 0 #000, 10px 10px 0 var(--gold);
+  position:relative;
+  overflow:hidden;
+}
+
+/* MASTHEAD */
+.masthead{
+  background:var(--ink);
+  color:var(--paper);
+  padding:14px 20px 10px;
+  border-bottom:5px double var(--gold);
+  text-align:center;
+  position:relative;
+}
+.mast-kicker{
+  font-family:'Oswald',sans-serif;
+  font-size:10px;letter-spacing:5px;
+  text-transform:uppercase;opacity:.6;margin-bottom:3px;
+}
+.mast-title{
+  font-family:'Special Elite',cursive;
+  font-size:clamp(20px,5vw,36px);
+  letter-spacing:3px;line-height:1.1;
+}
+.mast-subtitle{
+  font-size:11px;font-style:italic;
+  opacity:.55;margin-top:4px;letter-spacing:1px;
+}
+.ticker{
+  background:var(--red);
+  color:#fff;padding:4px 0;
+  font-family:'Oswald',sans-serif;
+  font-size:11px;letter-spacing:1px;
+  overflow:hidden;white-space:nowrap;
+}
+.ticker-inner{
+  display:inline-block;
+  animation:tick 22s linear infinite;
+}
+@keyframes tick{0%{transform:translateX(100vw)}100%{transform:translateX(-100%)}}
+
+/* SCREEN */
+#screen{padding:22px 26px;min-height:480px;position:relative;}
+
+/* Scene header */
+.scene-hdr{
+  display:flex;justify-content:space-between;align-items:baseline;
+  border-bottom:2px solid var(--ink);
+  margin-bottom:14px;padding-bottom:7px;flex-wrap:wrap;gap:6px;
+}
+.scene-label{
+  font-family:'Oswald',sans-serif;
+  font-size:12px;letter-spacing:3px;
+  text-transform:uppercase;color:var(--red);
+}
+.score-disp{
+  font-family:'Oswald',sans-serif;
+  font-size:13px;color:var(--blue);letter-spacing:1px;
+}
+
+/* Phase dots */
+.phases{display:flex;gap:5px;margin-bottom:14px;}
+.ph-dot{
+  flex:1;height:7px;
+  background:var(--aged);border:1px solid #999;
+  transition:background .4s;
+}
+.ph-dot.active{background:var(--red);}
+.ph-dot.done{background:var(--green);}
+
+/* Character badge */
+.char-badge{
+  display:inline-block;
+  background:var(--ink);color:var(--paper);
+  padding:2px 12px;font-family:'Oswald',sans-serif;
+  font-size:11px;letter-spacing:2px;margin-bottom:12px;
+}
+
+/* Narrative text */
+.narr{
+  font-size:14.5px;line-height:1.85;
+  margin-bottom:16px;color:var(--ink);
+}
+.narr strong{color:var(--red);}
+.narr em{color:var(--blue);font-style:italic;}
+
+/* Newspaper clip */
+.newsclip{
+  background:#fffef0;
+  border:1.5px solid var(--aged);
+  padding:14px 16px;
+  margin:14px 0;
+  transform:rotate(-0.4deg);
+  box-shadow:2px 3px 8px var(--shadow);
+  position:relative;
+}
+.newsclip::before{
+  content:'BANGOR DAILY NEWS';
+  position:absolute;top:-10px;left:14px;
+  background:var(--paper);
+  font-family:'Special Elite',cursive;
+  font-size:9px;padding:0 6px;
+  letter-spacing:3px;color:var(--red);
+}
+.newsclip .hed{
+  font-family:'Special Elite',cursive;
+  font-size:15px;border-bottom:1px solid var(--aged);
+  padding-bottom:6px;margin-bottom:8px;
+}
+.newsclip .body{font-size:12px;line-height:1.7;font-style:italic;}
+
+/* Event box */
+.evt{
+  border:2px solid var(--ink);
+  background:rgba(255,255,255,.35);
+  padding:12px 14px;margin:12px 0;
+  position:relative;
+}
+.evt::before{
+  content:attr(data-tag);
+  position:absolute;top:-10px;left:12px;
+  font-family:'Oswald',sans-serif;
+  font-size:10px;letter-spacing:2px;
+  padding:1px 8px;color:#fff;
+}
+.evt.bad::before{background:var(--red);}
+.evt.good::before{background:var(--green);}
+.evt.neutral::before{background:var(--blue);}
+.evt.warn::before{background:var(--rust);}
+
+/* Choices */
+.choices{display:flex;flex-direction:column;gap:9px;margin-top:14px;}
+.ch-btn{
+  background:var(--paper);
+  border:2px solid var(--ink);
+  padding:12px 14px;
+  text-align:left;
+  font-family:'Courier Prime',monospace;
+  font-size:13.5px;cursor:pointer;
+  transition:all .15s;
+  color:var(--ink);
+  line-height:1.5;
+}
+.ch-btn::before{content:'▶ ';color:var(--red);font-size:10px;}
+.ch-btn:hover{
+  background:var(--ink);color:var(--paper);
+  transform:translateX(5px);
+  box-shadow:3px 3px 0 var(--gold);
+}
+.ch-btn:hover::before{color:var(--gold);}
+.ch-btn:disabled{opacity:.45;cursor:not-allowed;transform:none;}
+
+/* Primary button */
+.pri-btn{
+  display:block;width:100%;
+  background:var(--ink);color:var(--paper);
+  border:3px solid var(--ink);
+  padding:13px 24px;
+  font-family:'Special Elite',cursive;
+  font-size:16px;cursor:pointer;
+  transition:all .15s;
+  letter-spacing:1px;margin-top:14px;
+  text-align:center;
+}
+.pri-btn:hover{
+  background:var(--red);border-color:var(--red);
+  transform:translateY(-2px);box-shadow:0 4px 0 #000;
+}
+.sec-btn{
+  display:inline-block;
+  background:transparent;color:var(--blue);
+  border:2px solid var(--blue);
+  padding:9px 18px;
+  font-family:'Oswald',sans-serif;
+  font-size:13px;cursor:pointer;
+  letter-spacing:1px;margin-top:8px;
+  transition:all .15s;
+}
+.sec-btn:hover{background:var(--blue);color:#fff;}
+
+/* Character select */
+.char-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(190px,1fr));
+  gap:14px;margin:18px 0;
+}
+.char-card{
+  border:3px solid var(--ink);
+  padding:16px 14px;
+  cursor:pointer;
+  transition:all .2s;
+  background:var(--cream);
+  text-align:center;
+}
+.char-card:hover,.char-card.sel{
+  background:var(--ink);color:var(--paper);
+  transform:translateY(-4px);
+  box-shadow:0 6px 0 var(--gold);
+}
+.char-icon{font-size:44px;display:block;margin-bottom:8px;}
+.char-name{
+  font-family:'Special Elite',cursive;
+  font-size:18px;margin-bottom:5px;color:var(--red);
+}
+.char-card:hover .char-name,.char-card.sel .char-name{color:var(--gold);}
+.char-role{font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;opacity:.7;}
+.char-desc{font-size:12px;line-height:1.6;}
+.char-goal{
+  font-size:11px;font-style:italic;
+  margin-top:8px;border-top:1px dashed currentColor;
+  padding-top:6px;opacity:.75;
+}
+
+/* Progress bar */
+.prog-wrap{margin-bottom:14px;}
+.prog-label{
+  font-family:'Oswald',sans-serif;font-size:11px;
+  letter-spacing:2px;text-transform:uppercase;
+  display:flex;justify-content:space-between;margin-bottom:4px;
+}
+.prog-bar{
+  height:13px;background:var(--aged);
+  border:2px solid var(--ink);overflow:hidden;
+}
+.prog-fill{
+  height:100%;background:var(--green);
+  transition:width .5s;
+}
+.prog-fill.warn{background:var(--gold);}
+.prog-fill.danger{background:var(--red);}
+
+/* Textarea */
+textarea.game-ta{
+  width:100%;height:110px;
+  border:2px solid var(--ink);
+  background:rgba(255,255,255,.55);
+  font-family:'Courier Prime',monospace;
+  font-size:14px;padding:10px;
+  resize:vertical;color:var(--ink);
+  line-height:1.65;margin-bottom:6px;
+}
+.wc{
+  font-family:'Oswald',sans-serif;
+  font-size:12px;color:var(--blue);letter-spacing:1px;
+  margin-bottom:10px;
+}
+.wc.over{color:var(--red);}
+
+/* Hearing box */
+.hearing{
+  border:2px solid var(--red);
+  background:rgba(139,26,26,.06);
+  padding:13px 15px;margin:10px 0;
+}
+.hearing-who{
+  font-family:'Oswald',sans-serif;
+  font-size:11px;letter-spacing:2px;
+  text-transform:uppercase;color:var(--red);margin-bottom:4px;
+}
+.hearing-text{font-size:13.5px;line-height:1.65;font-style:italic;}
+
+/* Door canvassing */
+.doors{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:8px;margin:14px 0;
+}
+.door{
+  border:2px solid var(--ink);
+  aspect-ratio:1;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  font-size:26px;cursor:pointer;
+  transition:all .2s;
+  background:var(--cream);gap:3px;
+}
+.door:hover:not([data-done]){
+  background:var(--ink);transform:scale(1.06);
+}
+.door[data-done="win"]{background:var(--green);pointer-events:none;}
+.door[data-done="loss"]{background:var(--red);pointer-events:none;}
+.door[data-done="neutral"]{background:var(--aged);pointer-events:none;}
+.door[data-done="skip"]{opacity:.35;pointer-events:none;}
+.door-lbl{font-size:9px;font-family:'Oswald',sans-serif;letter-spacing:1px;color:var(--ink);}
+.door[data-done] .door-lbl{color:#fff;}
+
+/* Vote tally */
+.tally{display:flex;gap:12px;margin:12px 0;}
+.tally-box{
+  flex:1;border:3px solid var(--ink);
+  padding:10px;text-align:center;
+}
+.tally-lbl{
+  font-family:'Oswald',sans-serif;
+  font-size:11px;letter-spacing:2px;margin-bottom:3px;
+}
+.tally-num{
+  font-family:'Special Elite',cursive;font-size:34px;
+}
+.tally-box.blue{border-color:var(--blue);}
+.tally-box.blue .tally-num{color:var(--blue);}
+.tally-box.red{border-color:var(--red);}
+.tally-box.red .tally-num{color:var(--red);}
+.tally-box.green{border-color:var(--green);}
+.tally-box.green .tally-num{color:var(--green);}
+
+/* Result box */
+.result{
+  border:4px double var(--ink);
+  padding:20px;text-align:center;
+  margin:18px 0;
+}
+.result.win{border-color:var(--green);}
+.result.win h2{color:var(--green);}
+.result.lose{border-color:var(--red);}
+.result.lose h2{color:var(--red);}
+.result h2{
+  font-family:'Special Elite',cursive;
+  font-size:28px;margin-bottom:10px;
+}
+.result p{font-size:14px;line-height:1.7;margin-bottom:8px;}
+
+/* Score breakdown */
+.score-bk{margin:14px 0;text-align:left;font-size:13px;}
+.score-line{
+  display:flex;justify-content:space-between;
+  border-bottom:1px dotted var(--aged);
+  padding:4px 0;
+}
+.final-score{
+  font-family:'Special Elite',cursive;
+  font-size:38px;color:var(--red);
+  margin:10px 0;
+}
+
+/* Email form */
+.email-form{
+  margin-top:18px;border-top:2px dashed var(--ink);
+  padding-top:14px;
+}
+.email-form label{
+  display:block;font-family:'Oswald',sans-serif;
+  font-size:12px;letter-spacing:2px;margin-bottom:5px;
+}
+.email-form input{
+  width:100%;border:2px solid var(--ink);
+  background:rgba(255,255,255,.65);
+  font-family:'Courier Prime',monospace;
+  font-size:14px;padding:9px;
+  color:var(--ink);margin-bottom:8px;
+}
+
+/* Leaderboard */
+.lb{margin-top:18px;}
+.lb h3{
+  font-family:'Special Elite',cursive;
+  font-size:20px;border-bottom:2px solid var(--ink);
+  margin-bottom:10px;padding-bottom:6px;
+}
+.lb-row{
+  display:flex;gap:10px;padding:5px 0;
+  border-bottom:1px dotted var(--aged);
+  font-size:13px;align-items:center;flex-wrap:wrap;
+}
+.lb-rank{
+  font-family:'Oswald',sans-serif;color:var(--gold);
+  min-width:26px;font-size:17px;font-weight:700;
+}
+.lb-name{flex:1;font-style:italic;min-width:100px;}
+.lb-char{color:var(--blue);font-size:11px;letter-spacing:1px;}
+.lb-score{font-family:'Oswald',sans-serif;font-weight:700;color:var(--red);}
+.lb-empty{
+  font-style:italic;opacity:.6;font-size:13px;
+  padding:10px 0;text-align:center;
+}
+
+/* Town meeting header */
+.tm-banner{
+  background:var(--ink);color:var(--paper);
+  padding:10px 20px;text-align:center;
+  font-family:'Special Elite',cursive;
+  font-size:16px;letter-spacing:2px;
+  margin:0 -26px 18px;
+}
+
+/* Animations */
+@keyframes fadein{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.fadein{animation:fadein .35s ease both;}
+@keyframes shake{0%,100%{transform:none}20%{transform:translateX(-5px)}40%{transform:translateX(5px)}60%{transform:translateX(-3px)}80%{transform:translateX(3px)}}
+.shake{animation:shake .4s ease;}
+
+/* Footer */
+.game-footer{
+  background:var(--ink);color:var(--paper);
+  padding:8px 20px;
+  font-family:'Oswald',sans-serif;
+  font-size:10px;letter-spacing:2px;
+  display:flex;justify-content:space-between;
+  opacity:.7;flex-wrap:wrap;gap:4px;
+}
+</style>
+</head>
+<body>
+<div id="wrap">
+  <div class="masthead">
+    <div class="mast-kicker">Bangor Daily News presents</div>
+    <div class="mast-title">BDN TOWN MEETING SIMULATOR</div>
+    <div class="mast-subtitle">A game of democracy, debt service, and difficult neighbors — set in Newsville, Maine</div>
+  </div>
+  <div class="ticker">
+    <span class="ticker-inner">★ NEWSVILLE ANNUAL TOWN MEETING — MARCH 2025 ★ MIL RATE: $10 PER $1,000 ASSESSED VALUE ★ MUNICIPAL BUDGET: $1.2 MILLION ★ FIRE TRUCK VOTE LOOMS LARGE ★ DEMOCRACY FILES NOMINATION PAPERS ★ SELECT BOARD DEADLOCKED 3-2 ON KEY ITEMS ★ CHIEF FIREMAN FIRES BACK AT SELECTMAN ★ BUDGET COMMITTEE MEETS THURSDAY ★</span>
+  </div>
+  <div id="screen"></div>
+  <div class="game-footer">
+    <span>© BANGOR DAILY NEWS INTERACTIVE</span>
+    <span id="footer-score">SCORE: 0</span>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// BDN TOWN MEETING SIMULATOR — Full Game Engine
+// ============================================================
+
+const S = window.localStorage; // leaderboard storage
+
+// ---- Game State ----
+let G = {
+  char: null,      // 'manager'|'selectman'|'democracy'
+  score: 0,
+  luck: 0,
+  skill: 0,
+  phase: 0,        // 0=intro, 1-3 char phases, 4-6 town meeting phases
+  door_wins: 0,
+  door_losses: 0,
+  door_total: 0,
+  negativity: 0,   // selectman vs democracy race negativity
+  warrant_score: 0,// manager warrant quality
+  speech_score: 0, // text quality
+  door_score: 0,
+  hearing_score: 0,
+  phase2_wild: null,// which character's secondary goal is attacked
+  budget_change: 0, // -10 = 10% cut, +5 = 5% tax hike
+  fire_truck: false,// whether fire truck is approved
+  eliminated: false,
+  win: false,
+  final_msg: '',
+  game_id: Math.random().toString(36).slice(2),
+};
+
+// ---- Helpers ----
+function rand(n){ return Math.floor(Math.random()*n); }
+function pick(arr){ return arr[rand(arr.length)]; }
+function pct(n){ return Math.random() < n; }
+function wc(txt){ return txt.trim().split(/\s+/).filter(Boolean).length; }
+function $ (id){ return document.getElementById(id); }
+function screen(html){ $('screen').innerHTML = html; $('footer-score').textContent = 'SCORE: '+G.score; }
+function scrollTop(){ window.scrollTo(0,0); try{ $('wrap').scrollIntoView({behavior:'smooth'}); }catch(e){} }
+
+// ---- LEADERBOARD ----
+function getBoard(){
+  try{ return JSON.parse(S.getItem('bdn_lb') || '[]'); }catch(e){ return []; }
+}
+function saveBoard(board){
+  try{ S.setItem('bdn_lb', JSON.stringify(board)); }catch(e){}
+}
+function submitScore(email, score, char){
+  let board = getBoard();
+  let existing = board.findIndex(r => r.email.toLowerCase() === email.toLowerCase());
+  if(existing >= 0){
+    if(score > board[existing].score){
+      board[existing].score = score;
+      board[existing].char = char;
+    }
+  } else {
+    board.push({email, score, char});
+  }
+  board.sort((a,b) => b.score - a.score);
+  board = board.slice(0,20);
+  saveBoard(board);
+  return board;
+}
+function renderBoard(board){
+  if(!board.length) return '<p class="lb-empty">No entries yet. Be the first!</p>';
+  const icons = {manager:'📋',selectman:'🏛️',democracy:'✊'};
+  const names = {manager:'Martha Manager',selectman:'Steve Selectman',democracy:'Darlene Democracy'};
+  return board.slice(0,10).map((r,i) => `
+    <div class="lb-row">
+      <span class="lb-rank">#${i+1}</span>
+      <span class="lb-name">${r.email.replace(/(.{2}).+(@.*)/, '$1…$2')}</span>
+      <span class="lb-char">${icons[r.char]||''} ${names[r.char]||r.char}</span>
+      <span class="lb-score">${r.score} pts</span>
+    </div>`).join('');
+}
+
+// ---- SCORING ----
+function addScore(pts, reason){
+  G.score = Math.max(0, G.score + pts);
+  $('footer-score').textContent = 'SCORE: '+G.score;
+}
+
+// ---- RANDOM EVENTS POOLS ----
+const MANAGER_PHASE1_EVENTS = [
+  { tag:'bad', headline:'Manager Proposes Recreation Budget Cut', body:'Martha Manager\'s proposal to trim the recreation budget by $8,000 draws sharp criticism from the Newsville Youth Sports League. "She\'s taking ice time from kids," says league president Ron Goulet.', penalty:-80, fireChance:0 },
+  { tag:'bad', headline:'Road Maintenance Budget Draws Ire', body:'"We had THREE potholes on Slab City Road last spring. THREE," shouted a resident at last night\'s public hearing. Manager\'s proposal to hold road maintenance flat draws skepticism.', penalty:-40, fireChance:0 },
+  { tag:'neutral', headline:'Manager Presents Balanced Warrant', body:'Martha Manager\'s 49-article warrant mirrors the Whitefield model closely, with Select Board and Budget Committee recommendations in alignment on most articles.', penalty:0, fireChance:0 },
+  { tag:'good', headline:'Manager Finds $42,000 in Surplus Savings', body:'By applying unassigned fund balance and auto excise revenues creatively, Manager has identified a path to the 5% tax reduction without cutting any services outright.', penalty:100, fireChance:0 },
+  { tag:'bad', headline:'BDN: Manager\'s Budget Raises Taxes 3%', body:'An analysis by the Bangor Daily News finds that Manager\'s proposed warrant, despite rosy projections, would likely increase the mil rate from $10 to $10.30. "The numbers don\'t add up," says a local accountant.', penalty:-120, fireChance:.08 },
+  { tag:'bad', headline:'Manager Under Fire for Animal Control Spending', body:'The proposed animal control contract increase from $10,500 to $13,000 has set off a debate at Town Hall. "Are we paying $13,000 to chase one skunk?" demanded Chester Harlow.', penalty:-30, fireChance:0 },
+  { tag:'good', headline:'Budget Committee Backs Manager\'s Plan Unanimously', body:'In a rare 9-0 vote, the Budget Committee endorsed Manager\'s warrant recommendations, citing "unusual clarity and fiscal discipline."', penalty:120, fireChance:0 },
+  { tag:'bad', headline:'Select Board Dissidents Leak Manager\'s Draft', body:'Two dissenting board members shared Manager\'s draft warrant with the BDN before the official release, fueling speculation of hidden cuts to the fire department. Manager denies it.', penalty:-60, fireChance:.06 },
+  { tag:'bad', headline:'Manager Accused of Favoritism in Road Contracts', body:'A complaint filed with the town clerk alleges that Manager steered a $40,000 road maintenance contract to a family friend. An ethics review is underway.', penalty:-150, fireChance:.15 },
+  { tag:'neutral', headline:'Manager Holds Information Sessions on Warrant', body:'Three public info sessions drew modest crowds. Several residents expressed support for Manager\'s approach; others asked pointed questions about the Delta Ambulance rate increase.', penalty:20, fireChance:0 },
+  { tag:'bad', headline:'BDN Op-Ed: Fire Department Funding Shortchanged', body:'Chief Fireman\'s op-ed in the BDN argues that Manager\'s proposed fire department budget of $160,000 is inadequate for a growing town. "We run on goodwill and duct tape," says Fireman.', penalty:-50, fireChance:0 },
+  { tag:'good', headline:'State Grant Offsets Road Spending', body:'Manager secured a $76,000 Local Roads Assistance Program grant, allowing the town to maintain full road services without raising property taxes.', penalty:90, fireChance:0 },
+  { tag:'bad', headline:'Manager Proposes Library Cut; Librarians Mobilize', body:'Reducing the Newsville Library appropriation from $20,000 to $14,000 has energized a vocal bloc of voters. The Friends of the Library are printing yard signs.', penalty:-70, fireChance:.04 },
+  { tag:'good', headline:'Manager\'s Warrant Gets Clean Bill from Town Counsel', body:'Town Counsel reviewed the draft warrant and found no legal issues — a rarity praised by the moderator as "the most buttoned-up warrant in a decade."', penalty:60, fireChance:0 },
+  { tag:'bad', headline:'Manager\'s Employee Benefits Proposal Draws Union Grievance', body:'The employee benefits article, which shifts more health insurance costs to workers, has prompted a formal grievance from AFSCME Local 1011. A mediator has been called.', penalty:-90, fireChance:.09 },
+];
+
+const MANAGER_FIRE_EVENTS = [
+  { headline:'FIRED: Select Board Votes 3-2 to Dismiss Manager', reason:'After the BDN published Manager\'s private email calling Select Board member Harold Plourde "a walking speed bump," the board voted to terminate her contract without severance. "She serves at our pleasure," said Chair Selectman.' },
+  { headline:'FIRED: Manager Resigns Under Pressure Over Budget Errors', reason:'A $47,000 math error in the proposed budget — doubling the Tax Anticipation Note line — forced Manager\'s resignation after the Budget Committee called for an independent audit.' },
+  { headline:'FIRED: Ethics Board Recommends Manager\'s Removal', reason:'After a four-week investigation into allegations of steering a recycling contract to her brother-in-law, the ethics board recommended termination. The Select Board complied 4-1.' },
+  { headline:'FIRED: Manager Dismissed After Skipping Budget Hearing', reason:'Manager failed to appear at the mandatory public budget hearing, reportedly at a conference in Portland. The Select Board called an emergency session and voted 3-2 to terminate her.' },
+];
+
+const SELECTMAN_PHASE1_EVENTS = [
+  { tag:'bad', headline:'Fireman Calls Selectman "Enemy of Public Safety"', body:'"He wants us fighting fires with a 1987 Mack truck that runs on prayers and rust," Chief Fireman told a packed hearing room. Fireman produced maintenance records showing 14 mechanical failures last year.', penalty:-80 },
+  { tag:'bad', headline:'BDN Uncovers Selectman\'s 2019 Tax Lien', body:'Records obtained by the BDN reveal Steve Selectman had a property tax lien filed against his Route 218 parcel in 2019, which he says was a billing error. Democracy calls it "a pattern of fiscal irresponsibility."', penalty:-140, endChance:.10 },
+  { tag:'good', headline:'Selectman Releases Independent Fire Truck Cost Analysis', body:'A report commissioned by Selectman shows the town would pay $127,000 in total interest over 10 years on the million-dollar truck — "money that could pave six miles of road," he argues.', penalty:110 },
+  { tag:'neutral', headline:'Selectman Holds Firm at Contentious Hearing', body:'Despite interruptions from fire truck supporters, Selectman calmly cited the town\'s current debt service obligations — including the existing fire station bond maturing in 2040 — to make his case.', penalty:30 },
+  { tag:'bad', headline:'Democracy Launches "Save Our Station" Petition', body:'Darlene Democracy collected 180 signatures in two weeks calling for the fire truck purchase. The petition was submitted to the Select Board clerk and prominently featured in the BDN.', penalty:-60 },
+  { tag:'good', headline:'Selectman Wins Budget Committee Endorsement', body:'The Budget Committee voted 7-2 to back Selectman\'s position on debt service restraint. "We can\'t afford a million-dollar truck when we\'re already carrying $400,000 in fire-related debt," said committee chair.', penalty:90 },
+  { tag:'bad', headline:'Three Firefighters Resign Over Truck Vote', body:'Three volunteer firefighters publicly resigned, citing Selectman\'s opposition to the new truck. "I\'m not risking my life on a machine held together by zip ties," wrote one in a letter to the BDN.', penalty:-100 },
+  { tag:'bad', headline:'Arrest: Selectman Charged with OUI', body:'State Police arrested Steve Selectman on Route 17 following a complaint. He denies the charges and says he was returning from a selectmen\'s conference dinner. The BDN ran the story above the fold.', penalty:-200, endChance:.12 },
+  { tag:'good', headline:'Selectman Secures Mutual Aid Truck Agreement', body:'Selectman negotiated a mutual aid agreement with three neighboring towns to share a ladder truck, potentially addressing coverage gaps without new debt. Fireman calls it "a Band-Aid on a gunshot wound."', penalty:80 },
+  { tag:'bad', headline:'BDN: Selectman\'s Donor Owns Equipment Competing Firm', body:'Campaign finance records show Selectman received $500 from the owner of a competing fire apparatus company. Democracy calls for a recusal; Selectman calls it "a ridiculous smear."', penalty:-80, endChance:.06 },
+  { tag:'neutral', headline:'Public Hearing Draws 90 Residents', body:'The public hearing on the fire truck drew the largest crowd in three years. Speakers were split roughly 55-45 in favor of the new truck, according to a BDN informal tally.', penalty:-20 },
+  { tag:'good', headline:'Selectman Endorsed by Tax Watchdog Group', body:'The Maine Taxpayers Alliance endorsed Steve Selectman, citing his "principled resistance to unnecessary municipal debt." The group plans mailers to 600 households.', penalty:70 },
+];
+
+const SELECTMAN_END_EVENTS = [
+  { headline:'RACE OVER: BDN Exposes Selectman\'s Undisclosed Business Conflict', reason:'The BDN revealed that Selectman\'s landscaping company holds a no-bid mowing contract with the town cemetery. The Select Board voted to place him on administrative leave pending a conflict-of-interest review.' },
+  { headline:'RACE OVER: Selectman Charged with Election Law Violation', reason:'The state ethics commission found that Selectman\'s campaign distributed $25 gift cards at the Grange Hall — a violation of Maine election law. He withdrew from the race to focus on his defense.' },
+];
+
+const DEMOCRACY_PHASE1_EVENTS = [
+  { tag:'good', headline:'Democracy Gains Ground on Rural Route 218', body:'Going door to door on Route 218, Darlene Democracy found deep frustration with road conditions and channeled it into support for her candidacy. "She listens," said one farmer.', penalty:60 },
+  { tag:'bad', headline:'BDN: Democracy Donated to Anti-Tax Group in 2021', body:'Opposition research surfaced a $50 donation Democracy made to a group opposing municipal spending. She calls it "ancient history taken out of context." Fireman supporters are undeterred.', penalty:-90 },
+  { tag:'bad', headline:'Democracy Confronted Over Fire Truck Financing Math', body:'At a Grange Hall forum, an accountant challenged Democracy\'s financing figures, noting the actual 10-year cost with 5% APY would be approximately $1.27 million, not the $100,000/year she cited.', penalty:-60 },
+  { tag:'good', headline:'Fireman Stumps for Democracy at Three Events', body:'Chief Fireman appeared at a chicken supper, the snowmobile club meeting, and the PTA to introduce Democracy to voters. "She\'s the candidate who won\'t let us die in a burning building," he said.', penalty:80 },
+  { tag:'neutral', headline:'Democracy Collects 200 Door-to-Door Pledges', body:'After three weekends of canvassing in Selectman\'s Slab City Road neighborhood, Democracy says she has pledges from 200 voters. Independent observers put the real number closer to 120.', penalty:20 },
+  { tag:'bad', headline:'Arrest: Democracy Cited for Trespassing While Canvassing', body:'Harold Plourde called police after Democracy knocked on his door after 8 p.m. and refused to leave. She was issued a civil trespass warning; the BDN reported it under "Police Notes."', penalty:-50 },
+  { tag:'bad', headline:'BDN: Democracy\'s Past Bankruptcy Filing Uncovered', body:'Court records show Democracy filed for Chapter 7 bankruptcy in 2014 following a failed small business venture. "She wants to control a million-dollar budget but couldn\'t manage her own," said Selectman\'s camp.', penalty:-120, endChance:.09 },
+  { tag:'good', headline:'Democracy\'s Letter-Writing Campaign Goes Viral', body:'A series of letters to the BDN from Democracy supporters have generated more reader comments than any local news item this year. The editor featured them in a weekend roundup.', penalty:70 },
+  { tag:'bad', headline:'Democracy Accused of Misleading Voters on Debt Service', body:'Selectman\'s campaign released a fact-check showing Democracy understated the town\'s existing fire-related debt obligations. "She\'s cherry-picking numbers," said the town treasurer.', penalty:-70 },
+  { tag:'good', headline:'Democracy Endorsement from Retired Fire Chief', body:'Retired Chief Bob Lessard endorsed Democracy in a letter to the BDN, calling the current truck "a liability the town\'s insurance company should be terrified of."', penalty:90 },
+  { tag:'neutral', headline:'Democracy Forums Draw Moderate Crowds', body:'Three town forums organized by Democracy drew 40-60 residents each. The tone was substantive if contentious, with detailed debate over the town\'s capital improvement plan.', penalty:10 },
+  { tag:'bad', headline:'Democracy Campaign Finance Report Late', body:'Democracy\'s campaign finance report was filed four days late with the town clerk — a minor violation that Selectman\'s campaign is amplifying as evidence of "disorganization."', penalty:-30 },
+];
+
+const DEMOCRACY_END_EVENTS = [
+  { headline:'RACE OVER: Democracy Indicted for Improper Use of Volunteer Fire Department Funds', reason:'The Lincoln County DA announced an indictment of Darlene Democracy for allegedly misusing $1,800 in fire department auxiliary funds during a fundraiser she organized. She suspended her campaign.' },
+  { headline:'RACE OVER: BDN Reveals Democracy\'s Undisclosed Conflict of Interest', reason:'Democracy failed to disclose that her brother-in-law is a sales rep for the fire truck manufacturer. The revelation, published two days before the meeting, sent her candidacy into freefall.' },
+];
+
+const DOOR_VOTERS = [
+  {emoji:'👩‍🌾', name:'Ruth M.', lean:'against', phrase: '"I\'ve seen enough bond debt for one lifetime. Route 17 is still a mess."'},
+  {emoji:'🧔', name:'Carl T.', lean:'for', phrase: '"My cousin\'s a firefighter. Those boys need proper equipment."'},
+  {emoji:'👵', name:'Pauline K.', lean:'against', phrase: '"My taxes went up again last year. Something has to give."'},
+  {emoji:'👨‍🔧', name:'Derek S.', lean:'for', phrase: '"I volunteer at the fire station. That truck is a death trap."'},
+  {emoji:'🧑‍💼', name:'Janet O.', lean:'neutral', phrase: '"I haven\'t made up my mind. Talk to me."'},
+  {emoji:'👴', name:'Harold P.', lean:'against', phrase: '"We bought that old truck in \'98. Ran fine for 25 years."'},
+  {emoji:'👩‍⚕️', name:'Kim F.', lean:'for', phrase: '"I\'m a nurse. Response times matter. Period."'},
+  {emoji:'🧑‍🎓', name:'Tyler B.', lean:'neutral', phrase: '"I just moved here. What\'s the actual cost breakdown?"'},
+  {emoji:'🧓', name:'Elaine V.', lean:'against', phrase: '"My pension is fixed. I can\'t afford another mill rate hike."'},
+  {emoji:'👩‍🔬', name:'Dr. Mills', lean:'for', phrase: '"I\'ve read the maintenance logs. That equipment is unsafe."'},
+  {emoji:'🧑‍🌾', name:'Wayne B.', lean:'neutral', phrase: '"Convince me it won\'t break the budget."'},
+  {emoji:'👩', name:'Sandra G.', lean:'for', phrase: '"Chief Fireman is a good man. I trust him on this."'},
+  {emoji:'👨', name:'Frank A.', lean:'against', phrase: '"I\'ve voted no on every bond since 1995. Not changing now."'},
+  {emoji:'🧑', name:'Lisa C.', lean:'neutral', phrase: '"I want to see the full cost analysis before deciding."'},
+  {emoji:'👩‍💼', name:'Helen N.', lean:'for', phrase: '"Public safety is not the place to cut corners."'},
+];
+
+const HEARING_STATEMENTS = {
+  fireman: [
+    '"Seventeen mechanical failures in 24 months. SEVENTEEN. That truck is a coffin on wheels."',
+    '"I\'ve had to pull Engine 1 out of service three times this year during active calls. Three times. People could have died."',
+    '"The ISO rating for this town\'s fire coverage drops if we don\'t modernize. Your homeowner\'s insurance goes UP when our rating goes DOWN."',
+    '"I\'ve given 22 years to this department. I\'m asking for one million dollars to protect people\'s lives. One million. That\'s it."',
+  ],
+  democracy: [
+    '"Steve Selectman has never once set foot in that fire station. I have. I\'ve seen what those men work with."',
+    '"The debt service on this truck is $127,000 over ten years. That\'s $12,700 a year. For a town our size, that\'s the cost of safety."',
+    '"When the Plourde barn burned last spring, Engine 1 arrived with 40 PSI of water pressure. It should have been 150."',
+    '"This isn\'t about politics. This is about whether Newsville shows up for its people or leaves them to burn."',
+  ],
+  supporter: [
+    '"I\'m a homeowner and a taxpayer. I support the new truck. My house is my retirement."',
+    '"The fire department serves ALL of us. This is exactly what we pay taxes for."',
+    '"I moved here from Massachusetts because communities here still work together. Don\'t let that change."',
+    '"Vote yes on the truck. And vote yes on Darlene Democracy for Select Board."',
+  ],
+};
+
+const WARRANT_ITEMS = [
+  { id:'roads', label:'Road Maintenance & Repair', current:466025, proposed:795024, description:'Major increase reflects paving backlog and LRAP matching funds.', impact:'moderate', serviceImpact:0 },
+  { id:'fire_ops', label:'Fire Department Operations', current:225785, proposed:160344, description:'Reduction reflects removal of Delta Ambulance (now separate article).', impact:'neutral', serviceImpact:0 },
+  { id:'employees', label:'Employee Compensation & Benefits', current:259660, proposed:266713, description:'2.7% increase for COLA and insurance.', impact:'low', serviceImpact:0 },
+  { id:'gov_ops', label:'Town Government Operations', current:136939, proposed:145726, description:'Includes TRIO software upgrade and new website.', impact:'low', serviceImpact:0 },
+  { id:'library', label:'Newsville Public Library', current:20000, proposed:20000, description:'Hold flat. Friends of Library request unchanged.', impact:'neutral', serviceImpact:0 },
+  { id:'animal', label:'Animal Control Contract', current:10500, proposed:13000, description:'Vendor price increase. Committee recommends $10,500.', impact:'low', serviceImpact:0 },
+  { id:'delta', label:'Delta Ambulance Service', current:80955, proposed:138780, description:'Rate jumps from $35 to $60 per capita — statewide increase.', impact:'high', serviceImpact:0 },
+  { id:'winter', label:'Winter Road Maintenance', current:464300, proposed:467300, description:'Modest increase for fuel and contractor costs.', impact:'low', serviceImpact:0 },
+  { id:'recycling', label:'Recycling Center Salaries & Utilities', current:5419, proposed:7248, description:'New part-time employee; utility rate increase.', impact:'low', serviceImpact:0 },
+  { id:'cemetery', label:'Soldiers\' Graves & Cemetery', current:8300, proposed:4700, description:'Cemetery Association moved to separate article; reduces this line.', impact:'neutral', serviceImpact:0 },
+];
+
+const WILDCARD_MOTIONS = [
+  {
+    char: 'manager',
+    motion: 'A voter moves to REDUCE the road maintenance budget by $40,000, below the Budget Committee recommendation.',
+    options: [
+      { text: 'Support the motion — accept the cut to show fiscal restraint.', outcome: 'lose', msg: 'The crowd reads your capitulation as weakness. The motion passes, services are cut by 8%, and you narrowly miss your goal — then lose your job at the next board meeting.' },
+      { text: 'Rise to speak: explain the LRAP match requirement means the town loses $76,000 in state funds if road spending drops.', outcome: 'survive', msg: 'The crowd hadn\'t considered the state match. The motion fails 58-41. Your score rises.' },
+      { text: 'Defer to the Select Board chair and stay quiet.', outcome: 'lose', msg: 'Without your explanation, the motion passes. Services are cut. Your budget goal fails.' },
+    ]
+  },
+  {
+    char: 'selectman',
+    motion: 'A fire truck supporter moves to add the $1M fire truck purchase to the warrant as a late article.',
+    options: [
+      { text: 'Rule the motion out of order — it wasn\'t on the warrant as warned.', outcome: 'survive', msg: 'The moderator backs you up. The motion is tabled. The crowd grumbles but respects the procedure.' },
+      { text: 'Allow the motion to proceed — you\'re confident you can defeat it in a vote.', outcome: 'risky', msg: 'The motion proceeds. It\'s close — but your prep pays off and it fails 48-52. Narrow escape.' },
+      { text: 'Step down from the chair to speak against the motion as a private citizen.', outcome: 'lose', msg: 'Your absence from the chair creates chaos. The vice chair allows the motion, it passes, and the truck is approved over your objection.' },
+    ]
+  },
+  {
+    char: 'democracy',
+    motion: 'A Selectman ally moves to TABLE the fire truck article indefinitely, referring it to a capital planning committee.',
+    options: [
+      { text: 'Rise immediately and argue that tabling equals killing — the committee meets once a year.', outcome: 'survive', msg: 'Voters understand the tabling tactic. The motion to table fails 44-55. The fire truck article will be voted on.' },
+      { text: 'Accept a compromise: a 60-day study committee with a guaranteed vote.', outcome: 'risky', msg: 'The study committee is formed. It reports back in 58 days recommending purchase. The truck passes — barely.' },
+      { text: 'Attack Selectman personally from the floor.', outcome: 'lose', msg: 'The crowd turns against you. The moderator warns you twice. The motion to table passes and the fire truck article is buried.' },
+    ]
+  },
+];
+
+// ---- TITLE SCREEN ----
+function showTitle(){
+  G = { char:null, score:0, luck:0, skill:0, phase:0,
+    door_wins:0, door_losses:0, door_total:0,
+    negativity:0, warrant_score:0, speech_score:0,
+    door_score:0, hearing_score:0, phase2_wild:null,
+    budget_change:0, fire_truck:false, eliminated:false,
+    win:false, final_msg:'', game_id:Math.random().toString(36).slice(2) };
+
+  screen(`<div class="fadein">
+    <div class="scene-hdr">
+      <span class="scene-label">★ Welcome to Newsville</span>
+      <span class="score-disp">Score: 0</span>
+    </div>
+    <div class="narr">
+      <strong>NEWSVILLE, Maine (pop. 2,400).</strong> Budget season has arrived. The mil rate sits at $10.00 per thousand. The annual town meeting is in three weeks. And everything is about to get very, very complicated.<br><br>
+      The Select Board is deadlocked 3-2 on <strong>Chief Fred Fireman's $1 million fire truck request</strong>. The town manager is scrambling to cut the property tax rate 5% without gutting services. And a challenger has filed nomination papers for the board seat of the centrist chair.<br><br>
+      <em>Choose your character. Navigate the warrant. Survive the meeting. Or don't.</em>
+    </div>
+    <div class="newsclip">
+      <div class="hed">NEWSVILLE SELECT BOARD FACES TRIPLE CRISIS AT ANNUAL MEETING</div>
+      <div class="body">Budget, fire truck debt, and a contested board seat have set the stage for what insiders are calling "the most consequential town meeting in a decade." The mil rate currently stands at $10.00 per thousand of assessed value, generating roughly $1.2 million in property tax revenue against a $1.2M budget. Municipal finance experts say the 5% tax reduction goal would require finding $60,000 in savings or new revenue — a tall order in a year when ambulance costs alone have jumped $57,000. — By Staff Reporter</div>
+    </div>
+    <div class="narr">Select your role:</div>
+    <div class="char-grid">
+      <div class="char-card" onclick="selectChar('manager')">
+        <span class="char-icon">📋</span>
+        <div class="char-name">Martha Manager</div>
+        <div class="char-role">Town Manager</div>
+        <div class="char-desc">Smart, cautious, politically appointed. Your job is the warrant — and keeping it.</div>
+        <div class="char-goal">Goal: Cut the mil rate 5% without cutting services more than 10%.</div>
+      </div>
+      <div class="char-card" onclick="selectChar('selectman')">
+        <span class="char-icon">🏛️</span>
+        <div class="char-name">Steve Selectman</div>
+        <div class="char-role">Select Board Chair</div>
+        <div class="char-desc">Centrist. Pragmatic. Hates debt. Running for re-election against a vocal challenger.</div>
+        <div class="char-goal">Goal: Win re-election. Block the $1M fire truck purchase.</div>
+      </div>
+      <div class="char-card" onclick="selectChar('democracy')">
+        <span class="char-icon">✊</span>
+        <div class="char-name">Darlene Democracy</div>
+        <div class="char-role">Challenger / Fire Truck Ally</div>
+        <div class="char-desc">Passionate. Organized. Allied with Chief Fireman. Running on one big issue.</div>
+        <div class="char-goal">Goal: Win the board seat. Get the fire truck approved.</div>
+      </div>
+    </div>
+    <button class="sec-btn" onclick="showLeaderboard()">📊 View Leaderboard</button>
+  </div>`);
+}
+
+function showLeaderboard(){
+  const board = getBoard();
+  screen(`<div class="fadein">
+    <div class="scene-hdr">
+      <span class="scene-label">★ Leaderboard</span>
+      <span class="score-disp">All Time</span>
+    </div>
+    <div class="lb">
+      <h3>🏆 Top Scores — Newsville Town Meeting</h3>
+      ${renderBoard(board)}
+    </div>
+    <button class="pri-btn" onclick="showTitle()">← Back to Start</button>
+  </div>`);
+}
+
+function selectChar(c){
+  G.char = c;
+  showPhase1();
+}
+
+// ============================================================
+// MANAGER PATH
+// ============================================================
+function showPhase1(){
+  scrollTop();
+  if(G.char === 'manager') managerPhase1();
+  else if(G.char === 'selectman') selectmanPhase1();
+  else democracyPhase1();
+}
+
+// ---- MANAGER PHASE 1: Warrant + Newspaper ----
+function managerPhase1(){
+  // Random fire event?
+  const fireRoll = pct(.10);
+  if(fireRoll){
+    const fe = pick(MANAGER_FIRE_EVENTS);
+    G.eliminated = true;
+    screen(`<div class="fadein">
+      <div class="scene-hdr"><span class="scene-label">📋 Martha Manager — Phase 1: The Warrant</span><span class="score-disp">Score: ${G.score}</span></div>
+      <div class="phases"><div class="ph-dot active"></div><div class="ph-dot"></div><div class="ph-dot"></div></div>
+      <div class="char-badge">MARTHA MANAGER</div>
+      <div class="newsclip">
+        <div class="hed">${fe.headline}</div>
+        <div class="body">${fe.reason}</div>
+      </div>
+      <div class="evt bad" data-tag="GAME OVER">
+        <p class="narr">Your career in municipal government ends here. <strong>Score: ${G.score}</strong></p>
+      </div>
+      <button class="pri-btn" onclick="showEndScreen()">See Your Results →</button>
+    </div>`);
+    return;
+  }
+
+  // Pick 3 random events
+  let events = [...MANAGER_PHASE1_EVENTS].sort(()=>Math.random()-.5).slice(0,3);
+  G.warrant_events = events;
+  let scoreAdj = 0;
+  events.forEach(e => scoreAdj += e.penalty);
+  G.warrant_score = Math.max(0, 150 + scoreAdj);
+  addScore(G.warrant_score);
+
+  const evHTML = events.map(e => `
+    <div class="newsclip" style="margin-bottom:16px;">
+      <div class="hed">${e.headline}</div>
+      <div class="body">${e.body}</div>
+    </div>`).join('');
+
+  // Check for second fire chance
+  const secFire = events.some(e => e.fireChance && pct(e.fireChance * 2));
+  if(secFire){
+    const fe = pick(MANAGER_FIRE_EVENTS);
+    G.eliminated = true;
+    screen(`<div class="fadein">
+      <div class="scene-hdr"><span class="scene-label">📋 Martha Manager — Phase 1: The Warrant</span><span class="score-disp">Score: ${G.score}</span></div>
+      <div class="phases"><div class="ph-dot active"></div><div class="ph-dot"></div><div class="ph-dot"></div></div>
+      <div class="char-badge">MARTHA MANAGER</div>
+      <div class="narr">You've been working on the warrant. The BDN is watching. Here's how things played out:</div>
+      ${evHTML}
+      <div class="newsclip">
+        <div class="hed">${fe.headline}</div>
+        <div class="body">${fe.reason}</div>
+      </div>
+      <div class="evt bad" data-tag="GAME OVER">
+        <p class="narr">Despite your best efforts, the political fallout was too great. <strong>Score: ${G.score}</strong></p>
+      </div>
+      <button class="pri-btn" onclick="showEndScreen()">See Your Results →</button>
+    </div>`);
+    return;
+  }
+
+  screen(`<div class="fadein">
+    <div class="scene-hdr"><span class="scene-label">📋 Martha Manager — Phase 1: The Warrant</span><span class="score-disp">Score: ${G.score}</span></div>
+    <div class="phases"><div class="ph-dot active"></div><div class="ph-dot"></div><div class="ph-dot"></div></div>
+    <div class="char-badge">MARTHA MANAGER</div>
+    <div class="narr">
+      You're building the annual warrant for Newsville. The current budget is <strong>$1,236,000</strong> against a mil rate of <strong>$10.00</strong>. Your mission: reduce the mil rate by 5% (to <strong>$9.50</strong>) without cutting more than 10% of services.<br><br>
+      The Budget Committee meets Thursday. The BDN is already calling. Here's the coverage so far:
+    </div>
+    ${evHTML}
+    <div class="narr">Now you must choose where to find the savings. The Select Board wants the 5% reduction. Your choices will define the warrant — and your job security.</div>
+    <div class="choices">
+      <button class="ch-btn" onclick="managerWarrantChoice('surplus')">Apply the maximum $300,000 unassigned fund balance to offset property taxes, reducing the need for cuts.</button>
+      <button class="ch-btn" onclick="managerWarrantChoice('cuts')">Make targeted cuts: reduce animal control to $10,500, facilities maintenance by $8,000, and hold library flat.</button>
+      <button class="ch-btn" onclick="managerWarrantChoice('grants')">Pursue LRAP, Tree Growth, and auto excise revenue aggressively to reduce the amount raised from property taxes.</button>
+      <button class="ch-btn" onclick="managerWarrantChoice('hybrid')">Hybrid: modest surplus draw ($150k), targeted $30k in cuts, aggressive revenue forecasting.</button>
+    </div>
+  </div>`);
+}
+
+function managerWarrantChoice(choice){
+  let pts = 0, msg = '';
+  if(choice === 'surplus'){
+    pts = 60; msg = 'The fund balance approach buys a one-year reduction but leaves the town with thin reserves. Budget Committee approves 7-2 but notes the structural deficit.';
+    G.budget_change = -4.5; // just under goal
+  } else if(choice === 'cuts'){
+    pts = 40; msg = 'The cuts achieve the mil rate target, but the library and animal control crowds are now organizing against you. Service reduction at 7%.';
+    G.budget_change = -5.2;
+  } else if(choice === 'grants'){
+    pts = 90; msg = 'Grant revenue projections are optimistic but the LRAP match is solid. Budget Committee loves it. 9-0 approval on most articles.';
+    G.budget_change = -5.0;
+  } else {
+    pts = 110; msg = 'The hybrid approach is praised as "the most thoughtful warrant since the Sheaffer era." Budget Committee votes 8-1 in favor.';
+    G.budget_change = -5.0;
+  }
+  addScore(pts);
+  G.skill += pts;
+  G.phase = 1;
+  screen(`<div class="fadein">
+    <div class="scene-hdr"><span class="scene-label">📋 Martha Manager — Phase 1 Complete</span><span class="score-disp">Score: ${G.score}</span></div>
+    <div class="phases"><div class="ph-dot done"></div><div class="ph-dot active"></div><div class="ph-dot"></div></div>
+    <div class="char-badge">MARTHA MANAGER</div>
+    <div class="evt good" data-tag="PHASE 1 RESULT">
+      <p class="narr">${msg}</p>
+    </div>
+    <div class="narr">The warrant is set. Now you need to <strong>present your budget to the Select Board</strong> and win their vote before the town meeting. You have 75 words. Make them count.</div>
+    <button class="pri-btn" onclick="managerPhase2()">Continue to Phase 2 →</button>
+  </div>`);
+}
+
+// ---- MANAGER PHASE 2: Board Presentation ----
+function managerPhase2(){
+  scrollTop();
+  // 20% elimination chance here
+  if(pct(.20)){
+    const fe = pick(MANAGER_FIRE_EVENTS);
+    G.eliminated = true;
+    screen(`<div class="fadein">
+      <div class="scene-hdr"><span class="scene-label">📋 Martha Manager — Phase 2: Board Presentation</span><span class="score-disp">Score: ${G.score}</span></div>
+      <div class="phases"><div class="ph-dot done"></div><div class="ph-dot active"></div><div class="ph-dot"></div></div>
+      <div class="char-badge">MARTHA MANAGER</div>
+      <div class="newsclip">
+        <div class="hed">${fe.headline}</div>
+        <div class="body">${fe.reason}</div>
+      </div>
+      <div class="evt bad" data-tag="GAME OVER">
+        <p class="narr">Before you could present your budget, the board voted to dismiss you. Score: <strong>${G.score}</strong></p>
+      </div>
+      <button class="pri-btn" onclick="showEndScreen()">See Your Results →</button>
+    </div>`);
+    return;
+  }
+
+  screen(`<div class="fadein">
+    <div class="scene-hdr"><span class="scene-label">📋 Martha Manager — Phase 2: Board Presentation</span><span class="score-disp">Score: ${G.score}</span></div>
+    <div class="phases"><div class="ph-dot done"></div><div class="ph-dot active"></div><div class="ph-dot"></div></div>
+    <div class="char-badge">MARTHA MANAGER</div>
+    <div class="narr">
+      The Select Board meets Tuesday night. You have <strong>exactly 75 words</strong> to present your budget and win their 3-2 approval (you already have 2 votes; you need to bring the centrist Selectman Harlow across).<br><br>
+      Your budget proposes a <strong>${Math.abs(G.budget_change).toFixed(1)}% mil rate reduction</strong> to $${(10 * (1 + G.budget_change/100)).toFixed(2)}. Newsville's total assessed value is $123.6M, so each 0.1 mil point = $12,360 in tax revenue. The surplus draw is $300,000; LRAP revenue $76,000.<br><br>
+      <em>Speak to Selectman Harlow. He cares about structural balance and not raiding reserves excessively. He is skeptical of one-time fixes.</em>
+    </div>
+    <div class="evt neutral" data-tag="ASSIGNMENT">
+      <p>Write your 75-word budget presentation below. You will be scored on relevance, persuasiveness, and staying within the word limit.</p>
+    </div>
+    <textarea class="game-ta" id="manager-speech" placeholder="Example: &quot;This warrant achieves a 5% mil rate reduction through a combination of LRAP grant revenue, a targeted $150,000 surplus draw, and modest operational efficiencies. No core services are cut. The structural deficit is addressed through a three-year revenue plan. I ask for your support of a budget that is honest about Newsville's finances and fair to its taxpayers...&quot;" oninput="updateWC('manager-speech','manager-wc',75)"></textarea>
+    <div class="wc" id="manager-wc">Words: 0 / 75</div>
+    <button class="pri-btn" onclick="managerSpeechSubmit()">Submit Presentation to Select Board →</button>
+  </div>`);
+}
+
+function updateWC(taId, wcId, limit){
+  const ta = document.getElementById(taId);
+  const wcd = document.getElementById(wcId);
+  if(!ta||!wcd) return;
+  const count = wc(ta.value);
+  wcd.textContent = `Words: ${count} / ${limit}`;
+  wcd.className = 'wc' + (count > limit ? ' over' : '');
+}
+
+function managerSpeechSubmit(){
+  const ta = document.getElementById('manager-speech');
+  const txt = ta ? ta.value.trim() : '';
+  const count = wc(txt);
+  let pts = 0, verdict = '';
+
+  if(count < 20){
+    pts = 10; verdict = 'Too brief. The board sat in awkward silence. Selectman Harlow asked if you had finished. Your presentation lacked substance.';
+  } else if(count > 75){
+    pts = 30; verdict = 'You went over the 75-word limit. Moderator Harlow cut you off mid-sentence. The board noticed the lack of discipline.';
+  } else {
+    // Score on keywords
+    const low = txt.toLowerCase();
+    let kw = 0;
+    ['surplus','fund balance','lrap','grant','mil rate','revenue','structure','debt','service','balanced','savings','five percent','5%','reduce','sustain'].forEach(k => { if(low.includes(k)) kw++; });
+    pts = Math.min(200, 60 + kw * 15);
+    if(count >= 60 && count <= 75) pts += 30; // sweet spot bonus
+    verdict = pts >= 150 ? 'Harlow nodded twice during your presentation. "That\'s the most cogent budget argument I\'ve heard in this building," he said. The board voted 3-2 to approve.' :
+              pts >= 100 ? 'A solid presentation. Harlow voted yes, but with reservations about the surplus draw timeline. Board approves 3-2.' :
+              pts >= 60 ? 'Adequate but thin. Harlow abstained. The vote was 2-2-1. The warrant advances on a tie, which means it goes to town meeting without board endorsement — a bad sign.' :
+              'Weak. Harlow voted no. The board deadlocked 2-3. The warrant goes to town meeting without Select Board endorsement.';
+  }
+  addScore(pts);
+  G.skill += pts;
+  G.speech_score = pts;
+  G.phase = 2;
+
+  screen(`<div class="fadein">
+    <div class="scene-hdr"><span class="scene-label">📋 Martha Manager — Phase 2 Complete</span><span class="score-disp">Score: ${G.score}</span></div>
+    <div class="phases"><div class="ph-dot done"></div><div class="ph-dot done"></div><div class="ph-dot active"></div></div>
+    <div class="char-badge">MARTHA MANAGER</div>
+    <div class="evt ${pts>=100?'good':'neutral'}" data-tag="BOARD RESULT">
+      <p class="narr">${verdict}</p>
+    </div>
+    <div class="narr">The warrant is approved (or advancing). Now it goes to the <strong>Annual Town Meeting</strong>. Three hundred voters. One gymnasium. The fate of the budget — and your job — decided by show of hands.</div>
+    <button class="pri-btn" onclick="startTownMeeting()">Proceed to Town Meeting →</button>
+  </div>`);
+}
+
+// ============================================================
+// SELECTMAN PATH
+// ============================================================
+function selectmanPhase1(){
+  scrollTop();
+  // 10% instant end
+  if(pct(.10)){
+    const ee = pick(SELECTMAN_END_EVENTS);
+    G.eliminated = true;
+    screen(`<div class="fadein">
+      <div class="scene-hdr"><span class="scene-label">🏛️ Steve Selectman — Phase 1: Public Hearing</span><span class="score-disp">Score: ${G.score}</span></div>
+      <div class="phases"><div class="ph-dot active"></div><div class="ph-dot"></div><div class="ph-dot"></div></div>
+      <div class="char-badge">STEVE SELECTMAN</div>
+      <div class="newsclip"><div class="hed">${ee.headline}</div><div class="body">${ee.reason}</div></div>
+      <div class="evt bad" data-tag="ELIMINATED"><p class="narr">Your path to re-election ends here. Score: <strong>${G.score}</strong></p></div>
+      <button class="pri-btn" onclick="showEndScreen()">See Your Results →</button>
+    </div>`);
+    return;
+  }
+
+  // Pick 2 news events
+  let events = [...SELECTMAN_PHASE1_EVENTS].sort(()=>Math.random()-.5).slice(0,2);
+  let scoreAdj = 0;
+  events.forEach(e => { scoreAdj += e.penalty; G.negativity += e.penalty < -100 ? 2 : e.penalty < -50 ? 1 : 0; });
+  addScore(Math.max(0, 100 + scoreAdj));
+  G.skill += Math.max(0, 100 + scoreAdj);
+
+  const evHTML = events.map(e => `
+    <div class="newsclip" style="margin-bottom:14px;">
+      <div class="hed">${e.headline}</div>
+      <div class="body">${e.body}</div>
+    </div>`).join('');
+
+  // Pick hearing statements
+  const fStmt = pick(HEARING_STATEMENTS.fireman);
+  const dStmt = pick(HEARING_STATEMENTS.democracy);
+  const sStmt = pick(HEARING_STATEMENTS.supporter);
+
+  screen(`<div class="fadein">
+    <div class="scene-hdr"><span class="scene-label">🏛️ Steve Selectman — Phase 1: Public Hearing</span><span class="score-disp">Score: ${G.score}</span></div>
+    <div class="phases"><div class="ph-dot active"></div><div class="ph-dot"></div><div class="ph-dot"></div></div>
+    <div class="char-badge">STEVE SELECTMAN</div>
+    <div class="narr">
+      The public hearing on the proposed $1 million fire truck bond is standing room only. Chief Fireman and Darlene Democracy are in the front row. Three TV cameras. One hostile crowd.<br><br>
+      The BDN has been covering the story all week:
+    </div>
+    ${evHTML}
+    <div class="narr">Now the hearing begins. Speakers take the floor:</div>
+    <div class="hearing">
+      <div class="hearing-who">🧑‍🚒 Chief Fred Fireman</div>
+      <div class="hearing-text">${fStmt}</div>
+    </div>
+    <div class="hearing">
+      <div class="hearing-who">✊ Darlene Democracy</div>
+      <div class="hearing-text">${dStmt}</div>
+    </div>
+    <div class="hearing">
+      <div class="hearing-who">👤 Supporter from Floor</div>
+      <div class="hearing-text">${sStmt}</div>
+    </div>
+    <div class="narr">As chair, you have the final word. How do you respond?</div>
+    <div class="choices">
+      <button class="ch-btn" onclick="selectmanHearingResponse('data')">Present the full 10-year debt service analysis: $127,000 in interest, $400k already owed on the fire station bond, ISO ratings context.</button>
+      <button class="ch-btn" onclick="selectmanHearingResponse('mutual')">Announce your mutual aid truck agreement as an alternative to purchase, saving the town $127k in interest.</button>
+      <button class="ch-btn" onclick="selectmanHearingResponse('attack')">Challenge Fireman's maintenance records as cherry-picked and accuse Democracy of using public safety as a political prop.</button>
+      <button class="ch-btn" onclick="selectmanHearingResponse('defer')">Thank speakers, note the board will take the matter under advisement, and close the hearing without taking a position.</button>
+    </div>
+  </div>`);
+}
+
+function selectmanHearingResponse(choice){
+  let pts = 0, msg = '', neg = 0;
+  if(choice === 'data'){
+    pts = 130; msg = 'Your numbers are solid and verifiable. Several undecided voters nod. The BDN headline: "Selectman Presents Careful Case Against Bond." Negativity stays low.';
+    neg = 0;
+  } else if(choice === 'mutual'){
+    pts = 110; msg = 'The mutual aid proposal generates real interest. Two fence-sitters say it\'s "creative." Fireman calls it "a political stunt" but looks rattled.';
+    neg = 1;
+  } else if(choice === 'attack'){
+    pts = 40; msg = 'The room erupts. Democracy raises a point of order. The BDN covers it as "Selectman Gets Personal." Your negativity score climbs — and so does Democracy\'s fundraising.';
+    neg = 3;
+  } else {
+    pts = 20; msg = 'Your silence reads as weakness. Three fence-sitters leave the hearing leaning toward Democracy. "He had nothing to say," one told the BDN.';
+    neg = 1;
+  }
+  G.negativity += neg;
+  addScore(pts);
+  G.skill += pts;
+  G.hearing_score = pts;
+  G.phase = 1;
+
+  screen(`<div class="fadein">
+    <div class="scene-hdr"><span class="scene-label">🏛️ Steve Selectman — Phase 1 Complete</span><span class="score-disp">Score: ${G.score}</span></div>
+    <div class="phases"><div class="ph-dot done"></div><div class="ph-dot active"></div><div class="ph-dot"></div></div>
+    <div class="char-badge">STEVE SELECTMAN</div>
+    <div class="evt ${pts>=100?'good':pts>=50?'neutral':'bad'}" data-tag="HEARING RESULT"><p class="narr">${msg}</p></div>
+    <div class="narr">Now you need to win votes <strong>door to door</strong>. You need at least <strong>3 out of every 5 voters</strong> you meet. The canvass begins at 7 AM Saturday.</div>
+    <button class="pri-btn" onclick="selectmanPhase2()">Start Canvassing →</button>
+  </div>`);
+}
+
+// ---- SELECTMAN PHASE 2: Door to Door ----
+function selectmanPhase2(){
+  scrollTop();
+  // 20% elimination
+  if(pct(.20)){
+    const ee = pick(SELECTMAN_END_EVENTS);
+    G.eliminated = true;
+    screen(`<div class="fadein">
+      <div class="scene-hdr"><span class="scene-label">🏛️ Steve Selectman — Phase 2: Canvassing</span><span class="score-disp">Score: ${G.score}</span></div>
+      <div class="phases"><div class="ph-dot done"></div><div class="ph-dot active"></div><div class="ph-dot"></div></div>
+      <div class="char-badge">STEVE SELECTMAN</div>
+      <div class="newsclip"><div class="hed">${ee.headline}</div><div class="body">${ee.reason}</div></div>
+      <div class="evt bad" data-tag="ELIMINATED"><p class="narr">Before you could canvass a single voter, the news broke. Score: <strong>${G.score}</strong></p></div>
+      <button class="pri-btn" onclick="showEndScreen()">See Your Results →</button>
+    </div>`);
+    return;
+  }
+  showDoorCanvas('selectman');
+}
+
+function showDoorCanvas(charType){
+  scrollTop();
+  const total = 10;
+  G.door_total = total;
+  G.door_wins = 0;
+  G.door_losses = 0;
+  const voters = [...DOOR_VOTERS].sort(()=>Math.random()-.5).slice(0,total);
+  G._canvas_voters = voters;
+  G._canvas_char = charType;
+  G._canvas_done = new Array(total).fill(null);
+  renderDoors(charType);
+}
+
+function renderDoors(charType){
+  const voters = G._canvas_voters;
+  const done = G._canvas_done;
+  const remaining = done.filter(d=>d===null).length;
+  const needed = charType === 'selectman' ? 6 : 6; // 3/5 of 10
+  const current = G.door_wins;
+  const pct_done = Math.round(((10 - remaining)/10)*100);
+
+  let doorsHTML = voters.map((v,i) => {
+    let state = done[i];
+    let icon = v.emoji;
+    let lbl = state === 'win' ? '✓ WON' : state === 'loss' ? '✗ LOST' : state === 'neutral' ? '— MEH' : 'KNOCK';
+    return `<div class="door" ${state ? `data-done="${state}"` : `onclick="knockDoor(${i})"`} data-i="${i}">
+      <span>${icon}</span>
+      <span class="door-lbl">${lbl}</span>
+    </div>`;
+  }).join('');
+
+  const msg = charType === 'selectman'
+    ? `You need to win <strong>6 of 10 voters</strong> (60%) to build momentum for re-election. Current: <strong>${G.door_wins} wins</strong>.`
+    : `You need to win <strong>6 of 10 doors</strong> (60%) in Selectman's neighborhood to show you can flip his turf. Current: <strong>${G.door_wins} wins</strong>.`;
+
+  screen(`<div class="fadein">
+    <div class="scene-hdr">
+      <span class="scene-label">${charType==='selectman'?'🏛️ Selectman':'✊ Democracy'} — Door to Door</span>
+      <span class="score-disp">Score: ${G.score}</span>
+    </div>
+    <div class="phases"><div class="ph-dot done"></div><div class="ph-dot active"></div><div class="ph-dot"></div></div>
+    <div class="char-badge">${charType==='selectman'?'STEVE SELECTMAN':'DARLENE DEMOCRACY'}</div>
+    <div class="narr">${msg}</div>
+    <div class="prog-wrap">
+      <div class="prog-label"><span>CANVASS PROGRESS</span><span>${10-remaining}/10 doors</span></div>
+      <div class="prog-bar"><div class="prog-fill ${G.door_wins>=6?'':'warn'}" style="width:${pct_done}%"></div></div>
+    </div>
+    <div class="doors">${doorsHTML}</div>
+    <div id="door-result" style="min-height:60px;"></div>
+    ${remaining === 0 ? `<button class="pri-btn" onclick="finishDoors('${charType}')">Continue →</button>` : ''}
+  </div>`);
+}
+
+function knockDoor(i){
+  const voter = G._canvas_voters[i];
+  const charType = G._canvas_char;
+  // Outcome based on lean + luck
+  let win = false;
+  if(voter.lean === 'for'){
+    win = charType === 'democracy' ? pct(.75) : pct(.35);
+  } else if(voter.lean === 'against'){
+    win = charType === 'democracy' ? pct(.30) : pct(.65);
+  } else {
+    win = pct(.50);
+  }
+  // Hearing/event bonus
+  if(G.hearing_score >= 130) win = win || pct(.15);
+  // Luck factor
+  const luckyRoll = pct(.15);
+  if(luckyRoll){ win = !win; G.luck += 20; }
+
+  G._canvas_done[i] = win ? 'win' : 'loss';
+  if(win) G.door_wins++;
+  else G.door_losses++;
+
+  // Award points per door
+  if(win) addScore(30);
+  G.door_score += win ? 30 : 0;
+
+  // Mark remaining as skip if mathematically over
+  const remaining_blank = G._canvas_done.filter(d=>d===null).length;
+  const still_possible = G.door_wins + remaining_blank;
+  if(G.door_wins >= 6 || still_possible < 6){
+    // Auto-fill remaining
+    G._canvas_done = G._canvas_done.map(d => d === null ? 'skip' : d);
+  }
+
+  const result = document.getElementById('door-result');
+  if(result){
+    result.innerHTML = `<div class="evt ${win?'good':'bad'}" data-tag="${win?'SUPPORT WON':'DOOR CLOSED'}" style="margin-top:10px;">
+      <strong>${voter.emoji} ${voter.name}</strong> says: <em>${voter.phrase}</em><br>
+      ${win ? '✅ Persuaded!' : '❌ Not convinced.'}
+    </div>`;
+  }
+
+  setTimeout(() => renderDoors(charType), 800);
+}
+
+function finishDoors(charType){
+  const passed = G.door_wins >= 6;
+  G.phase = 2;
+  if(!passed){
+    G.eliminated = true;
+    screen(`<div class="fadein">
+      <div class="scene-hdr"><span class="scene-label">${charType==='selectman'?'🏛️ Steve Selectman':'✊ Darlene Democracy'} — Canvass Results</span><span class="score-disp">Score: ${G.score}</span></div>
+      <div class="phases"><div class="ph-dot done"></div><div class="ph-dot done"></div><div class="ph-dot"></div></div>
+      <div class="evt bad" data-tag="CANVASS FAILED">
+        <p class="narr">You only won <strong>${G.door_wins} of 10</strong> doors — not enough. Word spreads that ${charType==='selectman'?'Selectman':'Democracy'} is in trouble. The BDN runs a story on "waning support." Your path to the town meeting is compromised. Score: <strong>${G.score}</strong></p>
+      </div>
+      <button class="pri-btn" onclick="showEndScreen()">See Your Results →</button>
+    </div>`);
+    return;
+  }
+  screen(`<div class="fadein">
+    <div class="scene-hdr"><span class="scene-label">${charType==='selectman'?'🏛️ Steve Selectman':'✊ Darlene Democracy'} — Phase 2 Complete</span><span class="score-disp">Score: ${G.score}</span></div>
+    <div class="phases"><div class="ph-dot done"></div><div class="ph-dot done"></div><div class="ph-dot active"></div></div>
+    <div class="evt good" data-tag="CANVASS SUCCESS">
+      <p class="narr">You won <strong>${G.door_wins} of 10</strong> doors. Momentum is building. The BDN notes "${charType==='selectman'?'Selectman':'Democracy'} shows surprising ground game strength." Now comes the town meeting — and your 75-word speech.</p>
+    </div>
+    <button class="pri-btn" onclick="${charType==='selectman'?'selectmanPhase3()':'democracyPhase3()'}">${charType==='selectman'?'Prepare Your Speech →':'Write Your Letter to the Editor →'}</button>
+  </div>`);
+}
+
+// ---- SELECTMAN PHASE 3: Speech ----
+function selectmanPhase3(){
+  scrollTop();
+  screen(`<div class="fadein">
+    <div class="scene-hdr"><span class="scene-label">🏛️ Steve Selectman — Phase 3: Town Meeting Speech</span><span class="score-disp">Score: ${G.score}</span></div>
+    <div class="phases"><div class="ph-dot done"></div><div class="ph-dot done"></div><div class="ph-dot active"></div></div>
+    <div class="char-badge">STEVE SELECTMAN</div>
+    <div class="narr">
+      Town meeting night. The gym is packed. You and Darlene Democracy each get <strong>75 words</strong> to make your case to the voters who will decide this election.<br><br>
+      <em>You need to explain your opposition to the fire truck bond in terms voters understand, while making the case for your own re-election. A negative campaign has hurt you both. Stay on substance.</em><br><br>
+      Negativity index: <strong>${G.negativity > 4 ? 'HIGH ⚠️ — A third-party candidate may emerge' : G.negativity > 2 ? 'MODERATE' : 'LOW ✓'}</strong>
+    </div>
+    <textarea class="game-ta" id="sel-speech" placeholder="Example: &quot;Newsville already carries $400,000 in fire-related debt — a bond that runs to 2040. Adding a million-dollar truck means $127,000 more in interest. I've secured a mutual aid agreement with three neighboring towns for ladder truck access at no cost. That's fiscal responsibility. Vote for experience over emotion, for balance over bonds. I've served this town for nine years. I ask for four more.&quot;" oninput="updateWC('sel-speech','sel-wc',75)"></textarea>
+    <div class="wc" id="sel-wc">Words: 0 / 75</div>
+    <button class="pri-btn" onclick="selectmanSpeechSubmit()">Deliver Your Speech →</button>
+  </div>`);
+}
+
+function selectmanSpeechSubmit(){
+  const ta = document.getElementById('sel-speech');
+  const txt = ta ? ta.value.trim() : '';
+  const count = wc(txt);
+  let pts = 0;
+  if(count < 20){ pts = 15; }
+  else if(count > 75){ pts = 35; }
+  else {
+    const low = txt.toLowerCase();
+    let kw = 0;
+    ['debt','interest','bond','mutual aid','fiscal','responsible','service','experience','balance','taxpayer','cost','million','budget','nine years','alternative'].forEach(k=>{ if(low.includes(k)) kw++; });
+    pts = Math.min(180, 50 + kw * 15);
+    if(count >= 60 && count <= 75) pts += 25;
+  }
+  addScore(pts);
+  G.skill += pts;
+  G.speech_score = pts;
+  G.phase = 3;
+  startTownMeeting();
+}
+
+// ============================================================
+// DEMOCRACY PATH
+// ============================================================
+function democracyPhase1(){
+  scrollTop();
+  // 10% instant end
+  if(pct(.10)){
+    const ee = pick(DEMOCRACY_END_EVENTS);
+    G.eliminated = true;
+    screen(`<div class="fadein">
+      <div class="scene-hdr"><span class="scene-label">✊ Darlene Democracy — Phase 1: Canvassing</span><span class="score-disp">Score: ${G.score}</span></div>
+      <div class="phases"><div class="ph-dot active"></div><div class="ph-dot"></div><div class="ph-dot"></div></div>
+      <div class="char-badge">DARLENE DEMOCRACY</div>
+      <div class="newsclip"><div class="hed">${ee.headline}</div><div class="body">${ee.reason}</div></div>
+      <div class="evt bad" data-tag="ELIMINATED"><p class="narr">Your campaign ends before it really begins. Score: <strong>${G.score}</strong></p></div>
+      <button class="pri-btn" onclick="showEndScreen()">See Your Results →</button>
+    </div>`);
+    return;
+  }
+
+  // News events
+  let events = [...DEMOCRACY_PHASE1_EVENTS].sort(()=>Math.random()-.5).slice(0,2);
+  let scoreAdj = 0;
+  events.forEach(e => { scoreAdj += e.penalty; G.negativity += e.penalty < -100 ? 2 : e.penalty < -50 ? 1 : 0; });
+  addScore(Math.max(0, 80 + scoreAdj));
+  G.skill += Math.max(0, 80 + scoreAdj);
+
+  const evHTML = events.map(e => `
+    <div class="newsclip" style="margin-bottom:14px;">
+      <div class="hed">${e.headline}</div>
+      <div class="body">${e.body}</div>
+    </div>`).join('');
+
+  screen(`<div class="fadein">
+    <div class="scene-hdr"><span class="scene-label">✊ Darlene Democracy — Phase 1: Door to Door</span><span class="score-disp">Score: ${G.score}</span></div>
+    <div class="phases"><div class="ph-dot active"></div><div class="ph-dot"></div><div class="ph-dot"></div></div>
+    <div class="char-badge">DARLENE DEMOCRACY</div>
+    <div class="narr">
+      You're knocking on doors in <strong>Steve Selectman's own neighborhood</strong> — Route 218 and Slab City Road. If you can flip his turf, you can flip the town.<br><br>
+      Chief Fireman is your biggest asset. The 17 mechanical failures, the ISO rating drop, the neighbor whose barn burned while Engine 1 was in the shop — these are your stories.<br><br>
+      The BDN has been following the race:
+    </div>
+    ${evHTML}
+    <div class="narr">You need to win <strong>6 of 10 doors</strong> in Selectman's neighborhood. Let's go.</div>
+    <button class="pri-btn" onclick="showDoorCanvas('democracy')">Start Canvassing →</button>
+  </div>`);
+}
+
+// ---- DEMOCRACY PHASE 3: Letter to Editor ----
+function democracyPhase3(){
+  scrollTop();
+  // 20% elimination
+  if(pct(.20)){
+    const ee = pick(DEMOCRACY_END_EVENTS);
+    G.eliminated = true;
+    screen(`<div class="fadein">
+      <div class="scene-hdr"><span class="scene-label">✊ Democracy — Phase 3: Letter to Editor</span><span class="score-disp">Score: ${G.score}</span></div>
+      <div class="phases"><div class="ph-dot done"></div><div class="ph-dot done"></div><div class="ph-dot active"></div></div>
+      <div class="char-badge">DARLENE DEMOCRACY</div>
+      <div class="newsclip"><div class="hed">${ee.headline}</div><div class="body">${ee.reason}</div></div>
+      <div class="evt bad" data-tag="ELIMINATED"><p class="narr">Before your letter ran, the story broke. Score: <strong>${G.score}</strong></p></div>
+      <button class="pri-btn" onclick="showEndScreen()">See Your Results →</button>
+    </div>`);
+    return;
+  }
+
+  screen(`<div class="fadein">
+    <div class="scene-hdr"><span class="scene-label">✊ Darlene Democracy — Phase 3: Letter to the BDN</span><span class="score-disp">Score: ${G.score}</span></div>
+    <div class="phases"><div class="ph-dot done"></div><div class="ph-dot done"></div><div class="ph-dot active"></div></div>
+    <div class="char-badge">DARLENE DEMOCRACY</div>
+    <div class="narr">
+      The BDN will run one letter from you before the town meeting — exactly <strong>75 words</strong>. This is your chance to define the race.<br><br>
+      You can appeal to your base (fire supporters, safety voters) or try to persuade swing voters who care about costs. <em>Be strategic — the BDN's readership skews older and tax-conscious. But Fireman's supporters are motivated.</em><br><br>
+      Negativity index: <strong>${G.negativity > 4 ? 'HIGH ⚠️ — A third-party may emerge' : G.negativity > 2 ? 'MODERATE' : 'LOW ✓'}</strong>
+    </div>
+    <textarea class="game-ta" id="dem-letter" placeholder="Example: &quot;Newsville's Engine 1 broke down 17 times last year. Seventeen. When the Plourde barn burned in November, that truck arrived with 40 PSI instead of 150. We got lucky. Next time, we might not. A million-dollar bond costs $127,000 in interest over 10 years — less than one tenth of a mill point. That's the cost of safety. Vote yes on the fire truck. Vote Darlene Democracy for Select Board.&quot;" oninput="updateWC('dem-letter','dem-wc',75)"></textarea>
+    <div class="wc" id="dem-wc">Words: 0 / 75</div>
+    <button class="pri-btn" onclick="democracyLetterSubmit()">Submit Letter to BDN →</button>
+  </div>`);
+}
+
+function democracyLetterSubmit(){
+  const ta = document.getElementById('dem-letter');
+  const txt = ta ? ta.value.trim() : '';
+  const count = wc(txt);
+  let pts = 0;
+  if(count < 20){ pts = 10; }
+  else if(count > 75){ pts = 30; }
+  else {
+    const low = txt.toLowerCase();
+    let kw = 0;
+    ['safety','fire truck','engine','breakdown','iso','fireman','cost','bond','million','seventeen','barn','psi','vote','select board','community'].forEach(k=>{ if(low.includes(k)) kw++; });
+    pts = Math.min(200, 55 + kw * 15);
+    if(count >= 60 && count <= 75) pts += 30;
+  }
+  addScore(pts);
+  G.skill += pts;
+  G.speech_score = pts;
+  G.phase = 3;
+  startTownMeeting();
+}
+
+// ============================================================
+// TOWN MEETING — Three Phases
+// ============================================================
+function startTownMeeting(){
+  scrollTop();
+  G.phase = 4;
+  // Determine wildcard target
+  const wildcardTargets = ['manager','selectman','democracy'];
+  G.phase2_wild = wildcardTargets[rand(3)];
+
+  screen(`<div class="fadein">
+    <div class="tm-banner">⚑ NEWSVILLE ANNUAL TOWN MEETING ⚑</div>
+    <div class="scene-hdr"><span class="scene-label">★ Town Meeting — Called to Order</span><span class="score-disp">Score: ${G.score}</span></div>
+    <div class="narr">
+      <strong>Saturday, March 15th. Newsville Elementary School gymnasium.</strong> Folding chairs are packed in tight. The smell of coffee and old gym floor. Three hundred registered voters. Moderator James Harte raps the gavel.<br><br>
+      The warrant has 47 articles. But everyone is here for <strong>three things</strong>: the budget, the fire truck, and the Select Board race.<br><br>
+      The Pledge is recited. The clerk reads the warrant greeting. And then — it begins.
+    </div>
+    <div class="newsclip">
+      <div class="hed">Live from Newsville Town Meeting</div>
+      <div class="body">Attendance is estimated at 312 — one of the largest turnouts in memory. Chief Fireman's supporters are wearing red T-shirts. Selectman's backers have blue stickers. Democracy has canvassers working the parking lot. — BDN Live Blog</div>
+    </div>
+    <div class="narr">
+      <strong>Phase 1 of Town Meeting:</strong> The Select Board election debate is about to begin. Two voter-citizens will speak — one for Selectman, one for Democracy — before the vote.
+    </div>
+    <button class="pri-btn" onclick="tmPhase1()">Proceed to Election Debate →</button>
+  </div>`);
+}
+
+function tmPhase1(){
+  scrollTop();
+  G.phase = 4;
+
+  // Check negativity — if high, third party emerges
+  const thirdParty = G.negativity >= 5 || pct(.15);
+  G.thirdParty = thirdParty;
+
+  const selSupporters = [
+    { name:'Charlie Wellman, retired road commissioner', speech:'"I\'ve watched Steve Selectman for nine years. He shows up. He knows the debt schedule. He knows what roads need paving. Newsville can\'t afford a million-dollar truck on top of a fire station bond that runs to 2040. Vote for experience."' },
+    { name:'Barbara Frost, former Budget Committee chair', speech:'"The numbers don\'t lie. With the fire station bond and now a truck bond, debt service would consume 12% of our total budget. Steve Selectman is the only candidate who has actually read those bond covenants."' },
+    { name:'Doug Haines, tax assessor emeritus', speech:'"I\'ve done this town\'s assessments for 20 years. A million-dollar bond at five percent APY costs $127,000 in interest. That\'s 12,700 dollars a year that could fix roads. Steve knows this. Vote Selectman."' },
+  ];
+  const demSupporters = [
+    { name:'Julie Barton, firefighter\'s spouse', speech:'"My husband drove Engine 1 to a house fire last October. The pump failed at the scene. He had to call for mutual aid from Alna while the garage burned to the foundation. A new truck. That\'s all we\'re asking."' },
+    { name:'Kevin Morse, homeowner Route 218', speech:'"My ISO fire rating dropped last year because of equipment deficiencies. My homeowner\'s insurance went UP $340. A new truck pays for itself in lower insurance rates across town. Vote Democracy."' },
+    { name:'Rev. Ann Tyler, Newsville Community Church', speech:'"This community has always taken care of its own. Those volunteer firefighters ask nothing of us — they run toward fires in the middle of the night. The least we can do is give them a truck that works."' },
+  ];
+
+  const selSpkr = pick(selSupporters);
+  const demSpkr = pick(demSupporters);
+
+  const thirdPartyHTML = thirdParty ? `
+    <div class="evt warn" data-tag="SURPRISE">
+      <p class="narr"><strong>⚠️ The race has turned toxic.</strong> Moderator Harte pauses the proceedings. From the back of the room, retired principal <strong>Margaret Cote</strong> rises: "I'm not on the ballot. But I am registered to vote in this town. And I move that this meeting elect a write-in candidate for Select Board. I nominate myself. I have no enemies, no agenda, and no debt." The room erupts in applause.</p>
+    </div>` : '';
+
+  screen(`<div class="fadein">
+    <div class="tm-banner">⚑ TOWN MEETING — PHASE 1: THE ELECTION ⚑</div>
+    <div class="scene-hdr"><span class="scene-label">Select Board Race Debate</span><span class="score-disp">Score: ${G.score}</span></div>
+    <div class="narr">The moderator opens the floor for one speaker per candidate before the vote:</div>
+    <div class="hearing">
+      <div class="hearing-who">👤 FOR SELECTMAN: ${selSpkr.name}</div>
+      <div class="hearing-text">${selSpkr.speech}</div>
+    </div>
+    <div class="hearing">
+      <div class="hearing-who">👤 FOR DEMOCRACY: ${demSpkr.name}</div>
+      <div class="hearing-text">${demSpkr.speech}</div>
+    </div>
+    ${thirdPartyHTML}
+    <div class="narr">The moderator calls for the vote. The crowd divides…</div>
+    <button class="pri-btn" onclick="tmElectionResult()">Count the Votes →</button>
+  </div>`);
+}
+
+function tmElectionResult(){
+  scrollTop();
+  // Calculate election outcome
+  let selScore = 50;
+  let demScore = 50;
+
+  // Skill-based adjustment
+  if(G.char === 'selectman'){
+    selScore += Math.floor(G.skill / 20);
+    demScore -= Math.floor(G.skill / 25);
+  } else if(G.char === 'democracy'){
+    demScore += Math.floor(G.skill / 20);
+    selScore -= Math.floor(G.skill / 25);
+  } else {
+    // Manager — neutral, slightly random
+    selScore += rand(20) - 10;
+    demScore += rand(20) - 10;
+  }
+  selScore += G.hearing_score ? Math.floor(G.hearing_score/20) : 0;
+  demScore += G.door_wins * 5;
+  // Luck factor
+  selScore += rand(20);
+  demScore += rand(20);
+  selScore = Math.max(10, Math.min(80, selScore));
+  demScore = Math.max(10, Math.min(80, demScore));
+  const total = selScore + demScore + (G.thirdParty ? 30 : 0);
+
+  let selPct = Math.round((selScore/total)*100);
+  let demPct = Math.round((demScore/total)*100);
+  let tpPct = G.thirdParty ? (100 - selPct - demPct) : 0;
+  tpPct = Math.max(0, 100 - selPct - demPct);
+
+  let winner = '';
+  if(G.thirdParty && tpPct > selPct && tpPct > demPct){
+    winner = 'thirdparty';
+  } else if(selPct > demPct){
+    winner = 'selectman';
+  } else {
+    winner = 'democracy';
+  }
+
+  G.election_winner = winner;
+
+  // Check if current player loses
+  let playerLoses = (G.char === 'selectman' && winner !== 'selectman') ||
+                    (G.char === 'democracy' && winner !== 'democracy');
+
+  const resultMsg = winner === 'thirdparty'
+    ? `In a stunning upset, retired principal <strong>Margaret Cote</strong> wins the Select Board seat as a write-in candidate with ${tpPct}% of the vote. Steve Selectman receives ${selPct}% and Darlene Democracy ${demPct}%. "The people have spoken," says Moderator Harte.`
+    : winner === 'selectman'
+    ? `<strong>Steve Selectman wins re-election</strong> with ${selPct}% of the vote to Democracy's ${demPct}%. Selectman pumps his fist; Democracy hugs Chief Fireman.`
+    : `<strong>Darlene Democracy wins</strong> with ${demPct}% of the vote to Selectman's ${selPct}%. Fireman's supporters in red T-shirts erupt. Selectman shakes Democracy's hand.`;
+
+  screen(`<div class="fadein">
+    <div class="tm-banner">⚑ ELECTION RESULTS ⚑</div>
+    <div class="scene-hdr"><span class="scene-label">Select Board Race</span><span class="score-disp">Score: ${G.score}</span></div>
+    <div class="tally">
+      <div class="tally-box blue">
+        <div class="tally-lbl">SELECTMAN</div>
+        <div class="tally-num">${selPct}%</div>
+      </div>
+      <div class="tally-box red">
+        <div class="tally-lbl">DEMOCRACY</div>
+        <div class="tally-num">${demPct}%</div>
+      </div>
+      ${G.thirdParty ? `<div class="tally-box green"><div class="tally-lbl">COTE (WRITE-IN)</div><div class="tally-num">${tpPct}%</div></div>` : ''}
+    </div>
+    <div class="narr">${resultMsg}</div>
+    ${playerLoses ? `
+      <div class="evt bad" data-tag="ELIMINATED">
+        <p class="narr">You did not win the election. Your path ends here. Score: <strong>${G.score}</strong></p>
+      </div>
+      <button class="pri-btn" onclick="showEndScreen()">See Your Results →</button>
+    ` : `
+      <div class="evt good" data-tag="YOU ADVANCE">
+        <p class="narr">You're still in the game. Now Phase 2 of the town meeting begins — and a surprise is waiting.</p>
+      </div>
+      <button class="pri-btn" onclick="tmPhase2()">Continue to Phase 2 →</button>
+    `}
+  </div>`);
+}
+
+function tmPhase2(){
+  scrollTop();
+  G.phase = 5;
+  // Choose wildcard
+  const wc_obj = WILDCARD_MOTIONS.find(w => w.char === G.phase2_wild) || WILDCARD_MOTIONS[rand(3)];
+
+  screen(`<div class="fadein">
+    <div class="tm-banner">⚑ TOWN MEETING — PHASE 2: WILDCARD MOTION ⚑</div>
+    <div class="scene-hdr"><span class="scene-label">Surprise from the Floor</span><span class="score-disp">Score: ${G.score}</span></div>
+    <div class="narr">The budget articles have been proceeding smoothly. Then a voter rises from the third row and makes an unexpected motion that stops the room.</div>
+    <div class="evt warn" data-tag="MOTION FROM FLOOR">
+      <p class="narr">🖐️ <strong>"Point of order. I move to: ${wc_obj.motion}"</strong></p>
+      <p style="font-size:13px;margin-top:8px;font-style:italic;">The motion is seconded. The moderator asks for discussion. All eyes turn to you.</p>
+    </div>
+    <div class="narr">How do you respond?</div>
+    <div class="choices">
+      ${wc_obj.options.map((opt,i) => `<button class="ch-btn" onclick="tmWildcardResponse(${i})">${opt.text}</button>`).join('')}
+    </div>
+  </div>`);
+
+  // Store for response
+  G._wildcard_obj = wc_obj;
+}
+
+function tmWildcardResponse(i){
+  const opt = G._wildcard_obj.options[i];
+  G.phase = 5;
+
+  if(opt.outcome === 'lose'){
+    G.eliminated = true;
+    addScore(-100);
+    screen(`<div class="fadein">
+      <div class="tm-banner">⚑ PHASE 2 — MOTION FAILS YOU ⚑</div>
+      <div class="scene-hdr"><span class="scene-label">Wildcard Result</span><span class="score-disp">Score: ${G.score}</span></div>
+      <div class="evt bad" data-tag="ELIMINATED">
+        <p class="narr">${opt.msg}</p>
+        <p class="narr" style="margin-top:10px;">Score: <strong>${G.score}</strong></p>
+      </div>
+      <button class="pri-btn" onclick="showEndScreen()">See Your Results →</button>
+    </div>`);
+    return;
+  }
+
+  addScore(opt.outcome === 'survive' ? 120 : 60);
+  screen(`<div class="fadein">
+    <div class="tm-banner">⚑ PHASE 2 — YOU SURVIVE ⚑</div>
+    <div class="scene-hdr"><span class="scene-label">Wildcard Result</span><span class="score-disp">Score: ${G.score}</span></div>
+    <div class="evt good" data-tag="MOTION HANDLED">
+      <p class="narr">${opt.msg}</p>
+    </div>
+    <div class="narr">The meeting moves forward. Article 31 — the fire truck and budget final vote — is next.</div>
+    <button class="pri-btn" onclick="tmPhase3()">Final Budget Vote →</button>
+  </div>`);
+}
+
+function tmPhase3(){
+  scrollTop();
+  G.phase = 6;
+
+  // Calculate fire truck outcome
+  let truckFor = 45 + G.negativity;
+  let truckAgainst = 55 - G.negativity;
+  if(G.char === 'democracy') truckFor += Math.floor(G.skill/15);
+  if(G.char === 'selectman') truckAgainst += Math.floor(G.skill/15);
+  if(G.election_winner === 'democracy') truckFor += 10;
+  if(G.election_winner === 'selectman') truckAgainst += 10;
+  if(G.election_winner === 'thirdparty'){ truckFor += 5; truckAgainst += 5; }
+  truckFor += rand(15);
+  truckAgainst += rand(15);
+  const truckTotal = truckFor + truckAgainst;
+  const truckForPct = Math.round((truckFor/truckTotal)*100);
+  const truckAgainstPct = 100 - truckForPct;
+  G.fire_truck = truckForPct > 50;
+
+  // Calculate budget outcome
+  let taxChange = G.budget_change || 0;
+  let serviceChange = 0;
+  if(G.fire_truck){ taxChange += 1.0; serviceChange -= 2; }
+  if(G.char === 'manager') taxChange += (G.warrant_score >= 150 ? -1 : 1);
+  taxChange += (Math.random() - 0.5) * 2;
+  serviceChange += (Math.random() - 0.5) * 4;
+  taxChange = Math.round(taxChange * 10) / 10;
+  serviceChange = Math.round(serviceChange * 10) / 10;
+  G.budget_change = taxChange;
+  G.service_change = serviceChange;
+
+  // Final mil rate
+  const finalMil = (10 * (1 + taxChange/100)).toFixed(2);
+
+  screen(`<div class="fadein">
+    <div class="tm-banner">⚑ TOWN MEETING — PHASE 3: THE FINAL VOTE ⚑</div>
+    <div class="scene-hdr"><span class="scene-label">Fire Truck & Budget</span><span class="score-disp">Score: ${G.score}</span></div>
+    <div class="narr">The moment of truth. Moderator Harte reads the fire truck article aloud. "Article 31: To see if the Town will vote to authorize the Select Board to issue bonds not exceeding $1,000,000 for the purchase of a Class A pumper fire apparatus, to be repaid over 10 years at 5% APY, at an estimated annual debt service of $127,000." He calls for the vote.</div>
+    <div class="tally">
+      <div class="tally-box green"><div class="tally-lbl">FOR TRUCK</div><div class="tally-num">${truckForPct}%</div></div>
+      <div class="tally-box red"><div class="tally-lbl">AGAINST</div><div class="tally-num">${truckAgainstPct}%</div></div>
+    </div>
+    <div class="evt ${G.fire_truck ? 'good' : 'bad'}" data-tag="${G.fire_truck ? 'TRUCK APPROVED' : 'TRUCK REJECTED'}">
+      <p class="narr">${G.fire_truck ? 'The motion carries. Chief Fireman pumps his fist. The red-shirted supporters break into applause.' : 'The motion fails. Chief Fireman shakes his head. Democracy looks stunned.'}</p>
+    </div>
+    <div class="narr" style="margin-top:14px;">The budget articles pass in sequence. When all the arithmetic is done, the final mil rate emerges:</div>
+    <div class="tally">
+      <div class="tally-box ${taxChange > 5 ? 'red' : taxChange < 0 ? 'green' : 'blue'}">
+        <div class="tally-lbl">FINAL MIL RATE</div>
+        <div class="tally-num">$${finalMil}</div>
+      </div>
+      <div class="tally-box ${serviceChange < -10 ? 'red' : 'blue'}">
+        <div class="tally-lbl">TAX CHANGE</div>
+        <div class="tally-num">${taxChange > 0 ? '+' : ''}${taxChange}%</div>
+      </div>
+    </div>
+    <button class="pri-btn" onclick="determineFinalOutcome()">See How You Did →</button>
+  </div>`);
+}
+
+function determineFinalOutcome(){
+  scrollTop();
+  let win = false;
+  let winMsg = '', loseMsg = '';
+
+  if(G.char === 'manager'){
+    const taxOK = G.budget_change <= 5;
+    const serviceOK = G.service_change > -10;
+    win = taxOK && serviceOK;
+    winMsg = `Your budget achieved a <strong>${Math.abs(G.budget_change).toFixed(1)}% mil rate change</strong> with only <strong>${Math.abs(G.service_change).toFixed(0)}% service impact</strong>. You hit the board's target. You kept your job. The BDN calls it "a technical masterpiece."`;
+    loseMsg = G.budget_change > 5
+      ? `The final mil rate exceeded the 5% ceiling you promised. Taxes rose ${G.budget_change.toFixed(1)}%. The Select Board votes 3-2 to terminate your contract "effective immediately." Your office key is returned by Thursday.`
+      : `Services were cut by ${Math.abs(G.service_change).toFixed(0)}% — more than the board's 10% limit. The BDN editorial board calls for your resignation. The Select Board obliges.`;
+  } else if(G.char === 'selectman'){
+    win = !G.fire_truck && G.election_winner === 'selectman';
+    winMsg = `You won re-election <strong>and</strong> blocked the fire truck. The bond fails; the mutual aid agreement holds. The BDN headline: "Selectman Survives, Fire Truck Does Not."`;
+    loseMsg = G.fire_truck
+      ? `The fire truck passed despite your opposition. You face four years of debt service you voted against. The BDN: "Selectman Loses Signature Issue."` 
+      : `You blocked the truck, but lost the election. Your final act on the Select Board was casting a losing vote. Margaret Cote or Darlene Democracy fills your chair.`;
+  } else {
+    win = G.fire_truck && G.election_winner === 'democracy';
+    winMsg = `You won the seat <strong>and</strong> the fire truck. Chief Fireman cries. The BDN runs it above the fold. Newsville gets a new apparatus and a new voice on the board.`;
+    loseMsg = !G.fire_truck
+      ? `You won the election but lost the truck vote. The very issue you ran on was defeated — by a coalition of tax watchdogs and the mutual aid argument. Fireman is heartbroken.`
+      : `The fire truck passed, but you lost the election. Someone else will chair the Select Board when the truck is delivered. A hollow victory.`;
+  }
+
+  G.win = win;
+  addScore(win ? 300 : 0);
+
+  // Luck bonus
+  G.luck += Math.floor(G.score * 0.20);
+  addScore(Math.floor(G.luck * 0.1));
+
+  G.final_msg = win ? winMsg : loseMsg;
+  showEndScreen();
+}
+
+function showEndScreen(){
+  scrollTop();
+  const charNames = {manager:'Martha Manager',selectman:'Steve Selectman',democracy:'Darlene Democracy'};
+  const charIcons = {manager:'📋',selectman:'🏛️',democracy:'✊'};
+  const final = G.score;
+  const skillPoints = Math.round(final * 0.80);
+  const luckPoints = Math.round(final * 0.20);
+
+  screen(`<div class="fadein">
+    <div class="result ${G.win ? 'win' : 'lose'}">
+      <h2>${G.win ? '🏆 MISSION ACCOMPLISHED' : '📰 GAME OVER'}</h2>
+      <p>${charIcons[G.char]||''} <strong>${charNames[G.char]||''}</strong></p>
+      <div class="final-score">${final} pts</div>
+      <p>${G.final_msg}</p>
+    </div>
+    <div class="score-bk">
+      <div class="score-line"><span>Skill Points (80%)</span><span>${skillPoints}</span></div>
+      <div class="score-line"><span>Luck Factor (20%)</span><span>${luckPoints}</span></div>
+      <div class="score-line"><span>Canvass Score</span><span>${G.door_score}</span></div>
+      <div class="score-line"><span>Speech/Writing Score</span><span>${G.speech_score}</span></div>
+      <div class="score-line"><span>Fire Truck</span><span>${G.fire_truck ? '✅ Approved' : '❌ Rejected'}</span></div>
+      <div class="score-line"><span>Election Winner</span><span>${G.election_winner || 'N/A'}</span></div>
+      <div class="score-line" style="font-weight:700;"><span>TOTAL SCORE</span><span>${final}</span></div>
+    </div>
+    <div class="email-form">
+      <label>SUBMIT YOUR SCORE TO THE LEADERBOARD</label>
+      <input type="email" id="lb-email" placeholder="your@email.com" />
+      <button class="pri-btn" onclick="submitToBoard()">Submit Score & Join Leaderboard →</button>
+    </div>
+    <div id="lb-display"></div>
+    <button class="sec-btn" style="margin-top:16px;" onclick="showTitle()">← Play Again</button>
+  </div>`);
+}
+
+function submitToBoard(){
+  const emailEl = document.getElementById('lb-email');
+  const email = emailEl ? emailEl.value.trim() : '';
+  if(!email || !email.includes('@')){
+    alert('Please enter a valid email address.');
+    return;
+  }
+  const board = submitScore(email, G.score, G.char);
+  const lbEl = document.getElementById('lb-display');
+  if(lbEl){
+    lbEl.innerHTML = `<div class="lb" style="margin-top:16px;">
+      <h3>🏆 Current Leaderboard</h3>
+      ${renderBoard(board)}
+    </div>`;
+  }
+  if(emailEl) emailEl.disabled = true;
+  const btn = document.querySelector('.email-form .pri-btn');
+  if(btn){ btn.textContent = '✅ Score Submitted!'; btn.disabled = true; }
+}
+
+// ---- INIT ----
+showTitle();
+</script>
+</body>
+</html>

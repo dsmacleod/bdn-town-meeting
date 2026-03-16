@@ -331,9 +331,9 @@ function clipArchive(b){
   const neg=b.t==='neg';
   const w=b.weight??1.0;
   const memNote=neg
-    ?(w>=0.9?`★ Voters remember this vividly — it was serious. Mention "${b.kw}" in your writing for a major bonus.`
-      :w>=0.8?`★ This story follows you — voters still recall it. Mention "${b.kw}" in your writing for bonus points.`
-      :`★ A year-old story — mostly faded, but serious writers still address it. Mention "${b.kw}" for a smaller bonus.`)
+    ?(w>=0.9?`★ Voters remember this vividly — it was serious. Watch for it to resurface at town meeting.`
+      :w>=0.8?`★ This story still follows you. It may come up at a door or on the floor.`
+      :`★ A year-old story — mostly faded, but it could still surface at the wrong moment.`)
     :'';
   return`<div class="clip ${neg?'neg':''}" style="margin-bottom:10px;${w<0.8?'opacity:0.88':''}">
     <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:3px;">
@@ -447,12 +447,12 @@ const VOTERS=[
    facts:['Has voted no on every bond question since 2015','Property taxes up 4% last year — she tracks it to the cent','Told the BDN: "I\'ll believe a road is fixed when I drive on it"'],
    args:{
      S:[
-       {txt:'Hit the tax math directly: two active bonds at once pushes debt service above 10% of budget. Show her the combined number.',win:'"The numbers you laid out — that\'s exactly what I\'ve been saying for years. You\'ve got my vote."',lose:'"I hear you on the debt, but those firefighters genuinely scared me. I need to think."',pct:.85},
-       {txt:'Lead with the mutual aid agreement: full ladder truck coverage, written response-time guarantee, zero new debt.',win:'"You actually found an alternative. That\'s what I wanted to hear. Yes."',lose:'"I want to believe that agreement holds under pressure. But I\'m not sure it does."',pct:.55},
+       {txt:'Hit the tax math directly: two active bonds at once pushes debt service above 10% of budget. Show her the combined number.',win:'"The numbers you laid out — that\'s exactly what I\'ve been saying for years. You\'ve got my vote."',lose:'"I hear you on the debt, but those firefighters genuinely scared me. I need to think."',pct:.60},
+       {txt:'Lead with the mutual aid agreement: full ladder truck coverage, written response-time guarantee, zero new debt.',win:'"You actually found an alternative. That\'s what I wanted to hear. Yes."',lose:'"I want to believe that agreement holds under pressure. But I\'m not sure it does."',pct:.40},
      ],
      D:[
-       {txt:'Show her the maintenance logs — 17 failures in 24 months — and connect it to her ISO fire rating and property value.',win:'"If my house burns down because of that truck, my property is worthless anyway. You\'re right. Yes."',lose:'"I understand the safety argument. I just can\'t vote for more debt this year."',pct:.85},
-       {txt:'Make the insurance case: her ISO rating drop already costs her $200–$340 more per year. The truck pays for itself.',win:'"Wait — I\'m already paying more because of this? Nobody told me that. Yes."',lose:'"I\'d need to see that insurance math verified. I\'m not taking your word for it."',pct:.55},
+       {txt:'Show her the maintenance logs — 17 failures in 24 months — and connect it to her ISO fire rating and property value.',win:'"If my house burns down because of that truck, my property is worthless anyway. You\'re right. Yes."',lose:'"I understand the safety argument. I just can\'t vote for more debt this year."',pct:.60},
+       {txt:'Make the insurance case: her ISO rating drop already costs her $200–$340 more per year. The truck pays for itself.',win:'"Wait — I\'m already paying more because of this? Nobody told me that. Yes."',lose:'"I\'d need to see that insurance math verified. I\'m not taking your word for it."',pct:.40},
      ]
    },
    yes:['"Those maintenance reports are hard to ignore. I\'m in."','"My brother-in-law\'s a firefighter two towns over. Fine. Count me in."'],
@@ -463,12 +463,12 @@ const VOTERS=[
    facts:['His cousin is a volunteer firefighter at Station 1','Has attended three straight town meetings over the truck issue','Told a neighbor: "That engine is going to get someone killed"'],
    args:{
      S:[
-       {txt:'Lead with what two simultaneous bonds does to the rest of the budget — roads, ambulance, staffing. Ask if his cousin\'s department can absorb those cuts.',win:'"I hadn\'t thought about what two bonds does to the rest of the budget. The department needs more than one truck."',lose:'"I\'m sorry. Family\'s in that station. I can\'t vote against them."',pct:.85},
-       {txt:'Acknowledge his concern directly, then present the mutual aid agreement as a genuine safety backup with a binding response-time clause.',win:'"You actually engaged with it. The mutual aid option is more serious than I thought. I can work with that."',lose:'"My cousin calls that agreement \'a piece of paper.\' I\'m going to trust the guy who pulls hose."',pct:.55},
+       {txt:'Lead with what two simultaneous bonds does to the rest of the budget — roads, ambulance, staffing. Ask if his cousin\'s department can absorb those cuts.',win:'"I hadn\'t thought about what two bonds does to the rest of the budget. The department needs more than one truck."',lose:'"I\'m sorry. Family\'s in that station. I can\'t vote against them."',pct:.60},
+       {txt:'Acknowledge his concern directly, then present the mutual aid agreement as a genuine safety backup with a binding response-time clause.',win:'"You actually engaged with it. The mutual aid option is more serious than I thought. I can work with that."',lose:'"My cousin calls that agreement \'a piece of paper.\' I\'m going to trust the guy who pulls hose."',pct:.40},
      ],
      D:[
-       {txt:'Let him talk first. Ask what his cousin has told him about the specific failure incidents. Then validate it with the maintenance record.',win:'"You know the numbers as well as he does. That\'s what I needed to hear from a candidate. Yes."',lose:'"I\'m already with you — but I\'m not sure the votes are there. I\'ll show up."',pct:.85},
-       {txt:'Frame it as a community obligation: the firefighters ask nothing, they show up for everyone, and this is the one thing we can give back.',win:'"It\'s not a budget question. It\'s a decency question. Yes."',lose:'"I\'m already voting yes. You don\'t have to convince me — convince the skeptics."',pct:.55},
+       {txt:'Let him talk first. Ask what his cousin has told him about the specific failure incidents. Then validate it with the maintenance record.',win:'"You know the numbers as well as he does. That\'s what I needed to hear from a candidate. Yes."',lose:'"I\'m already with you — but I\'m not sure the votes are there. I\'ll show up."',pct:.60},
+       {txt:'Frame it as a community obligation: the firefighters ask nothing, they show up for everyone, and this is the one thing we can give back.',win:'"It\'s not a budget question. It\'s a decency question. Yes."',lose:'"I\'m already voting yes. You don\'t have to convince me — convince the skeptics."',pct:.40},
      ]
    },
    yes:['"My cousin\'s a firefighter. Those guys need real equipment to stay safe."','"You\'re the first person who\'s actually talked to us about what we deal with."'],
@@ -479,12 +479,12 @@ const VOTERS=[
    facts:['On Social Security — every mill-rate increase is a real monthly cost','Voted yes on the fire station bond in 2018 and regrets it','Says: "I vote on what I can afford, not what I want"'],
    args:{
      S:[
-       {txt:'Acknowledge her fire station bond vote and validate the regret. Then show the combined debt service number — what two bonds means per month.',win:'"You remembered the fire station bond. That one still stings. Two of those — no. Thank you. Yes."',lose:'"I appreciate you knowing the history. But those maintenance numbers still keep me up."',pct:.85},
-       {txt:'Show her the mutual aid agreement as a way to say yes to safety without saying yes to debt — give her a way out of the dilemma.',win:'"You\'re telling me I don\'t have to choose between safe and affordable? That\'s what I\'ve been waiting to hear."',lose:'"I want that to be true. But agreements get broken. Bonds don\'t."',pct:.55},
+       {txt:'Acknowledge her fire station bond vote and validate the regret. Then show the combined debt service number — what two bonds means per month.',win:'"You remembered the fire station bond. That one still stings. Two of those — no. Thank you. Yes."',lose:'"I appreciate you knowing the history. But those maintenance numbers still keep me up."',pct:.60},
+       {txt:'Show her the mutual aid agreement as a way to say yes to safety without saying yes to debt — give her a way out of the dilemma.',win:'"You\'re telling me I don\'t have to choose between safe and affordable? That\'s what I\'ve been waiting to hear."',lose:'"I want that to be true. But agreements get broken. Bonds don\'t."',pct:.40},
      ],
      D:[
-       {txt:'Focus on what happens to her home\'s value if the fire rating drops further — deferred safety is a hidden tax on her most important asset.',win:'"My house is my retirement. If the fire rating is hurting that — alright. I\'m in."',lose:'"I hear you, but I can\'t afford to be right about property values and wrong about my tax bill."',pct:.85},
-       {txt:'Acknowledge her fixed income constraint, then show her the insurance math: she\'s already paying more per year than the bond would cost her.',win:'"You\'re telling me I\'m already paying for this? Nobody said that. That changes things."',lose:'"I\'d need to see that insurance figure from someone other than a candidate."',pct:.55},
+       {txt:'Focus on what happens to her home\'s value if the fire rating drops further — deferred safety is a hidden tax on her most important asset.',win:'"My house is my retirement. If the fire rating is hurting that — alright. I\'m in."',lose:'"I hear you, but I can\'t afford to be right about property values and wrong about my tax bill."',pct:.60},
+       {txt:'Acknowledge her fixed income constraint, then show her the insurance math: she\'s already paying more per year than the bond would cost her.',win:'"You\'re telling me I\'m already paying for this? Nobody said that. That changes things."',lose:'"I\'d need to see that insurance figure from someone other than a candidate."',pct:.40},
      ]
    },
    yes:['"If the numbers actually pencil out, I can support this."','"I don\'t love the debt, but I can\'t argue with a broken fire truck."'],
@@ -495,12 +495,12 @@ const VOTERS=[
    facts:['Six years on the Engine 1 crew — has filed three incident reports himself','Was on scene at the Dyer Neck Road fire when the pump failed','Told the chief: "I won\'t get on that truck next winter"'],
    args:{
      S:[
-       {txt:'Frame it as shared fiscal responsibility: if two bonds cut the broader budget, the department suffers too — staffing, training, all of it.',win:'"I hadn\'t thought about what two bonds does to everything else the department needs. Okay."',lose:'"I\'m sorry. I\'ve pulled hose off that engine. I can\'t tell you to vote against replacing it."',pct:.85},
-       {txt:'Ask him directly about the mutual aid agreement — whether an eight-minute ladder truck response addresses the specific gaps he\'s seen on Engine 1.',win:'"You actually read the agreement. Most people haven\'t. The response time provision is real. I can live with that."',lose:'"Eight minutes is eight minutes too many when a structure is involved. I\'ve been there. No."',pct:.55},
+       {txt:'Frame it as shared fiscal responsibility: if two bonds cut the broader budget, the department suffers too — staffing, training, all of it.',win:'"I hadn\'t thought about what two bonds does to everything else the department needs. Okay."',lose:'"I\'m sorry. I\'ve pulled hose off that engine. I can\'t tell you to vote against replacing it."',pct:.60},
+       {txt:'Ask him directly about the mutual aid agreement — whether an eight-minute ladder truck response addresses the specific gaps he\'s seen on Engine 1.',win:'"You actually read the agreement. Most people haven\'t. The response time provision is real. I can live with that."',lose:'"Eight minutes is eight minutes too many when a structure is involved. I\'ve been there. No."',pct:.40},
      ],
      D:[
-       {txt:'Ask him to walk you through the Dyer Neck Road incident specifically. Let his own account make the case.',win:'"You want the real story? Fine." He tells you everything. By the end: "Vote yes. That\'s all I\'ve got to say."',lose:'"I\'ll tell you what happened. But I already know what I\'m doing at that meeting."',pct:.85},
-       {txt:'Tell him you want to cite the incident report by name at the podium — put it on the public record, not let it stay buried.',win:'"If you actually do that — if you name it at the podium — you\'ll have every firefighter in this town behind you."',lose:'"Don\'t make promises you can\'t keep in front of the moderator."',pct:.55},
+       {txt:'Ask him to walk you through the Dyer Neck Road incident specifically. Let his own account make the case.',win:'"You want the real story? Fine." He tells you everything. By the end: "Vote yes. That\'s all I\'ve got to say."',lose:'"I\'ll tell you what happened. But I already know what I\'m doing at that meeting."',pct:.60},
+       {txt:'Tell him you want to cite the incident report by name at the podium — put it on the public record, not let it stay buried.',win:'"If you actually do that — if you name it at the podium — you\'ll have every firefighter in this town behind you."',lose:'"Don\'t make promises you can\'t keep in front of the moderator."',pct:.40},
      ]
    },
    yes:['"I volunteer at Station 1. That truck almost got someone killed last winter."','"You\'re the first person who\'s actually talked to us about what we deal with."'],
@@ -511,12 +511,12 @@ const VOTERS=[
    facts:['Has voted no on every spending question since 1997 — keeps a list','Was on the 1998 bond committee that bought the current truck. Takes it personally','Wrote a BDN letter calling deferred maintenance "a management failure, not an equipment problem"'],
    args:{
      S:[
-       {txt:'Reference his 1998 BDN letter directly — agree that maintenance failed, then show the repair costs now exceed replacement cost.',win:'"You read that letter. Nobody reads those. If the repair cost is past replacement value, that\'s a management argument I can\'t refute. Yes."',lose:'"I stand by that letter. Maintenance is still a choice. We chose wrong."',pct:.85},
-       {txt:'Appeal to his fiscal identity: tell him this is the moment where saying no is a genuine act of fiscal discipline — and you need him to hold the line.',win:'"Finally — someone who needs my vote, not just my applause. Yes. I\'m in."',lose:'"I\'ve been holding the line since Clinton was in office. I don\'t need you to tell me."',pct:.55},
+       {txt:'Reference his 1998 BDN letter directly — agree that maintenance failed, then show the repair costs now exceed replacement cost.',win:'"You read that letter. Nobody reads those. If the repair cost is past replacement value, that\'s a management argument I can\'t refute. Yes."',lose:'"I stand by that letter. Maintenance is still a choice. We chose wrong."',pct:.60},
+       {txt:'Appeal to his fiscal identity: tell him this is the moment where saying no is a genuine act of fiscal discipline — and you need him to hold the line.',win:'"Finally — someone who needs my vote, not just my applause. Yes. I\'m in."',lose:'"I\'ve been holding the line since Clinton was in office. I don\'t need you to tell me."',pct:.40},
      ],
      D:[
-       {txt:'Bring the actual maintenance logs — printed. Ask him to read the entry from the Dyer Neck Road fire. Let the document make the argument.',win:'"...I\'ve been carrying that 1998 bond in my head for 26 years. If this is what the records show, I can\'t vote against it." A pause. "Yes."',lose:'"I want a second opinion on these figures. Come back with an independent review."',pct:.85},
-       {txt:'Don\'t argue the debt. Ask directly: what does he think should happen when maintenance genuinely fails at the level the logs show?',win:'"That\'s a fair question. If the logs are accurate — and I\'m going to check them — then I\'d have to say yes."',lose:'"The logs are management spin. I want an independent audit before I vote a dime."',pct:.55},
+       {txt:'Bring the actual maintenance logs — printed. Ask him to read the entry from the Dyer Neck Road fire. Let the document make the argument.',win:'"...I\'ve been carrying that 1998 bond in my head for 26 years. If this is what the records show, I can\'t vote against it." A pause. "Yes."',lose:'"I want a second opinion on these figures. Come back with an independent review."',pct:.60},
+       {txt:'Don\'t argue the debt. Ask directly: what does he think should happen when maintenance genuinely fails at the level the logs show?',win:'"That\'s a fair question. If the logs are accurate — and I\'m going to check them — then I\'d have to say yes."',lose:'"The logs are management spin. I want an independent audit before I vote a dime."',pct:.40},
      ]
    },
    yes:['"I\'ve been saying no on everything for 20 years. I\'ll give you this one."','"The old truck was fine in my day, but I\'ll admit those logs are bad."'],
@@ -527,12 +527,12 @@ const VOTERS=[
    facts:['Worked two shifts where Engine 1 was out of service and response time doubled','Tracks Newsville\'s ISO fire rating and has written to the Select Board about it','Her home insurance went up $280 last year — she called to ask why, was told it was the fire rating'],
    args:{
      S:[
-       {txt:'Focus on the fiscal ripple: if two bonds consume 12% of the budget, what gets cut next — ambulance service, road maintenance, emergency staffing?',win:'"If cutting the truck means keeping Delta Ambulance funded properly... you might have a point I hadn\'t considered."',lose:'"The truck is the safety baseline. You don\'t trade the baseline."',pct:.85},
-       {txt:'Engage her clinical framing directly — acknowledge response time matters, then present the mutual aid eight-minute guarantee as a medical-grade commitment.',win:'"Eight minutes is marginal but defensible for a ladder call. If that agreement is binding, I can live with it. Reluctantly."',lose:'"I work in an ER. \'Marginal but defensible\' is how people die. No."',pct:.55},
+       {txt:'Focus on the fiscal ripple: if two bonds consume 12% of the budget, what gets cut next — ambulance service, road maintenance, emergency staffing?',win:'"If cutting the truck means keeping Delta Ambulance funded properly... you might have a point I hadn\'t considered."',lose:'"The truck is the safety baseline. You don\'t trade the baseline."',pct:.60},
+       {txt:'Engage her clinical framing directly — acknowledge response time matters, then present the mutual aid eight-minute guarantee as a medical-grade commitment.',win:'"Eight minutes is marginal but defensible for a ladder call. If that agreement is binding, I can live with it. Reluctantly."',lose:'"I work in an ER. \'Marginal but defensible\' is how people die. No."',pct:.40},
      ],
      D:[
-       {txt:'Ask her to walk you through what a doubled response time looks like clinically — let her expertise make the case.',win:'"You want the clinical version? Fine." She gives it. By the end she\'s the one making the argument. "Yes — obviously."',lose:'"I\'m already a yes. What you need to do is get to the people who aren\'t."',pct:.85},
-       {txt:'Reference her insurance increase directly — tell her you know about the rating drop and exactly what it\'s costing her.',win:'"You know about my insurance? How did—" A pause. "Okay. If you\'ve done that kind of homework, you\'ve got my vote."',lose:'"I appreciate the research. But I was already voting yes. Go find the skeptics."',pct:.55},
+       {txt:'Ask her to walk you through what a doubled response time looks like clinically — let her expertise make the case.',win:'"You want the clinical version? Fine." She gives it. By the end she\'s the one making the argument. "Yes — obviously."',lose:'"I\'m already a yes. What you need to do is get to the people who aren\'t."',pct:.60},
+       {txt:'Reference her insurance increase directly — tell her you know about the rating drop and exactly what it\'s costing her.',win:'"You know about my insurance? How did—" A pause. "Okay. If you\'ve done that kind of homework, you\'ve got my vote."',lose:'"I appreciate the research. But I was already voting yes. Go find the skeptics."',pct:.40},
      ]
    },
    yes:['"Response times save lives. That\'s not an abstraction for me — it\'s my job. Thank you."','"As a nurse, I can\'t in good conscience vote against faster emergency response."'],
@@ -543,12 +543,12 @@ const VOTERS=[
    facts:['Moved from Portland two years ago specifically for lower property taxes','Did a spreadsheet on Newsville\'s bond obligations before buying his house','Told his realtor: "If the mil rate goes above $11, I made a mistake"'],
    args:{
      S:[
-       {txt:'Speak his language: show him the spreadsheet math on two simultaneous bonds and the ten-year mil rate impact.',win:'"You\'re talking to me like I ran the numbers. I did run the numbers. That\'s exactly what I was afraid of. Yes."',lose:'"The numbers work, but I need to hear the full warrant before I commit."',pct:.85},
-       {txt:'Validate his choice to move here and frame this as protecting what he bought — a fiscally restrained small town.',win:'"I moved here for exactly this. Someone willing to hold the line. You\'ve got my vote."',lose:'"I appreciate that. But the safety record on that truck is hard to dismiss."',pct:.55},
+       {txt:'Speak his language: show him the spreadsheet math on two simultaneous bonds and the ten-year mil rate impact.',win:'"You\'re talking to me like I ran the numbers. I did run the numbers. That\'s exactly what I was afraid of. Yes."',lose:'"The numbers work, but I need to hear the full warrant before I commit."',pct:.60},
+       {txt:'Validate his choice to move here and frame this as protecting what he bought — a fiscally restrained small town.',win:'"I moved here for exactly this. Someone willing to hold the line. You\'ve got my vote."',lose:'"I appreciate that. But the safety record on that truck is hard to dismiss."',pct:.40},
      ],
      D:[
-       {txt:'Frame it as the investment case: a town that lets its fire rating drop loses home values. His house is worth less every year this goes unaddressed.',win:'"That\'s a property value argument. I respect a property value argument. Fine — yes."',lose:'"I hear you, but one truck isn\'t going to move my Zillow estimate."',pct:.85},
-       {txt:'Acknowledge his fiscal concern, then show him the insurance math: he\'s already paying a fire rating penalty before the bond even passes.',win:'"Wait — I\'m paying a fire rating penalty right now? That wasn\'t in my spreadsheet. Fine."',lose:'"I\'d need to verify that figure independently. Insurance companies don\'t break it down that cleanly."',pct:.55},
+       {txt:'Frame it as the investment case: a town that lets its fire rating drop loses home values. His house is worth less every year this goes unaddressed.',win:'"That\'s a property value argument. I respect a property value argument. Fine — yes."',lose:'"I hear you, but one truck isn\'t going to move my Zillow estimate."',pct:.60},
+       {txt:'Acknowledge his fiscal concern, then show him the insurance math: he\'s already paying a fire rating penalty before the bond even passes.',win:'"Wait — I\'m paying a fire rating penalty right now? That wasn\'t in my spreadsheet. Fine."',lose:'"I\'d need to verify that figure independently. Insurance companies don\'t break it down that cleanly."',pct:.40},
      ]
    },
    yes:['"New to town — but I know what a broken fire engine means. You\'ve got me."','"I came in skeptical about the cost. The safety case changed my mind."'],
@@ -559,12 +559,12 @@ const VOTERS=[
    facts:['Voted yes on the fire station bond in 2018 and watched her tax bill climb','On a fixed pension — calculates every warrant article in dollars per month','Called the town office last year to ask what the fire station bond balance was'],
    args:{
      S:[
-       {txt:'Acknowledge she already said yes once on a fire bond. Validate that it cost her. Then show two bonds means double the monthly hit.',win:'"You know about the fire station bond. You know what it costs me monthly. Two of those — no. Thank you. Yes."',lose:'"I appreciate you knowing the history. Those maintenance numbers still keep me up."',pct:.85},
-       {txt:'Show her the mutual aid agreement as a way to say yes to safety without saying yes to debt.',win:'"You\'re telling me I don\'t have to choose between safe and affordable? That\'s what I\'ve been waiting to hear."',lose:'"I want that to be true. But agreements get broken. Bonds don\'t."',pct:.55},
+       {txt:'Acknowledge she already said yes once on a fire bond. Validate that it cost her. Then show two bonds means double the monthly hit.',win:'"You know about the fire station bond. You know what it costs me monthly. Two of those — no. Thank you. Yes."',lose:'"I appreciate you knowing the history. Those maintenance numbers still keep me up."',pct:.60},
+       {txt:'Show her the mutual aid agreement as a way to say yes to safety without saying yes to debt.',win:'"You\'re telling me I don\'t have to choose between safe and affordable? That\'s what I\'ve been waiting to hear."',lose:'"I want that to be true. But agreements get broken. Bonds don\'t."',pct:.40},
      ],
      D:[
-       {txt:'Lead with property value: her home is her primary asset, and a declining fire rating is a hidden tax on that asset every year.',win:'"My house is the only thing I have left. If the fire rating is hurting that — alright. I\'m in."',lose:'"I hear you, but I can\'t afford to be right about property values and wrong about my tax bill."',pct:.85},
-       {txt:'Acknowledge her fire station bond vote — validate the sacrifice — then make the case that this is the last piece, and she\'s already paying more on insurance.',win:'"You remembered I voted for the station. That wasn\'t easy. If this is truly the last ask — fine. Yes."',lose:'"Every bond has been \'the last ask.\' I\'ll believe it when the fire station balance hits zero."',pct:.55},
+       {txt:'Lead with property value: her home is her primary asset, and a declining fire rating is a hidden tax on that asset every year.',win:'"My house is the only thing I have left. If the fire rating is hurting that — alright. I\'m in."',lose:'"I hear you, but I can\'t afford to be right about property values and wrong about my tax bill."',pct:.60},
+       {txt:'Acknowledge her fire station bond vote — validate the sacrifice — then make the case that this is the last piece, and she\'s already paying more on insurance.',win:'"You remembered I voted for the station. That wasn\'t easy. If this is truly the last ask — fine. Yes."',lose:'"Every bond has been \'the last ask.\' I\'ll believe it when the fire station balance hits zero."',pct:.40},
      ]
    },
    yes:['"I\'ve been skeptical, but those maintenance failures are hard to dismiss."','"I\'m not happy about the debt. But I\'m less happy about a truck that breaks down."'],
@@ -575,12 +575,12 @@ const VOTERS=[
    facts:['Printed and annotated every Engine 1 maintenance record going back five years','Submitted a written analysis to the Select Board — which was tabled without discussion','Told the BDN: "I don\'t do politics. I do evidence."'],
    args:{
      S:[
-       {txt:'Challenge her data on one specific point — the mutual aid response time — and show her the actual agreement language.',win:'"You actually read the agreement. Fine. If the language holds, the response gap is manageable. I\'ll consider it."',lose:'"The agreement is aspirational. The maintenance record is documented. I\'ll take documented."',pct:.85},
-       {txt:'Acknowledge her analysis was submitted and tabled. Tell her directly the warrant process is the right venue — not an attempt to suppress it.',win:'"You\'re the first person who\'s acknowledged that. If the warrant is the right venue, show me that tonight and I\'ll respect the process."',lose:'"You tabled it. Whatever the reason, you tabled it. That\'s the record."',pct:.55},
+       {txt:'Challenge her data on one specific point — the mutual aid response time — and show her the actual agreement language.',win:'"You actually read the agreement. Fine. If the language holds, the response gap is manageable. I\'ll consider it."',lose:'"The agreement is aspirational. The maintenance record is documented. I\'ll take documented."',pct:.60},
+       {txt:'Acknowledge her analysis was submitted and tabled. Tell her directly the warrant process is the right venue — not an attempt to suppress it.',win:'"You\'re the first person who\'s acknowledged that. If the warrant is the right venue, show me that tonight and I\'ll respect the process."',lose:'"You tabled it. Whatever the reason, you tabled it. That\'s the record."',pct:.40},
      ],
      D:[
-       {txt:'Tell her you read her Select Board submission — by name, with details — and ask her to walk you through the one finding she thinks matters most.',win:'"You read it. Nobody read it." A long pause. "The pump failure at Dyer Neck. That\'s the one. If you cite that at the podium, I\'ll be in the front row."',lose:'"I\'m already with you. You need to get to the people who haven\'t read anything."',pct:.85},
-       {txt:'Ask whether she\'d be willing to speak at town meeting — tell her her credibility on the data is worth more than any candidate argument.',win:'"You want me to speak? I wasn\'t planning to. But if you\'re asking — yes. And I\'ll bring the logs."',lose:'"I\'ll think about it. Public speaking isn\'t really my thing."',pct:.55},
+       {txt:'Tell her you read her Select Board submission — by name, with details — and ask her to walk you through the one finding she thinks matters most.',win:'"You read it. Nobody read it." A long pause. "The pump failure at Dyer Neck. That\'s the one. If you cite that at the podium, I\'ll be in the front row."',lose:'"I\'m already with you. You need to get to the people who haven\'t read anything."',pct:.60},
+       {txt:'Ask whether she\'d be willing to speak at town meeting — tell her her credibility on the data is worth more than any candidate argument.',win:'"You want me to speak? I wasn\'t planning to. But if you\'re asking — yes. And I\'ll bring the logs."',lose:'"I\'ll think about it. Public speaking isn\'t really my thing."',pct:.40},
      ]
    },
    yes:['"I\'ve read every maintenance record on that engine. It is genuinely unsafe."','"I don\'t do politics. I do evidence. The evidence says yes."'],
@@ -593,21 +593,21 @@ const VOTERS=[
 // DOORS — argument-choice system
 // ════════════════════════════════════════
 function startDoors(ct){
-  G._voters=[...VOTERS].sort(()=>Math.random()-.5).slice(0,3);
+  G._voters=[...VOTERS].sort(()=>Math.random()-.5).slice(0,5);
   G.doorWins=0;G._dst=new Array(5).fill(null);G._dct=ct;G._dmsg=null;
   renderDoors();
 }
 function renderDoors(){
   const v=G._voters,st=G._dst,ct=G._dct;
   const wins=G.doorWins,rem=st.filter(x=>x===null).length;
-  const done=rem===0||(wins+rem)<2;
+  const done=rem===0||(wins+rem)<3;
   const pct=Math.round(((5-rem)/5)*100);
   const rl=ct==='S'?'Steve Selectman — Phase 2: Canvassing':'Darlene Democracy — Phase 1: Canvassing';
   const rm2=ct==='S'?rm('S',1):rm('D',0);
   const por=ct==='S'?svgS(60,66):svgD(60,66);
   const framing=ct==='S'
-    ? `These three doors are <strong>persuadable anti-truck voters</strong>. Click a door to meet the voter and choose your argument. Win 2 of 3.`
-    : `These three doors are <strong>persuadable pro-truck voters</strong>. Click a door to meet the voter and choose your argument. Win 2 of 3.`;
+    ? `These five doors are <strong>persuadable anti-truck voters</strong>. Click a door to meet the voter and choose your argument. Win 3 of 5.`
+    : `These five doors are <strong>persuadable pro-truck voters</strong>. Click a door to meet the voter and choose your argument. Win 3 of 5.`;
   render(`
     <div class="hrow"><span class="hlabel">${rl}</span><span class="hscore">Score: ${G.score}</span></div>
     ${rm2}
@@ -615,7 +615,7 @@ function renderDoors(){
     <div style="display:flex;align-items:center;gap:14px;margin-bottom:12px;">
       ${por}
       <div>
-        <p class="story" style="margin:0;font-size:13px;">Need <strong>2 of 3 doors.</strong> Wins: <strong>${wins}</strong></p>
+        <p class="story" style="margin:0;font-size:13px;">Need <strong>3 of 5 doors.</strong> Wins: <strong>${wins}</strong></p>
         <div style="margin-top:6px;background:#ddd;height:8px;width:180px;overflow:hidden;"><div style="height:100%;background:${wins>=3?'var(--bdn)':'var(--blue)'};width:${pct}%;transition:width .4s;"></div></div>
       </div>
     </div>
@@ -675,19 +675,19 @@ function argue(voterIdx, argIdx){
   if(finalWin)addSkill(20);else if(lucky)addLuck(-15);
   const quote=finalWin?a.win:a.lose;
   const rem=G._dst.filter(x=>x===null).length;
-  if(G.doorWins>=2||(G.doorWins+rem)<2)G._dst=G._dst.map(x=>x===null?'S':x);
+  if(G.doorWins>=3||(G.doorWins+rem)<3)G._dst=G._dst.map(x=>x===null?'S':x);
   G._dmsg=`<strong>${vt.e} ${vt.n}</strong> <span style="font-size:10px;color:var(--muted)">(${vt.lt})</span>${lucky?'<em style="color:var(--gold);font-size:11px;margin-left:6px;">(unexpected!)</em>':''}<div class="drp-why">${quote} <strong style="color:${finalWin?'var(--bdn)':'var(--red)'}">${finalWin?'✓ Persuaded':'✗ Not convinced'}</strong></div>`;
   setTimeout(()=>renderDoors(),900);
 }
 function doneDoors(){
   const ct=G._dct;
-  if(G.doorWins<2){
+  if(G.doorWins<3){
     G.eliminated=true;
-    render(`${YOU_LOST}<div class="hrow"><span class="hlabel">Canvassing Results</span><span class="hscore">Score: ${G.score}</span></div><div class="tally"><div class="tb G"><div class="tb-lbl">Doors Won</div><div class="tb-num">${G.doorWins}</div></div><div class="tb R"><div class="tb-lbl">Doors Lost</div><div class="tb-num">${G._dst.filter(x=>x==="L").length}</div></div></div><span class="pill bad">Canvass Failed</span><p class="story">Only ${G.doorWins} wins from ${G._dst.filter(x=>x==="W"||x==="L").length} doors — needed 2. These were your most persuadable voters. If you can't move them, you can't win the election.</p><button class="btn" onclick="showBDNEnd()">See the BDN Front Page →</button>`);
+    render(`${YOU_LOST}<div class="hrow"><span class="hlabel">Canvassing Results</span><span class="hscore">Score: ${G.score}</span></div><div class="tally"><div class="tb G"><div class="tb-lbl">Doors Won</div><div class="tb-num">${G.doorWins}</div></div><div class="tb R"><div class="tb-lbl">Doors Lost</div><div class="tb-num">${5-G.doorWins}</div></div></div><span class="pill bad">Canvass Failed</span><p class="story">Only ${G.doorWins} of 5 — needed 3. These were your persuadable voters. If you can't win a majority here, you can't win the election.</p><button class="btn" onclick="showBDNEnd()">See the BDN Front Page →</button>`);
     return;
   }
   phaseBonus(100);
-  render(`<div class="hrow"><span class="hlabel">Canvassing Results</span><span class="hscore">Score: ${G.score}</span></div><div class="tally"><div class="tb G"><div class="tb-lbl">Doors Won</div><div class="tb-num">${G.doorWins}</div></div><div class="tb B"><div class="tb-lbl">Doors Lost</div><div class="tb-num">${G._dst.filter(x=>x==="L").length}</div></div></div><span class="pill good">Canvass Success</span><p class="story">${G.doorWins} of ${G._dst.filter(x=>x==="W"||x==="L").length} — strong ground game. BDN: "Surprising support in Selectman's neighborhood."</p><button class="btn" onclick="${ct==='S'?'startS3()':'startD2()'}">${ct==='S'?'Proceed to Town Meeting →':'Write Your BDN Letter →'}</button>`);
+  render(`<div class="hrow"><span class="hlabel">Canvassing Results</span><span class="hscore">Score: ${G.score}</span></div><div class="tally"><div class="tb G"><div class="tb-lbl">Doors Won</div><div class="tb-num">${G.doorWins}</div></div><div class="tb B"><div class="tb-lbl">Doors Lost</div><div class="tb-num">${5-G.doorWins}</div></div></div><span class="pill good">Canvass Success</span><p class="story">${G.doorWins} of 5 — strong ground game. BDN: "Surprising support in Selectman's neighborhood."</p><button class="btn" onclick="${ct==='S'?'startS3()':'startD2()'}">${ct==='S'?'Proceed to Town Meeting →':'Write Your BDN Letter →'}</button>`);
 }
 const HEARING_Q={
   fireman:['"Seventeen mechanical failures in 24 months. SEVENTEEN. That truck is going to get someone killed."','"Engine 1 was pulled from service three times this year during active calls. Three times."','"Our fire rating drops without new equipment. Your homeowner\'s insurance goes up."','"Twenty-two years I\'ve given this department. I\'m asking for a million dollars. That\'s it."'],
@@ -850,7 +850,7 @@ function startM1(){
       <div class="clip-hed">${news.hed}</div>
       <div style="font-family:'Oswald',sans-serif;font-size:9px;letter-spacing:1px;color:var(--muted);margin-bottom:4px;">${news.by}</div>
       <div class="clip-body">${news.body}</div>
-      ${news.t==='neg'?`<div class="clip-tip">★ This is in the room. Mention <em>"${news.kw}"</em> in your Phase 2 presentation for bonus points.</div>`:''}
+      ${news.t==='neg'?`<div class="clip-tip">★ This story is circulating. Expect it to come up at the board meeting.</div>`:''}
     </div>
     <hr class="r">
     <p class="story" style="font-weight:600">First decision: does your budget include a line for the fire truck bond?</p>
@@ -1173,12 +1173,12 @@ function sHearing(id){
     ${rm('S',0)}
     <span class="pill ${a.pts>=100?'good':'warn'}">Hearing Complete</span>
     <p class="story">${pick(a.descs)}</p>
-    <p class="story">Next: <strong>door-to-door canvassing.</strong> Win 2 of your 3 doors to advance.</p>
+    <p class="story">Next: <strong>door-to-door canvassing.</strong> Win 3 of 5 persuadable voters in your own neighborhood to advance.</p>
     <button class="btn" onclick="startS2()">Start Canvassing →</button>
   `);
 }
 function startS2(){G.phase=2;if(P(.20))return sElim();startDoors('S');}
-function startS3(){G.phase=3;if(P(.15))return sElim();startTM();}
+function startS3(){G.phase=3;startTM();}
 function mFired(){G.eliminated=true;const f=pick(MG_FIRED);render(`${YOU_LOST}<div class="hrow"><span class="hlabel">Martha Manager</span><span class="hscore">Score: ${G.score}</span></div><div class="clip neg"><div class="clip-src">Bangor Daily News</div><div class="clip-hed">${f.hed}</div><div style="font-family:'Oswald',sans-serif;font-size:9px;letter-spacing:1px;color:var(--muted);margin-bottom:4px;">${f.by}</div><div class="clip-body">${f.why}</div></div><span class="pill bad">Game Over</span><p class="story">Your career in Newsville municipal government ends here.</p><button class="btn" onclick="showBDNEnd()">See the BDN Front Page →</button>`);}
 function sElim(){G.eliminated=true;const e=pick(SEL_END);render(`${YOU_LOST}<div class="hrow"><span class="hlabel">Steve Selectman</span><span class="hscore">Score: ${G.score}</span></div><div class="clip neg"><div class="clip-src">Bangor Daily News</div><div class="clip-hed">${e.hed}</div><div style="font-family:'Oswald',sans-serif;font-size:9px;letter-spacing:1px;color:var(--muted);margin-bottom:4px;">${e.by}</div><div class="clip-body">${e.why}</div></div><span class="pill bad">Eliminated</span><p class="story">Your path to re-election ends here.</p><button class="btn" onclick="showBDNEnd()">See the BDN Front Page →</button>`);}
 
@@ -1195,13 +1195,13 @@ function startD1(){
       <div style="flex-shrink:0">${svgD(72,78)}</div>
       <p class="story">You're canvassing <strong style="color:var(--bdn)">Selectman's own neighborhood</strong> — Route 218 and Slab City Road. Flip his turf and you change Newsville politics.</p>
     </div>
-    <p class="story" style="font-weight:600">Win <strong>2 of 3 doors</strong> to advance. You'll choose your argument at each door.</p>
+    <p class="story" style="font-weight:600">Win <strong>3 of 5 doors</strong> to advance. You'll choose your argument at each door.</p>
     <button class="btn" onclick="startDoors('D')">Start Knocking →</button>
   `);
 }
 function startD2(){
   G.phase=2;
-  if(P(.50))return dElim();
+  if(P(.20))return dElim();
   const bite=checkBite('P2');
   const negEv=G.negHeadline;
   const hadBankruptcy=negEv&&negEv.kw==='finances';
@@ -1248,8 +1248,9 @@ function startD2(){
     ${rm('D',1)}
     <div style="display:flex;gap:14px;align-items:flex-start;margin-bottom:10px;">
       <div style="flex-shrink:0">${svgD(72,78)}</div>
-      <p class="story">The BDN prints your letter before town meeting — your most powerful tool. Choose your angle:</p>
+      <p class="story">The BDN prints your letter before town meeting — your most powerful tool. Choose your angle:<br><em>Negativity index: ${G.neg>4?'HIGH ⚠ — stay on message':G.neg>2?'Moderate':'Low ✓'}</em></p>
     </div>
+    ${biteAlert(bite)}
     <div class="choices">${approaches.map((a,i)=>`<button class="ch" onclick="dChooseLetter(${i})"><strong>${a.lbl}</strong><br><em style="font-size:12px;opacity:.8;font-style:italic;">${a.preview}</em></button>`).join('')}</div>
   `);
 }
@@ -1281,7 +1282,7 @@ function calcTurnout(){
   // Strong canvass = ground game = people showed up
   if(G.doorWins>=5) base += 30;
   else if(G.doorWins>=4) base += 15;
-  else if(G.doorWins>=2) base += 8;
+  else if(G.doorWins>=3) base += 8;
 
   // High writing score = your work moved people
   const wp = G.writingPts||0;
@@ -1706,7 +1707,7 @@ function showBDNEnd(){
       hed='Democracy Wins Select Board Seat; Fire Truck Bond Approved';
       deck=doors>=8?'Dominant canvass campaign ends in double victory':'Challenger defeats nine-year incumbent as $1 million purchase clears';
       lede=`Darlene Democracy won the Select Board seat Saturday and the $1 million fire truck bond passed alongside her — ${doors>=8?'a dominant finish that':'a dual victory that'} ended Steve Selectman's nine-year tenure and reshaped Newsville town hall.`;
-      col1=`Democracy's ground game${doors>=2?' — winning '+doors+' of 3 doors in Selectman\'s own neighborhood —':' in Selectman\'s neighborhood'} shifted enough undecided voters to flip both races. ${wTag==='sharp'?'Her BDN letter was the most-forwarded piece of local writing this campaign season.':wTag==='solid'?'Her BDN letter built real reader response and was credited with moving swing voters.':'Chief Fireman\'s emotional testimony throughout the campaign was widely credited with closing the gap.'}`;
+      col1=`Democracy's ground game${doors>=4?' — winning '+doors+' of 5 doors in Selectman\'s own neighborhood —':' in Selectman\'s neighborhood'} shifted enough undecided voters to flip both races. ${wTag==='sharp'?'Her BDN letter was the most-forwarded piece of local writing this campaign season.':wTag==='solid'?'Her BDN letter built real reader response and was credited with moving swing voters.':'Chief Fireman\'s emotional testimony throughout the campaign was widely credited with closing the gap.'}`;
       col2=posClip
         ? `${posClip.by.split('·')[0].trim()}'s coverage of ${posClip.hed.toLowerCase().split(';')[0]} gave Democracy a credibility foundation that weathered Selectman's attacks. Chief Fireman wept openly. "Twenty-two years. This is what it was for." Moderator Harte adjourned at 9:52 p.m.`
         : `Chief Fireman wept openly as the truck vote results were announced. "Twenty-two years. This is what it was for." Moderator Harte adjourned at 9:52 p.m.`;

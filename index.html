@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>BDN Town Meeting</title>
 <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,300;0,400;0,600;0,700;1,400;1,600&family=Oswald:wght@300;400;600;700&display=swap" rel="stylesheet">
 <style>
@@ -14,10 +13,10 @@
   --cream:#fdfaf3;--muted:#555;--shadow:rgba(0,0,0,.18);
 }
 *{box-sizing:border-box;margin:0;padding:0;}
-html,body{background:#1a1a1a;min-height:100vh;display:flex;justify-content:center;align-items:flex-start;padding:16px;}@media(max-width:480px){html,body{padding:0;}}
+html,body{background:#f0ede6;min-height:100vh;display:flex;justify-content:center;align-items:flex-start;padding:16px;}@media(max-width:480px){html,body{padding:0;}}
 body{font-family:'Source Serif 4',serif;}
 #G{width:100%;max-width:840px;background:var(--paper);box-shadow:0 8px 40px rgba(0,0,0,.6);overflow:hidden;position:relative;}@media(max-width:480px){#G{box-shadow:none;}}
-#G::after{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.75' numOctaves='4'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='.04'/%3E%3C/svg%3E");pointer-events:none;z-index:99;}
+#G::after{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.75' numOctaves='4'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='.04'/%3E%3C/svg%3E");pointer-events:none;z-index:99;}@media(max-width:580px){#G::after{display:none;}}
 /* MASTHEAD */
 .mast{background:#fff;border-bottom:3px solid var(--bdn);padding:10px 20px 8px;display:flex;align-items:center;gap:16px;}
 .mast-logo{background:var(--bdn);color:#fff;font-family:'Oswald',sans-serif;font-weight:700;font-size:22px;padding:4px 10px;letter-spacing:-.5px;flex-shrink:0;}
@@ -595,7 +594,7 @@ const VOTERS=[
 // ════════════════════════════════════════
 function startDoors(ct){
   G._voters=[...VOTERS].sort(()=>Math.random()-.5).slice(0,3);
-  G.doorWins=0;G._dst=new Array(5).fill(null);G._dct=ct;G._dmsg=null;
+  G.doorWins=0;G._dst=new Array(3).fill(null);G._dct=ct;G._dmsg=null;
   renderDoors();
 }
 function renderDoors(){
@@ -783,7 +782,7 @@ function showTitle(){
   G=reset();
   render(`
     <div class="hrow"><span class="hlabel">★ Choose Your Character</span></div>
-    <p class="sel-intro">Budget season in Newsville, Maine, population 2,400. The property tax rate is <strong>$4,000 on a $400,000 home.</strong> The fire truck question is dividing the town. Pick your player. Persuade the public. Implement your agenda.</p>
+    <p class="sel-intro">Budget season in Newsville, Maine (pop. 2,400). The fire truck question is dividing the town. Pick your player.</p>
     <div class="cg">
       ${[{c:'M',svg:svgM(100,110),n:'Martha Manager',r:'Town Manager',g:'Cut the property tax rate 5% without gutting services. Keep your job.',ph:['Propose the Budget Warrant','Win the Select Board Vote','Town Meeting']},
          {c:'S',svg:svgS(100,110),n:'Steve Selectman',r:'Select Board Member',g:'Win re-election. Block the $1M fire truck you believe Newsville can\'t afford.',ph:['Navigate the Public Hearing','Canvass Voters Door-to-Door','Town Meeting Speech']},
@@ -823,7 +822,6 @@ function pickChar(c){
         <p class="story" style="font-size:13px;margin:0;">${intro[c]}</p>
       </div>
     </div>
-    <p style="font-family:'Oswald',sans-serif;font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;">These stories are already in voters' memory. They will resurface.</p>
     ${bs.map(b=>clipArchive(b)).join('')}
     <button class="btn" onclick="${c==='M'?'startM1()':c==='S'?'startS1()':'startD1()'}">Begin Your Campaign →</button>
   `);
@@ -834,7 +832,6 @@ function pickChar(c){
 // ════════════════════════════════════════
 function startM1(){
   G.phase=1;
-  if(P(.20))return mFired();
   const bite=checkBite('P1');
   const teaserNews=MG_NEWS.filter(n=>n.t==='pos'||['taxes','legal'].includes(n.kw));
   const news=pick(teaserNews);
@@ -903,7 +900,7 @@ function mApp(id){
 }
 function startM2(){
   G.phase=2;
-  if(P(.28))return mFired();
+  if(P(.10))return mFired();
   const bite=checkBite('P2');
   const negEv=G.negHeadline;
   const app=G.warrantApproach;
@@ -1167,7 +1164,6 @@ function dLetter(){
 // ════════════════════════════════════════
 function startS1(){
   G.phase=1;
-  if(P(.20))return sElim();
   const bite=checkBite('P1');
   const fLine=pick(HEARING_Q.fireman);const dLine=pick(HEARING_Q.democracy);const pLine=pick(HEARING_Q.pro);
   render(`
@@ -1201,8 +1197,8 @@ function sHearing(id){
     <button class="btn" onclick="startS2()">Start Canvassing →</button>
   `);
 }
-function startS2(){G.phase=2;if(P(.28))return sElim();startDoors('S');}
-function startS3(){G.phase=3;if(P(.15))return sElim();startTM();}
+function startS2(){G.phase=2;if(P(.10))return sElim();startDoors('S');}
+function startS3(){G.phase=3;startTM();}
 function mFired(){G.eliminated=true;const f=pick(MG_FIRED);render(`${YOU_LOST}<div class="hrow"><span class="hlabel">Martha Manager</span><span class="hscore">Score: ${G.score}</span></div><div class="clip neg"><div class="clip-src">Bangor Daily News</div><div class="clip-hed">${f.hed}</div><div style="font-family:'Oswald',sans-serif;font-size:9px;letter-spacing:1px;color:var(--muted);margin-bottom:4px;">${f.by}</div><div class="clip-body">${f.why}</div></div><span class="pill bad">Game Over</span><p class="story">Your career in Newsville municipal government ends here.</p><p class="story" style="font-size:12px;color:var(--muted);border-top:1px solid #eee;padding-top:8px;margin-top:8px;"><strong>What just happened:</strong> Before you could file the warrant, the Select Board received word of a concern serious enough to end your tenure. Town managers serve at the board's pleasure — and that pleasure ran out.</p><button class="btn" onclick="showBDNEnd()">See the BDN Front Page →</button>`);}
 function sElim(){G.eliminated=true;const e=pick(SEL_END);render(`${YOU_LOST}<div class="hrow"><span class="hlabel">Steve Selectman</span><span class="hscore">Score: ${G.score}</span></div><div class="clip neg"><div class="clip-src">Bangor Daily News</div><div class="clip-hed">${e.hed}</div><div style="font-family:'Oswald',sans-serif;font-size:9px;letter-spacing:1px;color:var(--muted);margin-bottom:4px;">${e.by}</div><div class="clip-body">${e.why}</div></div><span class="pill bad">Eliminated</span><p class="story">Your path to re-election ends here.</p><p class="story" style="font-size:12px;color:var(--muted);border-top:1px solid #eee;padding-top:8px;margin-top:8px;"><strong>What just happened:</strong> A random event ended your campaign before you could canvass. These early eliminations reflect the unpredictable nature of local politics.</p><button class="btn" onclick="showBDNEnd()">See the BDN Front Page →</button>`);}
 
@@ -1225,7 +1221,7 @@ function startD1(){
 }
 function startD2(){
   G.phase=2;
-  if(P(.50))return dElim();
+  if(P(.10))return dElim();
   const bite=checkBite('P2');
   const negEv=G.negHeadline;
   const hadBankruptcy=negEv&&negEv.kw==='finances';
@@ -1807,7 +1803,10 @@ function showBDNEnd(){
         <div class="bdnfp-byline">${G.char==='M'?'By Kathleen O\'Brien':G.char==='S'?'By Michael Shepherd':'By Penelope Overton'} · Bangor Daily News</div>
         <div class="bdnfp-lede">${lede}</div>
         <div class="bdnfp-score"><div><div class="bdnfp-score-lbl">Your Final Score</div><div style="font-family:'Oswald',sans-serif;font-size:10px;color:var(--muted);letter-spacing:1px;margin-top:2px;">${cn[G.char]||''} · ${won?'Winner ✓':'Did not win'}</div></div><div class="bdnfp-score-num">${G.score}</div></div>
-
+        <div class="bdnfp-cols">
+          <div class="bdnfp-col"><div class="bdnfp-col-hed">What happened</div>${col1}</div>
+          <div class="bdnfp-col"><div class="bdnfp-col-hed">From the gymnasium floor</div>${col2}</div>
+        </div>
         <div style="margin-top:14px;padding-top:10px;border-top:1px solid #ccc;font-size:11px;color:var(--muted);">
           Score breakdown — Phases completed: <strong>${G.sb.base}</strong> · Skill: <strong>${G.sb.skill}</strong> · Luck: <strong>${G.sb.luck}</strong> · Win bonus: <strong>${G.sb.bonus}</strong>
         </div>

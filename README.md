@@ -26,7 +26,8 @@ Player sessions are logged to a private Google Sheet when a player submits their
 
 ```html
 <iframe src="https://dsmacleod.github.io/bdn-town-meeting/"
-  width="100%" height="900" frameborder="0"
+  width="100%" height="900" frameborder="0" allowfullscreen
+  allow="fullscreen"
   style="max-width:840px;margin:0 auto;display:block;"></iframe>
 ```
 

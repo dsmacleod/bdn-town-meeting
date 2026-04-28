@@ -52,7 +52,7 @@ body{font-family:'Source Serif 4',serif;}
 .story em{color:var(--blue);font-style:italic;}
 /* CHAR SELECT */
 .sel-intro{font-size:14px;line-height:1.75;color:var(--muted);margin-bottom:20px;text-align:center;}
-.cg{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px;}
+.cg{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:20px;}
 @media(max-width:580px){.cg{grid-template-columns:1fr;}.cc{min-height:auto;}.cph{display:none;}}
 .cc{border:2px solid #ccc;background:var(--cream);cursor:pointer;transition:all .18s;overflow:hidden;-webkit-tap-highlight-color:rgba(0,102,51,.15);touch-action:manipulation;user-select:none;font-family:inherit;padding:0;}
 .cc:hover,.cc.sel{border-color:var(--bdn);transform:translateY(-4px);box-shadow:0 6px 18px var(--shadow);}@media(max-width:580px){.cc:hover{transform:none;}}
@@ -86,16 +86,22 @@ body{font-family:'Source Serif 4',serif;}
 .btn.ghost{background:transparent;color:var(--bdn);border:1.5px solid var(--bdn);font-size:11px;padding:9px;margin-top:8px;}
 .btn.ghost:hover{background:var(--bdn);color:#fff;transform:none;}
 /* DOORS */
-.doors{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin:12px 0;}
-.door{border:1.5px solid #bbb;aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;background:var(--cream);gap:2px;padding:4px;}
-.door-ico{font-size:22px;}
-.door-nm{font-size:8px;font-family:'Oswald',sans-serif;color:var(--ink);letter-spacing:.5px;text-align:center;line-height:1.2;}
-.door-lbl{font-size:8px;font-family:'Oswald',sans-serif;letter-spacing:1px;color:var(--muted);}
-.door:hover:not([data-s]){background:var(--bdn);border-color:var(--bdn);}
-.door:hover:not([data-s]) .door-lbl,.door:hover:not([data-s]) .door-nm{color:#fff;}
-.door[data-s=W]{background:#d4edda;border-color:var(--green);}
-.door[data-s=L]{background:#f8d7da;border-color:var(--red);}
-.door[data-s=S]{opacity:.2;pointer-events:none;}
+.doors{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin:16px 0;}
+.door{display:flex;flex-direction:column;align-items:center;cursor:pointer;background:transparent;border:none;padding:0;}
+.door-body{width:100%;aspect-ratio:5/8;position:relative;background:linear-gradient(165deg,#1c3a6e 0%,#0f2548 100%);border:3px solid #0a1a35;border-radius:3px 3px 0 0;box-shadow:3px 5px 14px rgba(0,0,0,.35),inset 2px 0 5px rgba(255,255,255,.07);transition:filter .18s,transform .22s;}
+.door:hover:not([data-s]) .door-body{filter:brightness(1.22);transform:perspective(300px) rotateY(-7deg);}
+.door-panel-t{position:absolute;top:8%;left:10%;right:10%;height:24%;border:2px solid rgba(255,255,255,.15);background:rgba(255,255,255,.05);border-radius:2px;}
+.door-panel-b{position:absolute;top:40%;left:10%;right:10%;bottom:8%;border:2px solid rgba(255,255,255,.15);background:rgba(255,255,255,.05);border-radius:2px;}
+.door-knob{position:absolute;right:12%;top:53%;width:11%;aspect-ratio:1;background:radial-gradient(circle at 35% 30%,#f5d878,#b08910);border-radius:50%;box-shadow:0 1px 4px rgba(0,0,0,.6);}
+.door-ico{position:absolute;top:14%;left:50%;transform:translateX(-50%);font-size:28px;line-height:1;}
+.door-step{width:112%;height:10px;background:#6a6a6a;border-radius:0 0 3px 3px;}
+.door-nm{font-size:12px;font-family:'Oswald',sans-serif;color:var(--ink);letter-spacing:.5px;margin-top:10px;text-align:center;}
+.door-lbl{font-size:8px;font-family:'Oswald',sans-serif;letter-spacing:1.5px;color:var(--muted);margin-top:3px;}
+.door[data-s=W] .door-body{background:linear-gradient(165deg,#2e7a42 0%,#1b4a28 100%);border-color:#1a5528;}
+.door[data-s=L] .door-body{background:linear-gradient(165deg,#8b2020 0%,#5c1010 100%);border-color:#4a1010;}
+.door[data-s=S]{opacity:.18;pointer-events:none;}
+.door[data-s=W] .door-nm,.door[data-s=W] .door-lbl{color:var(--green);}
+.door[data-s=L] .door-nm{color:var(--red);}
 .drp{background:#fff;border:1.5px solid var(--bdn);padding:10px 12px;margin-top:8px;font-size:13px;line-height:1.65;min-height:58px;}
 .drp-why{font-size:11.5px;color:var(--muted);font-style:italic;margin-top:4px;}
 /* HEARING */
@@ -193,14 +199,14 @@ hr.r{border:none;border-top:1.5px solid #ddd;margin:14px 0;}
     <span class="nav-i" id="navscore" style="cursor:default">Score: 0</span>
   </div>
   <div id="SCR"></div>
-  <div class="foot"><span>© Bangor Daily News</span><span style="font-style:italic;">Game written by Michael Shepherd using Claude AI</span></div>
+  <div class="foot"><span>© Bangor Daily News</span><span style="font-style:italic;">Game written by the BDN using Claude AI</span></div>
 </div>
 <script>
 // ════════════════════════════════════════
 // STATE
 // ════════════════════════════════════════
 let G=reset();
-function reset(){return{char:null,score:0,phase:0,neg:0,doorWins:0,writingPts:0,hearingPts:0,hearingApproach:null,warrantApproach:null,negHeadline:null,backstory:[],bitesFired:{},electionWinner:null,fireTruck:false,budgetOk:false,eliminated:false,win:false,mgTruckBudget:null,sb:{base:0,skill:0,luck:0,bonus:0}};}
+function reset(){return{char:null,score:0,phase:0,neg:0,doorWins:0,writingPts:0,hearingPts:0,hearingApproach:null,warrantApproach:null,negHeadline:null,backstory:[],bitesFired:{},electionWinner:null,fireTruck:false,eliminated:false,win:false,sb:{base:0,skill:0,luck:0,bonus:0},_sessionId:null,_trackLog:[]};}
 const R=n=>Math.floor(Math.random()*n);
 const P=p=>Math.random()<p;
 const pick=a=>a[R(a.length)];
@@ -216,25 +222,27 @@ function render(h){const s=$('SCR');if(!s)return;s.innerHTML=`<div class="fade">
 const YOU_LOST='<div style="background:#b00;color:#fff;font-family:\'Oswald\',sans-serif;font-size:32px;font-weight:700;letter-spacing:2px;text-align:center;padding:14px 20px;margin:-22px -26px 18px;text-transform:uppercase;border-bottom:4px solid #800;">⛔ YOU LOST!</div>';
 const YOU_WON='<div style="background:#1a5c2a;color:#fff;font-family:\'Oswald\',sans-serif;font-size:32px;font-weight:700;letter-spacing:2px;text-align:center;padding:14px 20px;margin:-22px -26px 18px;text-transform:uppercase;border-bottom:4px solid #0d3318;">🏆 YOU WON!</div>';
 function rm(c,a){
-  const m={M:[['1','Warrant'],['2','Board Vote'],['3','Town Mtg']],S:[['1','Hearing'],['2','Canvass'],['3','Town Mtg']],D:[['1','Canvass'],['2','BDN Letter'],['3','Town Mtg']]};
+  const m={S:[['1','Hearing'],['2','Canvass'],['3','Town Mtg']],D:[['1','Canvass'],['2','BDN Letter'],['3','Town Mtg']]};
   return`<div class="rm">${m[c].map(([n,l],i)=>`<div class="rp ${i===a?'on':i<a?'done':''}"><div class="rp-n">${n}</div><div class="rp-l">${l}</div></div>`).join('')}</div>`;
 }
+// ── TRACKER ──────────────────────────────
+const TRACKER_URL='https://script.google.com/macros/s/AKfycbycWKNtrH4O15KKWp3CxEsUh_liYQNDkbaoZhP0v6n4-gQ0OKpMXiT-2BFUcJnU57sy/exec'; // tracker endpoint
+function track(event,detail){if(!G._trackLog)G._trackLog=[];G._trackLog.push({ts:Date.now(),char:G.char||'',event,detail:String(detail||''),score:G.score});}
+function flushTrack(email,name){if(!TRACKER_URL||!G._trackLog||!G._trackLog.length)return;const sid=G._sessionId||'';const events=G._trackLog.map(r=>r.event).join(', ');const details=G._trackLog.map(r=>r.detail).join(', ');const score=G.score||0;const win=G.win?'Win':'Loss';const p=new URLSearchParams({ts:Date.now(),session:sid,name:name||'',email:email||'',char:G.char||'',events,details,score,win});fetch(`${TRACKER_URL}?${p}`,{mode:'no-cors'}).catch(()=>{});G._trackLog=[];}
+// ─────────────────────────────────────────
 function getBoard(){try{return JSON.parse(localStorage.getItem('bdn3_lb')||'[]');}catch{return[];}}
-function saveLB(email,score,char){let b=getBoard();const i=b.findIndex(r=>r.e.toLowerCase()===email.toLowerCase());if(i>=0){if(score>b[i].s){b[i].s=score;b[i].c=char;}}else b.push({e:email,s:score,c:char});b.sort((a,z)=>z.s-a.s);try{localStorage.setItem('bdn3_lb',JSON.stringify(b.slice(0,20)));}catch{}return b;}
-function lbRows(b){if(!b.length)return`<div style="color:var(--muted);font-size:13px;padding:8px 0;font-style:italic;">No scores yet. Be the first!</div>`;const cn={M:'Manager',S:'Selectman',D:'Democracy'};return b.slice(0,10).map((r,i)=>`<div class="lbrow"><span class="lbr">#${i+1}</span><span class="lbn">${r.e.replace(/(.{2}).+(@.*)/,'$1…$2')}</span><span class="lbc">${cn[r.c]||''}</span><span class="lbs">${r.s}</span></div>`).join('');}
+function saveLB(email,name,score,char){let b=getBoard();const i=b.findIndex(r=>r.e.toLowerCase()===email.toLowerCase());if(i>=0){if(score>b[i].s){b[i].s=score;b[i].c=char;}if(name)b[i].n=name;}else b.push({e:email,n:name||'',s:score,c:char});b.sort((a,z)=>z.s-a.s);try{localStorage.setItem('bdn3_lb',JSON.stringify(b.slice(0,20)));}catch{}return b;}
+function lbRows(b){if(!b.length)return`<div style="color:var(--muted);font-size:13px;padding:8px 0;font-style:italic;">No scores yet. Be the first!</div>`;const cn={S:'Selectman',D:'Democracy'};return b.slice(0,10).map((r,i)=>`<div class="lbrow"><span class="lbr">#${i+1}</span><span class="lbn">${r.n||r.e.replace(/(.{2}).+(@.*)/,'$1…$2')}</span><span class="lbc">${cn[r.c]||''}</span><span class="lbs">${r.s}</span></div>`).join('');}
 
 // ════════════════════════════════════════
 // SVGs
 // ════════════════════════════════════════
-function svgM(w=110,h=120){return`<svg width="${w}" height="${h}" viewBox="0 0 110 120" xmlns="http://www.w3.org/2000/svg"><rect x="22" y="72" width="66" height="48" rx="4" fill="#1a3660"/><polygon points="42,72 55,88 68,72" fill="#e8e8f0"/><polygon points="42,72 49,82 55,77 55,72" fill="#c8c8e0"/><path d="M48,76 Q55,82 62,76" stroke="#c0392b" stroke-width="3" fill="none"/><rect x="48" y="62" width="14" height="12" rx="3" fill="#e8c4a0"/><ellipse cx="55" cy="48" rx="20" ry="22" fill="#e8c4a0"/><ellipse cx="55" cy="30" rx="20" ry="10" fill="#5c3a1e"/><rect x="35" y="30" width="9" height="28" rx="5" fill="#5c3a1e"/><rect x="66" y="30" width="9" height="28" rx="5" fill="#5c3a1e"/><rect x="35" y="28" width="40" height="10" fill="#5c3a1e"/><ellipse cx="35" cy="49" rx="3.5" ry="4.5" fill="#e8c4a0"/><ellipse cx="75" cy="49" rx="3.5" ry="4.5" fill="#e8c4a0"/><ellipse cx="47" cy="46" rx="4.5" ry="5" fill="#fff"/><ellipse cx="63" cy="46" rx="4.5" ry="5" fill="#fff"/><ellipse cx="48" cy="47" rx="2.8" ry="3.2" fill="#2a1a08"/><ellipse cx="64" cy="47" rx="2.8" ry="3.2" fill="#2a1a08"/><circle cx="49" cy="46" r=".9" fill="#fff"/><circle cx="65" cy="46" r=".9" fill="#fff"/><path d="M43,39 Q47,37 51,39" stroke="#5c3a1e" stroke-width="1.6" fill="none"/><path d="M59,39 Q63,37 67,39" stroke="#5c3a1e" stroke-width="1.6" fill="none"/><path d="M53,51 Q52,56 55,57 Q58,56 57,51" stroke="#c8956a" stroke-width="1" fill="none"/><path d="M48,62 Q55,68 62,62" stroke="#c8956a" stroke-width="1.5" fill="none"/><rect x="43" y="43" width="9" height="7" rx="2" stroke="#1a3660" stroke-width="1.5" fill="none" opacity=".7"/><rect x="58" y="43" width="9" height="7" rx="2" stroke="#1a3660" stroke-width="1.5" fill="none" opacity=".7"/><line x1="52" y1="46.5" x2="58" y2="46.5" stroke="#1a3660" stroke-width="1.5" opacity=".7"/><rect x="69" y="78" width="20" height="26" rx="1" fill="#d4a84b"/><rect x="69" y="78" width="20" height="5" rx="1" fill="#a07830"/><rect x="76" y="76" width="6" height="4" rx="1" fill="#888"/><line x1="72" y1="88" x2="86" y2="88" stroke="#888" stroke-width="1"/><line x1="72" y1="93" x2="86" y2="93" stroke="#888" stroke-width="1"/><line x1="72" y1="98" x2="83" y2="98" stroke="#888" stroke-width="1"/><rect x="10" y="74" width="14" height="10" rx="4" fill="#1a3660"/><rect x="86" y="74" width="14" height="10" rx="4" fill="#1a3660"/><ellipse cx="17" cy="84" rx="5.5" ry="5" fill="#e8c4a0"/></svg>`;}
 function svgS(w=110,h=120){return`<svg width="${w}" height="${h}" viewBox="0 0 110 120" xmlns="http://www.w3.org/2000/svg"><rect x="22" y="72" width="66" height="48" rx="4" fill="#1a2840"/><polygon points="42,72 55,90 55,72" fill="#2a3a55"/><polygon points="68,72 55,90 55,72" fill="#1a2840"/><polygon points="42,72 46,80 55,78 55,72" fill="#e8e8ee"/><polygon points="68,72 64,80 55,78 55,72" fill="#dddde8"/><polygon points="53,76 57,76 56,98 54,98" fill="#8b1a1a"/><polygon points="52,75 58,75 57,78 55,80 53,78" fill="#6a1010"/><polygon points="76,76 82,76 81,81 75,81" fill="#fff" opacity=".8"/><rect x="48" y="62" width="14" height="12" rx="3" fill="#d4a870"/><ellipse cx="55" cy="48" rx="21" ry="23" fill="#d4a870"/><ellipse cx="55" cy="28" rx="21" ry="9" fill="#5a4832"/><rect x="34" y="28" width="42" height="7" fill="#5a4832"/><ellipse cx="55" cy="29" rx="12" ry="5.5" fill="#d4a870"/><ellipse cx="36" cy="35" rx="5" ry="6" fill="#888"/><ellipse cx="74" cy="35" rx="5" ry="6" fill="#888"/><ellipse cx="34" cy="50" rx="4" ry="5" fill="#d4a870"/><ellipse cx="76" cy="50" rx="4" ry="5" fill="#d4a870"/><ellipse cx="46" cy="47" rx="4.5" ry="4.5" fill="#fff"/><ellipse cx="64" cy="47" rx="4.5" ry="4.5" fill="#fff"/><ellipse cx="47" cy="48" rx="2.7" ry="3" fill="#1a1008"/><ellipse cx="65" cy="48" rx="2.7" ry="3" fill="#1a1008"/><circle cx="47.8" cy="47" r=".9" fill="#fff"/><circle cx="65.8" cy="47" r=".9" fill="#fff"/><line x1="41" y1="41" x2="51" y2="42.5" stroke="#5a4832" stroke-width="2"/><line x1="59" y1="42.5" x2="69" y2="41" stroke="#5a4832" stroke-width="2"/><ellipse cx="55" cy="55" rx="3" ry="2.5" fill="#bf9060"/><line x1="47" y1="63" x2="63" y2="63" stroke="#b07840" stroke-width="1.5"/><circle cx="70" cy="84" r="6" fill="#8b1a1a"/><text x="70" y="87" font-size="5.5" fill="#fff" text-anchor="middle" font-family="Arial" font-weight="bold">NO</text><rect x="9" y="75" width="15" height="10" rx="4" fill="#1a2840"/><rect x="86" y="75" width="15" height="10" rx="4" fill="#1a2840"/><ellipse cx="16" cy="85" rx="5.5" ry="5" fill="#d4a870"/><ellipse cx="94" cy="85" rx="5.5" ry="5" fill="#d4a870"/></svg>`;}
 function svgD(w=110,h=120){return`<svg width="${w}" height="${h}" viewBox="0 0 110 120" xmlns="http://www.w3.org/2000/svg"><rect x="22" y="72" width="66" height="48" rx="4" fill="#8b1a1a"/><polygon points="42,72 55,86 68,72" fill="#fff"/><polygon points="42,72 48,80 55,76 55,72" fill="#e8f0e8"/><circle cx="66" cy="82" r="6" fill="#1a3660"/><circle cx="66" cy="82" r="3.5" fill="#fff"/><circle cx="66" cy="82" r="1.5" fill="#1a3660"/><rect x="48" y="62" width="14" height="12" rx="3" fill="#e8b888"/><ellipse cx="55" cy="48" rx="21" ry="23" fill="#e8b888"/><ellipse cx="55" cy="28" rx="21" ry="10" fill="#2c1a0e"/><rect x="34" y="28" width="9" height="30" rx="5" fill="#2c1a0e"/><rect x="67" y="28" width="9" height="30" rx="5" fill="#2c1a0e"/><rect x="34" y="26" width="42" height="11" fill="#2c1a0e"/><ellipse cx="55" cy="27" rx="12" ry="5" fill="#3a2210"/><ellipse cx="34" cy="50" rx="3.5" ry="4.5" fill="#e8b888"/><ellipse cx="76" cy="50" rx="3.5" ry="4.5" fill="#e8b888"/><circle cx="34" cy="55" r="2" fill="#c8a000"/><circle cx="76" cy="55" r="2" fill="#c8a000"/><ellipse cx="46" cy="46" rx="4.5" ry="5" fill="#fff"/><ellipse cx="64" cy="46" rx="4.5" ry="5" fill="#fff"/><ellipse cx="47" cy="47" rx="2.8" ry="3.2" fill="#1a0808"/><ellipse cx="65" cy="47" rx="2.8" ry="3.2" fill="#1a0808"/><circle cx="48" cy="46" r=".9" fill="#fff"/><circle cx="66" cy="46" r=".9" fill="#fff"/><path d="M42,39 Q46,36 50,39" stroke="#2c1a0e" stroke-width="1.8" fill="none"/><path d="M60,39 Q64,36 68,39" stroke="#2c1a0e" stroke-width="1.8" fill="none"/><path d="M53,51 Q52,56 55,57 Q58,56 57,51" stroke="#c89060" stroke-width="1" fill="none"/><path d="M47,62 Q55,70 63,62" stroke="#b07840" stroke-width="1.6" fill="none"/><text x="39" y="90" font-size="13" fill="rgba(255,255,255,.6)">✊</text><rect x="9" y="72" width="15" height="11" rx="4" fill="#8b1a1a" transform="rotate(-15 16 78)"/><rect x="86" y="72" width="15" height="11" rx="4" fill="#8b1a1a" transform="rotate(15 94 78)"/><ellipse cx="14" cy="82" rx="5.5" ry="5" fill="#e8b888" transform="rotate(-15 14 82)"/><ellipse cx="96" cy="82" rx="5.5" ry="5" fill="#e8b888" transform="rotate(15 96 82)"/></svg>`;}
 
 // ════════════════════════════════════════
 // DATA
-// Real BDN reporters: Kathleen O'Brien, Penelope Overton, Chris Cousins,
-// Michael Shepherd, Jessica Piper, Judy Harrison, Charles Eichacker,
-// Lori Valigra, Erin Rhoda, Bill Trotter
+// Fictional BDN coverage — reporter bylines intentionally omitted
 // ════════════════════════════════════════
 
 // ── BACKSTORY ARCHIVES ──────────────────
@@ -244,65 +252,45 @@ function svgD(w=110,h=120){return`<svg width="${w}" height="${h}" viewBox="0 0 1
 // bite: [{phase, trigger, msg}]  phase=1,2,3,TM; trigger=always|neg_event|low_score
 
 const BACKSTORY = {
-  M: [
-    // ── 8 neg ──
-    {ago:'1 year ago',t:'neg',hed:'Manager Overrode Budget Committee, Awarded Road Contract Without Bid',by:'By Chris Cousins · Bangor Daily News',body:'Manager awarded a $38,000 paving contract to a firm whose owner attended her daughter\'s wedding, bypassing competitive bid. The Budget Committee voted 7-2 to censure the decision.',kw:'ethics',bite:[{phase:'P2',msg:'Board member Harlow reads the year-old BDN ethics story aloud before you can start. "Procedural lapse — your words." The room waits.'},{phase:'TM',msg:'A voter rises: "Madam Manager, a year ago BDN reported a no-bid contract. What\'s changed?" Moderator Harte rules it in order.'}]},
-    {ago:'4 weeks ago',t:'neg',hed:'Budget Gap Wider Than Expected; Manager\'s Pension Projections Questioned',by:'By Kathleen O\'Brien · Bangor Daily News',body:'An independent actuarial review found pension obligations underfunded by $210,000 — absent from the draft budget. The Budget Committee chair said she was "blindsided."',kw:'pension',bite:[{phase:'P1',msg:'Budget Committee chair opens: "Your draft ignores the $210,000 pension gap O\'Brien reported four weeks ago. How does this pencil out?" Three members nod.'},{phase:'TM',msg:'A retired employee stands: "My pension is already underfunded and your budget ignores it." The four-week-old story is on several phones.'}]},
-    {ago:'1 year ago',t:'neg',hed:'Town Workers Union Files Grievance Over Proposed Insurance Shift',by:'By Erin Rhoda · Bangor Daily News',body:'The town employees union filed a grievance after Manager proposed shifting 12% of health insurance costs to workers. The union president called it "a breach of good faith."',kw:'workers',bite:[{phase:'P2',msg:'The union president is in the back row. Board member Harlow asks about the outstanding grievance before you can deliver your presentation.'},{phase:'TM',msg:'Three town employees speak against the budget in succession, each citing Erin Rhoda\'s story from a year ago.'}]},
-    {ago:'4 weeks ago',t:'neg',hed:'Road Committee: Paving Budget Falls $28,000 Short of State-Match Minimum',by:'By Lori Valigra · Bangor Daily News',body:'The road committee chair says the draft budget won\'t cover the minimum paving to maintain the town\'s road rating — and risks forfeiting future state matches.',kw:'roads',bite:[{phase:'P1',msg:'Road committee chair holds up Valigra\'s article: "Your numbers don\'t cover the minimum. The state match is at risk." He reads the figure aloud.'},{phase:'TM',msg:'A voter from the floor: "If this passes, do we lose the state road money?" The four-week-old story is on several phones.'}]},
-    {ago:'1 year ago',t:'neg',hed:'Manager\'s Office Misses Deadline; Town Forfeits $14,000 in Federal Aid',by:'By Charles Eichacker · Bangor Daily News',body:'A late grant reapplication caused Newsville to forfeit $14,000 in federal community development funds. Manager\'s office attributed the miss to "a calendaring error."',kw:'grant',bite:[{phase:'P2',msg:'Board member Harlow: "You forfeited $14,000 a year ago over a calendar mistake. Why should we trust these projections?" A beat of silence.'},{phase:'TM',msg:'A voter: "We lost $14,000 because of a calendaring error. That\'s in the BDN record." Heads nod in the back.'}]},
-    {ago:'4 weeks ago',t:'neg',hed:'Library Board Chair Resigns, Cites "Budget Hostility" From Manager\'s Office',by:'By Judy Harrison · Bangor Daily News',body:'The library board chair stepped down four weeks ago, writing that the Manager\'s draft "treats the library as a line item to be erased." Supporters plan to attend town meeting.',kw:'library',bite:[{phase:'P1',msg:'Four library supporters are in the front row wearing matching shirts. One stands before you can begin: "We read Judy Harrison\'s story. We\'re here."'},{phase:'TM',msg:'The former library board chair speaks from the floor. "I resigned over this. The BDN covered it. I\'m asking you to vote no."'}]},
-    {ago:'1 year ago',t:'neg',hed:'Audit Flags $31,000 Unexplained Variance in Highway Department Budget',by:'By Lori Valigra · Bangor Daily News',body:'State auditors flagged a $31,000 unexplained variance in the highway department account. Manager\'s office said it was a "reclassification," but no documentation was provided to the committee.',kw:'audit',bite:[{phase:'P2',msg:'The Budget Committee treasurer slides Valigra\'s audit story across the table. "Still no documentation on the highway variance. Still waiting."'},{phase:'TM',msg:'A voter: "The state flagged $31,000 unexplained a year ago. Has that been resolved?" Moderator Harte allows the question.'}]},
-    {ago:'4 weeks ago',t:'neg',hed:'Selectman Harlow: Manager\'s Projections "Optimistic to the Point of Fiction"',by:'By Michael Shepherd · Bangor Daily News',body:'Board member Harlow told the BDN that Manager\'s revenue projections assumed excise tax growth of 6.2% — nearly three times the five-year average. "She needs to revise or explain," Harlow said.',kw:'taxes',bite:[{phase:'P1',msg:'Harlow opens the meeting by reading Shepherd\'s quote back to you verbatim. "I stand by every word." He leans forward.'},{phase:'TM',msg:'A Budget Committee member reads the Shepherd quote aloud: "Optimistic to the point of fiction." The room stirs.'}]},
-    // ── 8 pos ──
-    {ago:'1 year ago',t:'pos',hed:'Newsville Wins $76,000 State Road Grant; Manager Credited',by:'By Lori Valigra · Bangor Daily News',body:'The Maine DOT awarded Newsville a competitive road assistance grant. Manager wrote the application herself over a weekend. "She saved us from a special assessment," the Select Board chair said.',kw:'roads',bite:[{phase:'P2',msg:'Board member Pelletier cites the road grant: "You got that one right." The room temperature warms slightly.'}]},
-    {ago:'4 weeks ago',t:'pos',hed:'Budget Committee Chair: "Cleanest Warrant Draft in a Decade"',by:'By Judy Harrison · Bangor Daily News',body:'The Budget Committee chair praised Manager\'s draft as unusually free of legal ambiguities. "Moderator Harte won\'t have to rule on a single defective article," he said.',kw:'budget',bite:[{phase:'TM',msg:'Moderator Harte notes: "As the BDN reported, this warrant has no procedural defects." A ripple of approval crosses the room.'}]},
-    {ago:'1 year ago',t:'pos',hed:'Reserves Audit: Manager Finds $65,000 in Unallocated Town Savings',by:'By Kathleen O\'Brien · Bangor Daily News',body:'A clean audit ordered by Manager identified $65,000 in unallocated reserves — enough for meaningful tax relief without service cuts.',kw:'savings',bite:[{phase:'P2',msg:'Board member Pelletier: "That reserves audit you ordered — that\'s the fiscal discipline we need here."'}]},
-    {ago:'4 weeks ago',t:'pos',hed:'State Confirms Road Grant Award; Newsville Receives $76,000',by:'By Lori Valigra · Bangor Daily News',body:'The Maine DOT confirmed Newsville\'s grant application was approved. The funds offset repaving costs and reduce pressure on the local tax rate this budget year.',kw:'grant',bite:[{phase:'TM',msg:'A voter: "The state road money came through — that changes the math, doesn\'t it?" Several undecideds turn toward you.'}]},
-    {ago:'1 year ago',t:'pos',hed:'Manager\'s Renegotiated Health Contract Saves Town $28,000 Annually',by:'By Erin Rhoda · Bangor Daily News',body:'After a competitive rebid on the town\'s employee health plan, Manager secured a 4.1% reduction in premiums — saving an estimated $28,000 per year without changing coverage.',kw:'workers',bite:[{phase:'P2',msg:'A board member nods: "You saved us $28,000 on health insurance last year. Erin Rhoda wrote it up. That kind of result matters here."'}]},
-    {ago:'4 weeks ago',t:'pos',hed:'Taxpayers Alliance: Manager\'s Draft Is "Most Transparent Budget in Five Years"',by:'By Chris Cousins · Bangor Daily News',body:'The Maine Taxpayers Alliance reviewed Manager\'s draft warrant and called it "unusually legible and honest about tradeoffs." The group plans to distribute summaries at town meeting.',kw:'taxpayers',bite:[{phase:'TM',msg:'The Taxpayers Alliance rep stands: "We reviewed this budget. It\'s honest. Chris Cousins covered our assessment four weeks ago." Undecideds look up.'}]},
-    {ago:'1 year ago',t:'pos',hed:'Newsville Receives Clean Financial Audit; First Since 2018',by:'By Charles Eichacker · Bangor Daily News',body:'State auditors gave Newsville\'s books a clean opinion for the first time in five years. Manager overhauled the town\'s accounting software after taking office.',kw:'audit',bite:[{phase:'P2',msg:'Board member Pelletier: "Clean audit last year — first since 2018. That\'s you. Eichacker wrote it up." He taps the folder.'}]},
-    {ago:'4 weeks ago',t:'pos',hed:'Road Committee Endorses Manager\'s Paving Plan as "Fiscally Sound"',by:'By Lori Valigra · Bangor Daily News',body:'The road committee voted 5-1 to endorse Manager\'s paving approach, calling it "the most defensible use of available funds given the state match calendar."',kw:'roads',bite:[{phase:'TM',msg:'The road committee chair stands: "We endorsed her plan 5-1. Valigra covered it. The paving math works." Several fence-sitters look up.'}]},
-  ],
   S: [
     // ── 8 neg ──
-    {ago:'1 year ago',t:'neg',hed:'Fire Truck Failed During Active Call; Incident Report Sat Unaddressed for a Year',by:'By Penelope Overton · Bangor Daily News',body:'Engine 1 lost pump pressure during a structure fire on Dyer Neck Road. The Chief submitted an incident report to the Select Board. Selectman, as the board\'s longest-serving member, never moved to place it on the public agenda.',kw:'safety',bite:[{phase:'P1',msg:'Chief Fireman reads Overton\'s story aloud at the hearing. "You buried this report. You had a year to act." Applause from the red-shirt section.'},{phase:'TM',msg:'Democracy from the floor: "A year ago the BDN reported Selectman buried the incident report. The voters deserve to know why."'}]},
-    {ago:'4 weeks ago',t:'neg',hed:'Documents: Selectman Received $500 From Equipment Firm in Fire Contract Race',by:'By Michael Shepherd · Bangor Daily News',body:'Campaign finance records show a $500 donation from a rival fire equipment firm\'s owner. Democracy called for recusal. Selectman\'s campaign says the donation was returned.',kw:'conflict',bite:[{phase:'P2',msg:'Ruth M. holds up her phone — Shepherd\'s story is on the screen. "My son sent me this. What do you say to that?"'},{phase:'TM',msg:'A voter: "Shepherd reported a campaign donation from an equipment firm. Aren\'t you in a conflict of interest on this truck vote?"'}]},
-    {ago:'1 year ago',t:'neg',hed:'Three Firefighters Resign, Citing "Dangerous Equipment" and Board Inaction',by:'By Penelope Overton · Bangor Daily News',body:'Three volunteer firefighters quit last spring, each citing Engine 1\'s mechanical failures in written statements. Their letters went unanswered by the Select Board for six weeks.',kw:'safety',bite:[{phase:'P1',msg:'One of the resigned firefighters is in the audience. Democracy introduces him. He reads his resignation letter into the record.'},{phase:'TM',msg:'Democracy: "Three firefighters quit over this truck. Penelope Overton covered it a year ago. Selectman never responded to their letters."'}]},
-    {ago:'4 weeks ago',t:'neg',hed:'Analysis: Mutual Aid Plan Has No Written Response-Time Guarantee',by:'By Chris Cousins · Bangor Daily News',body:'The BDN reviewed the mutual aid agreement and found no enforceable response-time provision. Fire chiefs in neighboring towns call eight-minute commitments "aspirational, not binding."',kw:'mutual',bite:[{phase:'TM',msg:'Chief Fireman holds up Cousins\'s analysis: "There\'s no guarantee in that agreement. Read the BDN piece." Several undecideds shift.'}]},
-    {ago:'1 year ago',t:'neg',hed:'Selectman Missed Four of Seven Public Safety Committee Meetings',by:'By Jessica Piper · Bangor Daily News',body:'Attendance records show Selectman missed four of the seven Public Safety Committee meetings held last year, including one at which the fire truck mechanical report was tabled.',kw:'record',bite:[{phase:'P1',msg:'Democracy reads Selectman\'s BDN attendance record at the podium. "Four of seven public safety meetings missed. The truck report sat untouched." The room stirs.'},{phase:'TM',msg:'A voter: "The BDN reported Selectman missed four public safety meetings. How does he know the risks if he wasn\'t there?"'}]},
-    {ago:'4 weeks ago',t:'neg',hed:'BDN Survey: 61% of Newsville Voters Support Fire Truck Purchase',by:'By Penelope Overton · Bangor Daily News',body:'A BDN telephone survey of 214 likely town meeting voters found 61% support the $1 million truck bond, 28% oppose it, and 11% are undecided. Support is highest among homeowners under 55.',kw:'voters',bite:[{phase:'P2',msg:'Ruth M. cites the poll: "Overton\'s survey had you down 61-28. What\'s your path?" She waits. The room waits.'},{phase:'TM',msg:'Democracy: "The BDN had this 61-28 four weeks ago. Nothing has changed those homeowners\' minds." Undecideds murmur.'}]},
-    {ago:'1 year ago',t:'neg',hed:'State Fire Marshal: Engine 1 "Should Not Be Primary Response Vehicle"',by:'By Bill Trotter · Bangor Daily News',body:'The state fire marshal\'s annual inspection rated Engine 1 as unfit for primary duty. Selectman acknowledged the report at a closed-door meeting but did not place it on the public warrant.',kw:'safety',bite:[{phase:'P1',msg:'Chief Fireman holds up Trotter\'s story: "The state fire marshal said Engine 1 shouldn\'t be our primary vehicle. That was a year ago. You did nothing."'},{phase:'TM',msg:'A voter: "Bill Trotter covered the fire marshal\'s inspection. The state said not to use that truck as primary. Why is it still rolling?"'}]},
-    {ago:'4 weeks ago',t:'neg',hed:'Homeowner Insurance Rates Rise in Newsville After Fire Rating Downgrade',by:'By Lori Valigra · Bangor Daily News',body:'ISO downgraded Newsville\'s fire protection rating last month, triggering an average 8% increase in homeowner premiums. Adjusters cite aging equipment. A new truck would restore the rating.',kw:'cost',bite:[{phase:'TM',msg:'A homeowner stands: "My premium went up $280 because of our fire rating. Valigra covered the downgrade. The truck pays for itself in savings." Applause.'}]},
+    {ago:'1 year ago',t:'neg',hed:'Fire Truck Failed During Active Call; Incident Report Sat Unaddressed for a Year',body:'Engine 1 lost pump pressure during a structure fire on Dyer Neck Road. The Chief submitted an incident report to the Select Board. Selectman, as the board\'s longest-serving member, never moved to place it on the public agenda.',kw:'safety',bite:[{phase:'P1',msg:'Chief Fireman reads the BDN story aloud at the hearing. "You buried this report. You had a year to act." Applause from the red-shirt section.'},{phase:'TM',msg:'Democracy from the floor: "A year ago the BDN reported Selectman buried the incident report. The voters deserve to know why."'}]},
+    {ago:'4 weeks ago',t:'neg',hed:'Documents: Selectman Received $500 From Equipment Firm in Fire Contract Race',body:'Campaign finance records show a $500 donation from a rival fire equipment firm\'s owner. Democracy called for recusal. Selectman\'s campaign says the donation was returned.',kw:'conflict',bite:[{phase:'P2',msg:'Ruth M. holds up her phone — the BDN\'s story is on the screen. "My son sent me this. What do you say to that?"'},{phase:'TM',msg:'A voter: "the BDN reported a campaign donation from an equipment firm. Aren\'t you in a conflict of interest on this truck vote?"'}]},
+    {ago:'1 year ago',t:'neg',hed:'Three Firefighters Resign, Citing "Dangerous Equipment" and Board Inaction',body:'Three volunteer firefighters quit last spring, each citing Engine 1\'s mechanical failures in written statements. Their letters went unanswered by the Select Board for six weeks.',kw:'safety',bite:[{phase:'P1',msg:'One of the resigned firefighters is in the audience. Democracy introduces him. He reads his resignation letter into the record.'},{phase:'TM',msg:'Democracy: "Three firefighters quit over this truck. the BDN covered it a year ago. Selectman never responded to their letters."'}]},
+    {ago:'4 weeks ago',t:'neg',hed:'Analysis: Mutual Aid Plan Has No Written Response-Time Guarantee',body:'The BDN reviewed the mutual aid agreement and found no enforceable response-time provision. Fire chiefs in neighboring towns call eight-minute commitments "aspirational, not binding."',kw:'mutual',bite:[{phase:'TM',msg:'Chief Fireman holds up the BDN\'s analysis: "There\'s no guarantee in that agreement. Read the BDN piece." Several undecideds shift.'}]},
+    {ago:'1 year ago',t:'neg',hed:'Selectman Missed Four of Seven Public Safety Committee Meetings',body:'Attendance records show Selectman missed four of the seven Public Safety Committee meetings held last year, including one at which the fire truck mechanical report was tabled.',kw:'record',bite:[{phase:'P1',msg:'Democracy reads Selectman\'s BDN attendance record at the podium. "Four of seven public safety meetings missed. The truck report sat untouched." The room stirs.'},{phase:'TM',msg:'A voter: "The BDN reported Selectman missed four public safety meetings. How does he know the risks if he wasn\'t there?"'}]},
+    {ago:'4 weeks ago',t:'neg',hed:'BDN Survey: 61% of Newsville Voters Support Fire Truck Purchase',body:'A BDN telephone survey of 214 likely town meeting voters found 61% support the $1 million truck bond, 28% oppose it, and 11% are undecided. Support is highest among homeowners under 55.',kw:'voters',bite:[{phase:'P2',msg:'Ruth M. cites the poll: "the BDN survey had you down 61-28. What\'s your path?" She waits. The room waits.'},{phase:'TM',msg:'Democracy: "The BDN had this 61-28 four weeks ago. Nothing has changed those homeowners\' minds." Undecideds murmur.'}]},
+    {ago:'1 year ago',t:'neg',hed:'State Fire Marshal: Engine 1 "Should Not Be Primary Response Vehicle"',body:'The state fire marshal\'s annual inspection rated Engine 1 as unfit for primary duty. Selectman acknowledged the report at a closed-door meeting but did not place it on the public warrant.',kw:'safety',bite:[{phase:'P1',msg:'Chief Fireman holds up the BDN\'s story: "The state fire marshal said Engine 1 shouldn\'t be our primary vehicle. That was a year ago. You did nothing."'},{phase:'TM',msg:'A voter: "the BDN covered the fire marshal\'s inspection. The state said not to use that truck as primary. Why is it still rolling?"'}]},
+    {ago:'4 weeks ago',t:'neg',hed:'Homeowner Insurance Rates Rise in Newsville After Fire Rating Downgrade',body:'ISO downgraded Newsville\'s fire protection rating last month, triggering an average 8% increase in homeowner premiums. Adjusters cite aging equipment. A new truck would restore the rating.',kw:'cost',bite:[{phase:'TM',msg:'A homeowner stands: "My premium went up $280 because of our fire rating. the BDN covered the downgrade. The truck pays for itself in savings." Applause.'}]},
     // ── 8 pos ──
-    {ago:'1 year ago',t:'pos',hed:'Selectman\'s Bond Refinancing Saves Town $44,000',by:'By Charles Eichacker · Bangor Daily News',body:'A debt review ordered by Selectman identified an opportunity to refinance the 2018 fire station bond. The refinancing saved an estimated $44,000 over the remaining term.',kw:'debt',bite:[{phase:'P2',msg:'Elaine V. mentions Eichacker\'s story: "You saved us $44,000 on the fire station bond. I remember that." Your fiscal credibility holds.'}]},
-    {ago:'4 weeks ago',t:'pos',hed:'Selectman Secures Mutual Aid Agreement With Three Lincoln County Towns',by:'By Bill Trotter · Bangor Daily News',body:'A ladder truck mutual aid pact gives Newsville access to neighboring equipment within eight minutes. Selectman called it "the fiscally responsible alternative to a million-dollar bond."',kw:'mutual',bite:[{phase:'TM',msg:'Budget Committee chair cites Trotter\'s story: "The mutual aid agreement is in effect. That changes the calculus on the truck." Undecideds nod.'}]},
-    {ago:'1 year ago',t:'pos',hed:'Tax Watchdog Group Endorses Selectman, Cites Fiscal Restraint Record',by:'By Jessica Piper · Bangor Daily News',body:'Maine Taxpayers Alliance endorsed Selectman, citing his record on debt and spending restraint. The group plans direct mail to 600 households before town meeting.',kw:'taxpayers',bite:[{phase:'TM',msg:'A voter: "Maine Taxpayers Alliance endorsed you — they don\'t do that lightly. I appreciated it." Two undecideds turn to listen.'}]},
-    {ago:'4 weeks ago',t:'pos',hed:'Budget Committee Backs Anti-Truck Position 7-2',by:'By Judy Harrison · Bangor Daily News',body:'"We can\'t carry $1M in new debt on top of the fire station bond," the committee chair said. The 7-2 vote was the clearest signal yet that fiscal caution has broad institutional backing.',kw:'budget',bite:[{phase:'TM',msg:'The Budget Committee chair stands: "We voted 7-2 against the truck four weeks ago. The numbers haven\'t changed."'}]},
-    {ago:'1 year ago',t:'pos',hed:'Selectman Negotiates Reduction in Town\'s Solid Waste Contract, Saves $19,000',by:'By Kathleen O\'Brien · Bangor Daily News',body:'After putting the solid waste contract out to competitive bid for the first time in nine years, Selectman secured a three-year deal saving the town $19,000 annually. "Proof that process works," he said.',kw:'savings',bite:[{phase:'P2',msg:'Harold P.: "The solid waste contract savings — O\'Brien covered that. $19,000 a year. That\'s what fiscal discipline looks like." He nods.'}]},
-    {ago:'4 weeks ago',t:'pos',hed:'Insurance Actuary: Mutual Aid Pact Sufficient for ISO Rating Maintenance',by:'By Chris Cousins · Bangor Daily News',body:'An insurance actuary commissioned by the town found the new mutual aid agreement adequate to maintain Newsville\'s current ISO fire protection rating — a key argument against the bond.',kw:'mutual',bite:[{phase:'TM',msg:'Selectman holds up Cousins\'s actuary story: "The ISO rating holds with mutual aid. The bond is not necessary for your premiums."'}]},
-    {ago:'1 year ago',t:'pos',hed:'Selectman\'s Debt Audit Reveals Town Is Ahead of Schedule on Fire Station Bond',by:'By Charles Eichacker · Bangor Daily News',body:'A debt audit commissioned by Selectman found the fire station bond is two years ahead of schedule. "Adding another $1M bond on top of this is not responsible stewardship," he told the BDN.',kw:'debt',bite:[{phase:'P2',msg:'Elaine V.: "Eichacker covered the debt audit last year — you\'re ahead of schedule on the fire station bond. That\'s worth saying tonight."'}]},
-    {ago:'4 weeks ago',t:'pos',hed:'Former Town Treasurer Backs Selectman: "The Numbers Don\'t Support the Bond"',by:'By Michael Shepherd · Bangor Daily News',body:'Retired treasurer Wallace Cote, who managed Newsville\'s books for 22 years, endorsed Selectman, telling the BDN: "I\'ve seen what debt service does to a small town. This bond is premature."',kw:'fiscal',bite:[{phase:'TM',msg:'Wallace Cote stands from the third row: "I managed these books for 22 years. Shepherd quoted me four weeks ago. I stand by it."'}]},
+    {ago:'1 year ago',t:'pos',hed:'Selectman\'s Bond Refinancing Saves Town $44,000',body:'A debt review ordered by Selectman identified an opportunity to refinance the 2018 fire station bond. The refinancing saved an estimated $44,000 over the remaining term.',kw:'debt',bite:[{phase:'P2',msg:'Elaine V. mentions the BDN\'s story: "You saved us $44,000 on the fire station bond. I remember that." Your fiscal credibility holds.'}]},
+    {ago:'4 weeks ago',t:'pos',hed:'Selectman Secures Mutual Aid Agreement With Three Lincoln County Towns',body:'A ladder truck mutual aid pact gives Newsville access to neighboring equipment within eight minutes. Selectman called it "the fiscally responsible alternative to a million-dollar bond."',kw:'mutual',bite:[{phase:'TM',msg:'Budget Committee chair cites the BDN\'s story: "The mutual aid agreement is in effect. That changes the calculus on the truck." Undecideds nod.'}]},
+    {ago:'1 year ago',t:'pos',hed:'Tax Watchdog Group Endorses Selectman, Cites Fiscal Restraint Record',body:'Maine Taxpayers Alliance endorsed Selectman, citing his record on debt and spending restraint. The group plans direct mail to 600 households before town meeting.',kw:'taxpayers',bite:[{phase:'TM',msg:'A voter: "Maine Taxpayers Alliance endorsed you — they don\'t do that lightly. I appreciated it." Two undecideds turn to listen.'}]},
+    {ago:'4 weeks ago',t:'pos',hed:'Budget Committee Backs Anti-Truck Position 7-2',body:'"We can\'t carry $1M in new debt on top of the fire station bond," the committee chair said. The 7-2 vote was the clearest signal yet that fiscal caution has broad institutional backing.',kw:'budget',bite:[{phase:'TM',msg:'The Budget Committee chair stands: "We voted 7-2 against the truck four weeks ago. The numbers haven\'t changed."'}]},
+    {ago:'1 year ago',t:'pos',hed:'Selectman Negotiates Reduction in Town\'s Solid Waste Contract, Saves $19,000'Brien · Bangor Daily News',body:'After putting the solid waste contract out to competitive bid for the first time in nine years, Selectman secured a three-year deal saving the town $19,000 annually. "Proof that process works," he said.',kw:'savings',bite:[{phase:'P2',msg:'Harold P.: "The solid waste contract savings — O\'Brien covered that. $19,000 a year. That\'s what fiscal discipline looks like." He nods.'}]},
+    {ago:'4 weeks ago',t:'pos',hed:'Insurance Actuary: Mutual Aid Pact Sufficient for ISO Rating Maintenance',body:'An insurance actuary commissioned by the town found the new mutual aid agreement adequate to maintain Newsville\'s current ISO fire protection rating — a key argument against the bond.',kw:'mutual',bite:[{phase:'TM',msg:'Selectman holds up the BDN\'s actuary story: "The ISO rating holds with mutual aid. The bond is not necessary for your premiums."'}]},
+    {ago:'1 year ago',t:'pos',hed:'Selectman\'s Debt Audit Reveals Town Is Ahead of Schedule on Fire Station Bond',body:'A debt audit commissioned by Selectman found the fire station bond is two years ahead of schedule. "Adding another $1M bond on top of this is not responsible stewardship," he told the BDN.',kw:'debt',bite:[{phase:'P2',msg:'Elaine V.: "the BDN covered the debt audit last year — you\'re ahead of schedule on the fire station bond. That\'s worth saying tonight."'}]},
+    {ago:'4 weeks ago',t:'pos',hed:'Former Town Treasurer Backs Selectman: "The Numbers Don\'t Support the Bond"',body:'Retired treasurer Wallace Cote, who managed Newsville\'s books for 22 years, endorsed Selectman, telling the BDN: "I\'ve seen what debt service does to a small town. This bond is premature."',kw:'fiscal',bite:[{phase:'TM',msg:'Wallace Cote stands from the third row: "I managed these books for 22 years. the BDN quoted me four weeks ago. I stand by it."'}]},
   ],
   D: [
     // ── 8 neg ──
-    {ago:'1 year ago',t:'neg',hed:'Democracy\'s 2014 Bankruptcy: A Full Account',by:'By Erin Rhoda · Bangor Daily News',body:'Darlene Democracy filed for Chapter 7 in 2014 after her landscaping business collapsed. Records show $62,000 in discharged debt. Democracy says it taught her "exactly what happens when you don\'t manage debt responsibly."',kw:'finances',bite:[{phase:'P1',msg:'Harold P. holds the door half-open: "I read that BDN bankruptcy story. You want to manage a million-dollar budget?"'},{phase:'TM',msg:'Selectman from the podium: "The BDN documented $62,000 in discharged debt. Newsville\'s budget is not a comeback story."'}]},
-    {ago:'4 weeks ago',t:'neg',hed:'Fact-Check: Democracy Understated Fire Truck Bond Interest by $40,000',by:'By Jessica Piper · Bangor Daily News',body:'Democracy claimed a 10-year bond would cost "$87,000 in interest." BDN review puts the figure at $127,000. The campaign has not corrected the mailer.',kw:'numbers',bite:[{phase:'P2',msg:'Voters remember Piper\'s fact-check. If you cite bond costs in your letter, use $127,000 — or it will hurt you.'},{phase:'TM',msg:'Selectman: "Even the BDN corrected her numbers four weeks ago. How can we trust her budget judgment?" Murmurs spread.'}]},
-    {ago:'1 year ago',t:'neg',hed:'Democracy Cited for Trespassing During Evening Canvass',by:'By Chris Cousins · Bangor Daily News',body:'Democracy received a trespassing citation after knocking on a Route 218 door after 8 p.m. The incident appeared in the weekly Police Notes column.',kw:'conduct',bite:[{phase:'P1',msg:'Harold P. opens the door with folded arms: "You\'re the one who came to my house at 8:15. I read it in the BDN police notes."'},{phase:'TM',msg:'Selectman: "This candidate has been in the police notes — literally. Chris Cousins reported it." A few voters murmur.'}]},
-    {ago:'4 weeks ago',t:'neg',hed:'BDN Finds Two Discrepancies in Democracy\'s Campaign Finance Filings',by:'By Michael Shepherd · Bangor Daily News',body:'BDN review of Democracy\'s campaign filings found two minor discrepancies. Democracy\'s campaign called the report "a desperate distraction."',kw:'record',bite:[{phase:'P2',msg:'Tyler B.: "I saw that campaign finance story. Minor, maybe — but does that kind of thing bother you?"'},{phase:'TM',msg:'Selectman: "The BDN found discrepancies in her filings. Minor, maybe. But pattern matters." Democracy supporters groan.'}]},
-    {ago:'1 year ago',t:'neg',hed:'Democracy Dropped From Volunteer Fire Department After Attendance Dispute',by:'By Bill Trotter · Bangor Daily News',body:'Democracy was removed from the Newsville volunteer roster last spring after missing 11 of 18 required training sessions. She disputes the count; the fire department stands by its records.',kw:'record',bite:[{phase:'P1',msg:'Harold P.: "You advocate for the fire department, but Trotter reported you couldn\'t make training. Why should they trust you now?"'},{phase:'TM',msg:'Selectman: "She missed eleven training sessions — Bill Trotter covered it. Her commitment to the fire department is a campaign talking point, not a record."'}]},
-    {ago:'4 weeks ago',t:'neg',hed:'Neighbors Complain Democracy\'s Yard Sign Blitz Violates Town Ordinance',by:'By Judy Harrison · Bangor Daily News',body:'Seven homeowners complained to the town clerk after Democracy\'s campaign placed signs on rights-of-way without permission. The campaign removed them after Harrison\'s story ran.',kw:'conduct',bite:[{phase:'P2',msg:'Kim F. mentions it with a laugh: "The sign thing was a little much." She\'s not hostile — but she noticed.'},{phase:'TM',msg:'Selectman: "She couldn\'t follow the sign ordinance. Judy Harrison reported it. Rules are rules." Light laughter, then discomfort.'}]},
-    {ago:'1 year ago',t:'neg',hed:'Democracy\'s Previous Run for Select Board Ended With Concession Before Recount',by:'By Penelope Overton · Bangor Daily News',body:'In 2022, Democracy lost a Select Board race by 14 votes and conceded before a requested recount was completed. Critics said it suggested she was not prepared for a close fight.',kw:'record',bite:[{phase:'P1',msg:'Harold P.: "You conceded before the recount in \'22. Overton covered it. Are you in this for the long game, or just the headline?"'},{phase:'TM',msg:'Selectman: "In 2022 she conceded before the recount finished. This is her second run. The voters should weigh that." A few undecideds nod.'}]},
-    {ago:'4 weeks ago',t:'neg',hed:'Firefighters\' Union Has Not Formally Endorsed Democracy, Contrary to Mailer',by:'By Jessica Piper · Bangor Daily News',body:'Democracy\'s campaign mailer claimed a "firefighters\' union endorsement." Piper found no formal vote had been taken. The union president said support was personal, not institutional.',kw:'numbers',bite:[{phase:'P2',msg:'Tyler B.: "Piper\'s story said the union endorsement was informal, not a vote. That\'s in the mailer. Does accuracy matter to you?"'},{phase:'TM',msg:'Selectman: "She put a non-existent union endorsement in her mailer. Jessica Piper fact-checked it. The details matter." Murmurs.'}]},
+    {ago:'1 year ago',t:'neg',hed:'Democracy\'s 2014 Bankruptcy: A Full Account',body:'Darlene Democracy filed for Chapter 7 in 2014 after her landscaping business collapsed. Records show $62,000 in discharged debt. Democracy says it taught her "exactly what happens when you don\'t manage debt responsibly."',kw:'finances',bite:[{phase:'P1',msg:'Harold P. holds the door half-open: "I read that BDN bankruptcy story. You want to manage a million-dollar budget?"'},{phase:'TM',msg:'Selectman from the podium: "The BDN documented $62,000 in discharged debt. Newsville\'s budget is not a comeback story."'}]},
+    {ago:'4 weeks ago',t:'neg',hed:'Fact-Check: Democracy Understated Fire Truck Bond Interest by $40,000',body:'Democracy claimed a 10-year bond would cost "$87,000 in interest." BDN review puts the figure at $127,000. The campaign has not corrected the mailer.',kw:'numbers',bite:[{phase:'P2',msg:'Voters remember the BDN\'s fact-check. If you cite bond costs in your letter, use $127,000 — or it will hurt you.'},{phase:'TM',msg:'Selectman: "Even the BDN corrected her numbers four weeks ago. How can we trust her budget judgment?" Murmurs spread.'}]},
+    {ago:'1 year ago',t:'neg',hed:'Democracy Cited for Trespassing During Evening Canvass',body:'Democracy received a trespassing citation after knocking on a Route 218 door after 8 p.m. The incident appeared in the weekly Police Notes column.',kw:'conduct',bite:[{phase:'P1',msg:'Harold P. opens the door with folded arms: "You\'re the one who came to my house at 8:15. I read it in the BDN police notes."'},{phase:'TM',msg:'Selectman: "This candidate has been in the police notes — literally. the BDN reported it." A few voters murmur.'}]},
+    {ago:'4 weeks ago',t:'neg',hed:'BDN Finds Two Discrepancies in Democracy\'s Campaign Finance Filings',body:'BDN review of Democracy\'s campaign filings found two minor discrepancies. Democracy\'s campaign called the report "a desperate distraction."',kw:'record',bite:[{phase:'P2',msg:'Tyler B.: "I saw that campaign finance story. Minor, maybe — but does that kind of thing bother you?"'},{phase:'TM',msg:'Selectman: "The BDN found discrepancies in her filings. Minor, maybe. But pattern matters." Democracy supporters groan.'}]},
+    {ago:'1 year ago',t:'neg',hed:'Democracy Dropped From Volunteer Fire Department After Attendance Dispute',body:'Democracy was removed from the Newsville volunteer roster last spring after missing 11 of 18 required training sessions. She disputes the count; the fire department stands by its records.',kw:'record',bite:[{phase:'P1',msg:'Harold P.: "You advocate for the fire department, but the BDN reported you couldn\'t make training. Why should they trust you now?"'},{phase:'TM',msg:'Selectman: "She missed eleven training sessions — the BDN covered it. Her commitment to the fire department is a campaign talking point, not a record."'}]},
+    {ago:'4 weeks ago',t:'neg',hed:'Neighbors Complain Democracy\'s Yard Sign Blitz Violates Town Ordinance',body:'Seven homeowners complained to the town clerk after Democracy\'s campaign placed signs on rights-of-way without permission. The campaign removed them after the BDN\'s story ran.',kw:'conduct',bite:[{phase:'P2',msg:'Kim F. mentions it with a laugh: "The sign thing was a little much." She\'s not hostile — but she noticed.'},{phase:'TM',msg:'Selectman: "She couldn\'t follow the sign ordinance. the BDN reported it. Rules are rules." Light laughter, then discomfort.'}]},
+    {ago:'1 year ago',t:'neg',hed:'Democracy\'s Previous Run for Select Board Ended With Concession Before Recount',body:'In 2022, Democracy lost a Select Board race by 14 votes and conceded before a requested recount was completed. Critics said it suggested she was not prepared for a close fight.',kw:'record',bite:[{phase:'P1',msg:'Harold P.: "You conceded before the recount in \'22. the BDN covered it. Are you in this for the long game, or just the headline?"'},{phase:'TM',msg:'Selectman: "In 2022 she conceded before the recount finished. This is her second run. The voters should weigh that." A few undecideds nod.'}]},
+    {ago:'4 weeks ago',t:'neg',hed:'Firefighters\' Union Has Not Formally Endorsed Democracy, Contrary to Mailer',body:'Democracy\'s campaign mailer claimed a "firefighters\' union endorsement." the BDN found no formal vote had been taken. The union president said support was personal, not institutional.',kw:'numbers',bite:[{phase:'P2',msg:'Tyler B.: "the BDN\'s story said the union endorsement was informal, not a vote. That\'s in the mailer. Does accuracy matter to you?"'},{phase:'TM',msg:'Selectman: "She put a non-existent union endorsement in her mailer. the BDN fact-checked it. The details matter." Murmurs.'}]},
     // ── 8 pos ──
-    {ago:'1 year ago',t:'pos',hed:'Democracy Organized Flood Relief That Aided 40 Newsville Families',by:'By Judy Harrison · Bangor Daily News',body:'After August flooding hit the lower Sheepscot, Democracy coordinated a volunteer effort that distributed supplies and connected families with FEMA. "She was the first to show up and the last to leave," a neighbor said.',kw:'community',bite:[{phase:'P2',msg:'Kim F. opens the door: "I remember the flood relief. That\'s the kind of person I want on the board."'}]},
-    {ago:'4 weeks ago',t:'pos',hed:'Retired Fire Chief Endorses Democracy, Calls Engine 1 "Most Dangerous Equipment I\'ve Seen"',by:'By Penelope Overton · Bangor Daily News',body:'Retired Fire Chief Raymond Lessard, 71, endorsed Democracy\'s candidacy, calling Engine 1 "the most dangerous piece of municipal equipment I\'ve seen in 30 years."',kw:'endorsement',bite:[{phase:'TM',msg:'Chief Lessard stands from the front row. Moderator Harte allows him 90 seconds: "Four weeks ago I told Penelope Overton what I\'m telling this room — that truck will kill somebody."'}]},
-    {ago:'1 year ago',t:'pos',hed:'Firefighters\' Auxiliary Backs Democracy in Rare Political Endorsement',by:'By Bill Trotter · Bangor Daily News',body:'The Newsville Firefighters Auxiliary endorsed Democracy, calling her "the only candidate who has stepped inside Station 1 and looked at our equipment." It is their first political endorsement in 11 years.',kw:'safety',bite:[{phase:'TM',msg:'The auxiliary president stands: "We endorsed her a year ago and we stand by it. Every firefighter here has seen that truck fail."'}]},
-    {ago:'4 weeks ago',t:'pos',hed:'Democracy\'s Door Campaign Reaches 380 Households; Largest in Town History',by:'By Penelope Overton · Bangor Daily News',body:'Democracy\'s campaign reached 380 of Newsville\'s 890 households in a five-week canvass — the most documented door-to-door effort in the town\'s recent electoral history.',kw:'canvass',bite:[{phase:'TM',msg:'A voter near the back: "She knocked on my door twice. Overton covered the canvass. You know who showed up? Not Selectman."'}]},
-    {ago:'1 year ago',t:'pos',hed:'Democracy Pushes for Public Safety Audit; Board Declines 3-2',by:'By Jessica Piper · Bangor Daily News',body:'Democracy petitioned the Select Board for an independent public safety audit after the Engine 1 incident. The board voted 3-2 to decline — with Selectman casting the deciding vote.',kw:'safety',bite:[{phase:'P2',msg:'Kim F.: "You asked for the audit and Selectman killed it. Piper covered the vote. That\'s the contrast I needed to see."'}]},
-    {ago:'4 weeks ago',t:'pos',hed:'BDN Survey: Democracy Leads Among Voters Under 55 by 22 Points',by:'By Penelope Overton · Bangor Daily News',body:'A BDN poll found Democracy leading Selectman 58-36 among registered voters under 55. The margin among homeowners 55 and older was reversed, with Selectman leading 54-31.',kw:'voters',bite:[{phase:'TM',msg:'A younger voter stands: "The BDN had us 22 points ahead with under-55s. We\'re here. We\'re voting." Applause from the center rows.'}]},
-    {ago:'1 year ago',t:'pos',hed:'Democracy\'s Fundraiser for Station 1 Equipment Raises $8,400 in One Night',by:'By Judy Harrison · Bangor Daily News',body:'A community fundraiser Democracy organized at the Grange Hall raised $8,400 for fire department equipment — the largest one-night haul in department history. Chief Fireman called it "remarkable."',kw:'community',bite:[{phase:'P2',msg:'Janet O. opens the door wide: "The fundraiser you ran raised $8,400 in one night. Harrison covered it. That\'s real." She\'s in.'}]},
-    {ago:'4 weeks ago',t:'pos',hed:'Three Neighboring Towns Back Democracy\'s Truck Proposal, Offer Regional Cost-Sharing',by:'By Chris Cousins · Bangor Daily News',body:'The select boards of three neighboring towns passed resolutions supporting Newsville\'s truck purchase and offered to negotiate a regional cost-sharing arrangement that could reduce the bond by up to $180,000.',kw:'cost',bite:[{phase:'TM',msg:'Democracy: "Three neighboring towns passed resolutions supporting this. Cousins covered it. The net bond could be $820,000 with cost-sharing — not a million." Heads turn.'}]},
+    {ago:'1 year ago',t:'pos',hed:'Democracy Organized Flood Relief That Aided 40 Newsville Families',body:'After August flooding hit the lower Sheepscot, Democracy coordinated a volunteer effort that distributed supplies and connected families with FEMA. "She was the first to show up and the last to leave," a neighbor said.',kw:'community',bite:[{phase:'P2',msg:'Kim F. opens the door: "I remember the flood relief. That\'s the kind of person I want on the board."'}]},
+    {ago:'4 weeks ago',t:'pos',hed:'Retired Fire Chief Endorses Democracy, Calls Engine 1 "Most Dangerous Equipment I\'ve Seen"',body:'Retired Fire Chief Raymond Lessard, 71, endorsed Democracy\'s candidacy, calling Engine 1 "the most dangerous piece of municipal equipment I\'ve seen in 30 years."',kw:'endorsement',bite:[{phase:'TM',msg:'Chief Lessard stands from the front row. Moderator Harte allows him 90 seconds: "Four weeks ago I told the BDN what I\'m telling this room — that truck will kill somebody."'}]},
+    {ago:'1 year ago',t:'pos',hed:'Firefighters\' Auxiliary Backs Democracy in Rare Political Endorsement',body:'The Newsville Firefighters Auxiliary endorsed Democracy, calling her "the only candidate who has stepped inside Station 1 and looked at our equipment." It is their first political endorsement in 11 years.',kw:'safety',bite:[{phase:'TM',msg:'The auxiliary president stands: "We endorsed her a year ago and we stand by it. Every firefighter here has seen that truck fail."'}]},
+    {ago:'4 weeks ago',t:'pos',hed:'Democracy\'s Door Campaign Reaches 380 Households; Largest in Town History',body:'Democracy\'s campaign reached 380 of Newsville\'s 890 households in a five-week canvass — the most documented door-to-door effort in the town\'s recent electoral history.',kw:'canvass',bite:[{phase:'TM',msg:'A voter near the back: "She knocked on my door twice. the BDN covered the canvass. You know who showed up? Not Selectman."'}]},
+    {ago:'1 year ago',t:'pos',hed:'Democracy Pushes for Public Safety Audit; Board Declines 3-2',body:'Democracy petitioned the Select Board for an independent public safety audit after the Engine 1 incident. The board voted 3-2 to decline — with Selectman casting the deciding vote.',kw:'safety',bite:[{phase:'P2',msg:'Kim F.: "You asked for the audit and Selectman killed it. the BDN covered the vote. That\'s the contrast I needed to see."'}]},
+    {ago:'4 weeks ago',t:'pos',hed:'BDN Survey: Democracy Leads Among Voters Under 55 by 22 Points',body:'A BDN poll found Democracy leading Selectman 58-36 among registered voters under 55. The margin among homeowners 55 and older was reversed, with Selectman leading 54-31.',kw:'voters',bite:[{phase:'TM',msg:'A younger voter stands: "The BDN had us 22 points ahead with under-55s. We\'re here. We\'re voting." Applause from the center rows.'}]},
+    {ago:'1 year ago',t:'pos',hed:'Democracy\'s Fundraiser for Station 1 Equipment Raises $8,400 in One Night',body:'A community fundraiser Democracy organized at the Grange Hall raised $8,400 for fire department equipment — the largest one-night haul in department history. Chief Fireman called it "remarkable."',kw:'community',bite:[{phase:'P2',msg:'Janet O. opens the door wide: "The fundraiser you ran raised $8,400 in one night. the BDN covered it. That\'s real." She\'s in.'}]},
+    {ago:'4 weeks ago',t:'pos',hed:'Three Neighboring Towns Back Democracy\'s Truck Proposal, Offer Regional Cost-Sharing',body:'The select boards of three neighboring towns passed resolutions supporting Newsville\'s truck purchase and offered to negotiate a regional cost-sharing arrangement that could reduce the bond by up to $180,000.',kw:'cost',bite:[{phase:'TM',msg:'Democracy: "Three neighboring towns passed resolutions supporting this. the BDN covered it. The net bond could be $820,000 with cost-sharing — not a million." Heads turn.'}]},
   ],
 }
 
@@ -342,7 +330,6 @@ function clipArchive(b){
       <div style="font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:2px;color:${w<0.8?'#888':'var(--gold)'};background:var(--ink);padding:1px 7px;">${b.ago.toUpperCase()}${w<0.8?' · FADING':''}</div>
     </div>
     <div class="clip-hed" style="${w<0.8?'opacity:0.8':''}">${b.hed}</div>
-    <div style="font-family:'Oswald',sans-serif;font-size:9px;letter-spacing:1px;color:var(--muted);margin-bottom:4px;">${b.by}</div>
     <div class="clip-body">${b.body}</div>
     ${neg&&memNote?`<div class="clip-tip">${memNote}</div>`:''}
   </div>`;
@@ -373,40 +360,14 @@ function biteAlert(msg){
   </div>`;
 }
 
-const MG_FIRED=[
-  {hed:'FIRED: Select Board Votes 3-2 to Dismiss Manager',why:'After BDN published an internal email in which Manager called a board member "a walking speed bump," the board voted to terminate her contract.',by:"By Kathleen O'Brien · Bangor Daily News"},
-  {hed:'FIRED: Budget Error Prompts Forced Resignation',why:'A calculation error doubling the debt service line prompted an audit. The board voted 4-1 to demand her resignation.',by:'By Chris Cousins · Bangor Daily News'},
-  {hed:'FIRED: Ethics Board Recommends Removal',why:'A four-week investigation found sufficient cause for removal. The board voted 3-2 to terminate.',by:'By Charles Eichacker · Bangor Daily News'},
-  {hed:'FIRED: Manager No-Shows Required Budget Hearing',why:'Manager missed the mandatory public budget hearing. The board voted 3-2 to terminate, citing breach of contract.',by:'By Judy Harrison · Bangor Daily News'},
-  {hed:"FIRED: Manager's Town Hall Deck Contains 11 Pieces of Clip Art, One Sunset Photo",why:'A 47-slide presentation to the Select Board included clip art of a thumbs-up emoji and one photograph of a sunset captioned "vision." The board voted 4-1 to terminate.',by:'By Judy Harrison · Bangor Daily News'},
-  {hed:'Manager Embroiled in Affair; Both Parties on Town Payroll',why:"The BDN didn't print details of your affair. But everyone in town knows what you did.",by:'By Michael Shepherd · Bangor Daily News'},
-  {hed:"FIRED: Manager Cites 'Vibes' in Response to Budget Committee Question",why:'"The vibes are good," Manager told the committee when asked how she planned to close a $180,000 gap. The room went quiet. The board met the following morning.',by:"By Kathleen O'Brien · Bangor Daily News"},
-  {hed:"FIRED: Manager's Dog Enters Budget Hearing, Eats Warrant",why:'The incident was witnessed by all five board members and a BDN reporter. The official warrant had to be reprinted. The board cited "a pattern of disorder."',by:'By Penelope Overton · Bangor Daily News'},
-];
-const MG_NEWS=[
-  {t:'neg',hed:'Union Files Grievance Over Proposed Health Insurance Shift',by:'By Erin Rhoda · Bangor Daily News',body:'Town employees union filed a formal grievance after seeing draft language shifting 12% of health insurance costs to workers. The union president called it "a breach of good faith."',kw:'workers',app:['cuts','hybrid']},
-  {t:'neg',hed:'Library Supporters Mobilize Against Proposed Hour Cuts',by:'By Judy Harrison · Bangor Daily News',body:"A petition with 340 signatures landed on Manager's desk opposing any reduction to library hours. Organizers have yard signs and are planning to attend town meeting.",kw:'library',app:['cuts']},
-  {t:'neg',hed:'Road Committee: Proposed Paving Budget Falls $28,000 Short of Minimum',by:'By Lori Valigra · Bangor Daily News',body:"The road committee chair said the draft budget would not cover the minimum paving needed to maintain the town's road rating — and risks forfeiting future state matches.",kw:'roads',app:['reserve','cuts']},
-  {t:'neg',hed:"Analysis: Manager's Draft Would Push Tax Rate Up, Not Down",by:'By Chris Cousins · Bangor Daily News',body:"An independent review of the draft warrant found the numbers as presented would increase the property tax rate by roughly 1.8%, not reduce it. Manager disputes the methodology.",kw:'taxes',app:['reserve','cuts','grant','hybrid']},
-  {t:'pos',hed:"Budget Committee Approves Manager's Proposal 8-1",by:"By Kathleen O'Brien · Bangor Daily News",body:'The Budget Committee gave its clearest endorsement in years, praising the approach as "honest about tradeoffs." The lone dissent came over library hours.',kw:'budget',app:['hybrid','grant']},
-  {t:'pos',hed:'State Confirms Road Grant Award; Newsville to Receive $76,000',by:'By Lori Valigra · Bangor Daily News',body:"The Maine DOT confirmed Newsville's competitive road grant application was approved. The funds will offset repaving costs and reduce pressure on the local tax rate.",kw:'roads',app:['grant','hybrid']},
-  {t:'pos',hed:"Town Attorney: Warrant Language 'Airtight' — No Legal Exposure",by:'By Charles Eichacker · Bangor Daily News',body:"Town counsel reviewed the draft warrant and found no procedural defects. Moderator Harte won't have to rule on a single ambiguous article.",kw:'legal',app:['reserve','cuts','grant','hybrid']},
-  {t:'pos',hed:'Reserves Audit Finds $58,000 in Unallocated Surplus',by:"By Kathleen O'Brien · Bangor Daily News",body:'A clean audit of town reserves identified $58,000 in unallocated surplus funds — enough to provide meaningful tax relief without cutting services.',kw:'savings',app:['reserve','hybrid']},
-]
-const MG_APP=[
-  {id:'reserve',l:'Draw from town savings — no service cuts needed',pts:60,desc:'Using reserves to bridge the gap. It works this year but leaves a thinner cushion.',kw:'savings reserve'},
-  {id:'cuts',l:'Small targeted cuts to lower-priority services',pts:40,desc:'Modest reductions. Affected groups will be vocal.',kw:'cuts services savings'},
-  {id:'grant',l:'Defer non-essential capital spending to next year',pts:90,desc:'Pushes lower-priority projects out of this warrant. Buys room without cutting services.',kw:'capital savings roads'},
-  {id:'hybrid',l:'Combine everything — some savings, some cuts, some state money',pts:110,desc:'"Most defensible" according to the Budget Committee. Harder to explain simply.',kw:'balance savings roads services'},
-];
 const SEL_END=[
-  {hed:'Selectman Withdraws From Re-Election Bid After Canvass Numbers Collapse',why:'Internal polling showed an unrecoverable deficit after a difficult public hearing. Sources said the fire truck issue had turned too many longtime supporters.',by:'By Michael Shepherd · Bangor Daily News'},
-  {hed:'Selectman Steps Down From Race; Cites Board Dysfunction',why:'After a contentious hearing, Selectman told the Select Board he would not seek another term. He pointed to sustained pressure from fire department advocates.',by:'By Penelope Overton · Bangor Daily News'},
-  {hed:"BDN: Selectman's Hearing Performance Draws Calls to Step Aside",why:'Three sitting board members privately asked Selectman not to seek re-election after his handling of the fire truck hearing drew community criticism.',by:'By Michael Shepherd · Bangor Daily News'},
-  {hed:'Selectman Drops Out; Fire Truck Vote Will Proceed Without His Opposition',why:"Selectman announced his withdrawal in a brief statement, saying Newsville deserved 'a fresh voice on the Select Board.'",by:'By Chris Cousins · Bangor Daily News'},
-  {hed:'Selectman Embroiled in Affair; Select Board Asks Him Not to Return',why:"The BDN didn't print details of your affair. But everyone in town knows what you did.",by:'By Michael Shepherd · Bangor Daily News'},
-  {hed:"Selectman's Anti-Truck Bumper Sticker Found on Chief Fireman's Personal Vehicle",why:"Nobody could explain it. Selectman couldn't explain it. The Chief couldn't explain it. The board accepted his resignation anyway.",by:'By Penelope Overton · Bangor Daily News'},
-  {hed:'Selectman Accidentally Mass-Texts All of Newsville',why:'"democracy is an idiot and the truck people are insane. also harlow smells weird." The message was intended for one person. It reached 847 contacts.',by:'By Chris Cousins · Bangor Daily News'},
+  {hed:'Selectman Withdraws From Re-Election Bid After Canvass Numbers Collapse',why:'Internal polling showed an unrecoverable deficit after a difficult public hearing. Sources said the fire truck issue had turned too many longtime supporters.'},
+  {hed:'Selectman Steps Down From Race; Cites Board Dysfunction',why:'After a contentious hearing, Selectman told the Select Board he would not seek another term. He pointed to sustained pressure from fire department advocates.'},
+  {hed:"BDN: Selectman's Hearing Performance Draws Calls to Step Aside",why:'Three sitting board members privately asked Selectman not to seek re-election after his handling of the fire truck hearing drew community criticism.'},
+  {hed:'Selectman Drops Out; Fire Truck Vote Will Proceed Without His Opposition',why:"Selectman announced his withdrawal in a brief statement, saying Newsville deserved 'a fresh voice on the Select Board.'"},
+  {hed:'Selectman Embroiled in Affair; Select Board Asks Him Not to Return',why:"The BDN didn't print details of your affair. But everyone in town knows what you did."},
+  {hed:"Selectman's Anti-Truck Bumper Sticker Found on Chief Fireman's Personal Vehicle",why:"Nobody could explain it. Selectman couldn't explain it. The Chief couldn't explain it. The board accepted his resignation anyway."},
+  {hed:'Selectman Accidentally Mass-Texts All of Newsville',why:'"democracy is an idiot and the truck people are insane. also harlow smells weird." The message was intended for one person. It reached 847 contacts.'},
 ]
 const SEL_APP=[
   {id:'data',l:'Present the 10-year cost numbers — $127k in interest on top of existing debt',pts:130,
@@ -431,12 +392,12 @@ const SEL_APP=[
    kw:'listen',ng:1},
 ];
 const DEM_END=[
-  {hed:'ELIMINATED: Democracy Indicted on Fundraiser Funds',why:'Lincoln County DA announced an indictment for allegedly misusing $1,800 in fire auxiliary funds. Campaign suspended.',by:'By Erin Rhoda · Bangor Daily News'},
-  {hed:'ELIMINATED: BDN Reveals Undisclosed Conflict of Interest',why:"Democracy failed to disclose that her brother-in-law is a sales rep for the fire truck manufacturer. Candidacy collapsed.",by:'By Penelope Overton · Bangor Daily News'},
-  {hed:'Democracy Embroiled in Affair; Campaign Collapses Overnight',why:"The BDN didn't print details of your affair. But everyone in town knows what you did.",by:'By Michael Shepherd · Bangor Daily News'},
-  {hed:"Democracy's Campaign Signs Misspell 'Newsville'",why:'"Newsvile" — one L short, printed on 200 signs, distributed across three precincts. The campaign issued a correction. Voters did not recover.',by:'By Judy Harrison · Bangor Daily News'},
-  {hed:'ELIMINATED: Democracy Endorses Wrong Candidate at Own Rally',why:'\"And that\'s why I\'m asking you to vote for Steve Selectman,\" Democracy told a packed Grange Hall. Silence. Then someone started laughing. The campaign ended that evening.',by:'By Penelope Overton · Bangor Daily News'},
-  {hed:"Democracy's Canvassing App Routes 40 Volunteers to Wrong Town",why:"A GPS glitch sent volunteers to a town meeting in Somerville — population 347 — where they canvassed enthusiastically for 90 minutes before anyone checked the map.",by:'By Chris Cousins · Bangor Daily News'},
+  {hed:'ELIMINATED: Democracy Indicted on Fundraiser Funds',why:'Lincoln County DA announced an indictment for allegedly misusing $1,800 in fire auxiliary funds. Campaign suspended.'},
+  {hed:'ELIMINATED: BDN Reveals Undisclosed Conflict of Interest',why:"Democracy failed to disclose that her brother-in-law is a sales rep for the fire truck manufacturer. Candidacy collapsed."},
+  {hed:'Democracy Embroiled in Affair; Campaign Collapses Overnight',why:"The BDN didn't print details of your affair. But everyone in town knows what you did."},
+  {hed:"Democracy's Campaign Signs Misspell 'Newsville'",why:'"Newsvile" — one L short, printed on 200 signs, distributed across three precincts. The campaign issued a correction. Voters did not recover.'},
+  {hed:'ELIMINATED: Democracy Endorses Wrong Candidate at Own Rally',why:'\"And that\'s why I\'m asking you to vote for Steve Selectman,\" Democracy told a packed Grange Hall. Silence. Then someone started laughing. The campaign ended that evening.'},
+  {hed:"Democracy's Canvassing App Routes 40 Volunteers to Wrong Town",why:"A GPS glitch sent volunteers to a town meeting in Somerville — population 347 — where they canvassed enthusiastically for 90 minutes before anyone checked the map."},
 ];
 // lean = 'pro' means pro-truck (Democracy's ally), 'anti' = anti-truck (Selectman's ally)
 // Each voter has pools of yes/no quotes — one is picked randomly each run so no two visits feel the same.
@@ -602,7 +563,7 @@ function renderDoors(){
   const v=G._voters,st=G._dst,ct=G._dct;
   const wins=G.doorWins,rem=st.filter(x=>x===null).length;
   const done=rem===0||(wins+rem)<2;
-  const pct=Math.round(((5-rem)/5)*100);
+  const pct=Math.round(((3-rem)/3)*100);
   const rl=ct==='S'?'Steve Selectman — Phase 2: Canvassing':'Darlene Democracy — Phase 1: Canvassing';
   const rm2=ct==='S'?rm('S',1):rm('D',0);
   const por=ct==='S'?svgS(60,66):svgD(60,66);
@@ -616,11 +577,11 @@ function renderDoors(){
     <div style="display:flex;align-items:center;gap:14px;margin-bottom:12px;">
       ${por}
       <div>
-        <p class="story" style="margin:0;font-size:13px;">Need <strong>2 of 3 doors.</strong> Wins: <strong>${wins}</strong></p>
-        <div style="margin-top:6px;background:#ddd;height:8px;width:180px;overflow:hidden;"><div style="height:100%;background:${wins>=3?'var(--bdn)':'var(--blue)'};width:${pct}%;transition:width .4s;"></div></div>
+        <p class="story" style="margin:0;font-size:13px;">Need <strong style="color:var(--red)">2 of 3 doors.</strong> Wins: <strong style="color:var(--bdn)">${wins}</strong></p>
+        <div style="margin-top:6px;background:#ddd;height:8px;width:100%;max-width:240px;overflow:hidden;border-radius:4px;"><div style="height:100%;background:${wins>=2?'var(--green)':'var(--blue)'};width:${pct}%;transition:width .4s;border-radius:4px;"></div></div>
       </div>
     </div>
-    <div class="doors">${v.map((vt,i)=>{const s=st[i];const ico=s?s==='W'?'✅':s==='L'?'❌':'·':vt.e;const lbl=s?s==='W'?'WON':s==='L'?'LOST':'SKIP':'KNOCK';return`<div class="door" ${s?`data-s="${s}"`:`onclick="knock(${i})"`}><span class="door-ico">${ico}</span><span class="door-nm">${vt.n}</span><span class="door-lbl">${lbl}</span></div>`;}).join('')}</div>
+    <div class="doors">${v.map((vt,i)=>{const s=st[i];const ico=s?s==='W'?'✅':s==='L'?'❌':'·':vt.e;const lbl=s?s==='W'?'WON':s==='L'?'LOST':'SKIP':'KNOCK';return`<div class="door" ${s?`data-s="${s}"`:`onclick="knock(${i})"`}><div class="door-body"><div class="door-panel-t"></div><div class="door-panel-b"></div><div class="door-knob"></div><span class="door-ico">${ico}</span></div><div class="door-step"></div><span class="door-nm">${vt.n}</span><span class="door-lbl">${lbl}</span></div>`;}).join('')}</div>
     ${G._dmsg?`<div class="drp">${G._dmsg}</div>`:''}
     ${done?`<button class="btn" onclick="doneDoors()" style="margin-top:10px;">See Results →</button>`:''}
   `);
@@ -674,6 +635,7 @@ function argue(voterIdx, argIdx){
   G._dst[voterIdx]=finalWin?'W':'L';
   if(finalWin)G.doorWins++;
   if(finalWin)addSkill(20);else if(lucky)addLuck(-15);
+  track('canvass_door',`${vt.n}|${a.txt.slice(0,40)}|${finalWin?'win':'loss'}${lucky?'|lucky':''}}`);
   const quote=finalWin?a.win:a.lose;
   const rem=G._dst.filter(x=>x===null).length;
   if(G.doorWins>=2||(G.doorWins+rem)<2)G._dst=G._dst.map(x=>x===null?'S':x);
@@ -696,32 +658,6 @@ const HEARING_Q={
   pro:['"I\'m a homeowner and taxpayer, and I support the truck. My home is my retirement."','"The fire department serves all of us. This is exactly what we pay taxes for."','"Vote yes on the truck. And vote yes on Darlene Democracy for Select Board."'],
 };
 const WILDCARDS=[
-  // ── MARTHA ─────────────────────────────────────────────────────────────────
-  {char:'M',motion:'add $80,000 to the road crew budget — citing last winter\'s pothole damage.',opts:[
-    {txt:'Support it: roads are popular and it fits the budget\'s margin.',out:'W',msg:'The crowd cheers. Motion passes 61-38. The tax rate bumps slightly, but you read the room. The new board sees a manager who understands what voters actually want.'},
-    {txt:'Oppose it: roads aren\'t your priority tonight, protect the tax cut.',out:'L',msg:'The motion passes over your objection, 57-42. The new Select Board reads your resistance as political tin-ear. "She couldn\'t tell a win from a fight." Contract not renewed.',flip:'Your opposition was so crisp that the Budget Committee rallied around you. The motion failed narrowly. Sometimes saying no builds credibility.'},
-    {txt:'Stay quiet and let the Select Board respond.',out:'L',msg:'The board supported it without your guidance. You looked uninformed on your own warrant. The new board asked: "What exactly does the town manager do?" Contract not renewed.',flip:'Your silence let the board own the win. They appreciated not being upstaged. The motion passed — and the chair thanked you for trusting elected officials to lead.'},
-  ]},
-  {char:'M',motion:'cut the library hours by 30% to offset the truck bond interest.',opts:[
-    {txt:'Oppose it firmly: library cuts poll badly and aren\'t in your warrant.',out:'W',msg:'The crowd agreed. Motion fails 34-65. You protected a service with broad support and signaled you know what Newsville values. The new board noticed.'},
-    {txt:'Accept a smaller cut — 15% — as a compromise to show flexibility.',out:'L',msg:'The compromise passed, 53-46. Parents were furious. The new Select Board saw a manager who traded a visible service cut for a procedural peace. "Wrong call." Contract not renewed.',flip:'The 15% split satisfied both factions and the room moved on. Compromise read as leadership, not weakness. The new board called it textbook political management.'},
-    {txt:'Support the full cut — fiscal discipline sends a message.',out:'L',msg:'The cut passed, 58-41. The library director announced her resignation the following Monday. The new board\'s first call was to a search firm. "Not the manager we need." Contract not renewed.',flip:'The library director\'s reaction was so over-the-top that voters swung back. The cut passed but she rescinded the resignation. The board called it a bluff well-played.'},
-  ]},
-  {char:'M',motion:'move $120,000 from the highway reserve fund into the operating budget — for immediate tax relief.',opts:[
-    {txt:'Oppose it: raiding the reserve destroys your credit rating and next year\'s bond capacity.',out:'W',msg:'You explained the bond covenant implications. The motion failed 40-59. The new board called it the most important intervention of the night.'},
-    {txt:'Support it — voters came here for tax relief and this delivers it.',out:'L',msg:'The motion passed, 63-36. The bond rating agency flagged the reserve draw the following week. The new board read the room faster than you did. Contract not renewed.',flip:'The reserve was technically above the minimum covenant floor. Your support passed, tax relief was real, and the bond agency shrugged. Sometimes the math works out.'},
-    {txt:'Propose a one-time $40,000 draw instead — a smaller tax relief signal.',out:'W',msg:'The compromise satisfied the room without triggering the covenant. The motion passed 55-44. The new board called you pragmatic under pressure.'},
-  ]},
-  {char:'M',motion:'fund a new part-time code enforcement officer at $45,000 — not in your warrant.',opts:[
-    {txt:'Oppose it: unfunded amendments outside the warrant are exactly how budgets unravel.',out:'W',msg:'Town counsel agreed. Moderator Harte ruled it out of order. The new Select Board called you the only adult in the room.'},
-    {txt:'Support it — code enforcement is overdue and $45,000 is manageable.',out:'L',msg:'The motion passed, 54-45. It blew your tax cut margin by $9 per household. The new board asked why it wasn\'t in the warrant if you supported it. Contract not renewed.',flip:'Three neighboring towns had just been sued over code violations. The room knew. Your support passed the motion and the new board later said the $45,000 saved a six-figure liability.'},
-    {txt:'Suggest tabling it for a future special meeting with proper notice.',out:'W',msg:'The motion to table passed 58-41. The procedural delay satisfied both sides. The new board appreciated that you kept the warrant clean.'},
-  ]},
-  {char:'M',motion:'triple the budget committee\'s annual stipend — from $500 to $1,500 per member.',opts:[
-    {txt:'Oppose it: symbolic spending is tone-deaf when the town is cutting elsewhere.',out:'W',msg:'The crowd agreed. The motion died 31-68. You read the political temperature correctly. "She knows what this town will and won\'t tolerate."'},
-    {txt:'Support it — the committee does real work and $1,000 is nothing in a $1.2M budget.',out:'L',msg:'The motion passed, 52-47. The local press ran a photo of the vote under the headline "Town Pays Committee While Cutting Services." The new board had read the piece before your contract review. Contract not renewed.',flip:'Nobody in the press covered the stipend vote — they\'d all left to file on the truck. The new board never saw the story. The committee was grateful and worked harder all year.'},
-    {txt:'Propose raising it to $750 instead — a gesture without the optics.',out:'W',msg:'The split-the-difference motion passed 61-38. The committee felt recognized. The press didn\'t notice. The new board called it a low-cost loyalty investment.'},
-  ]},
   // ── SELECTMAN ──────────────────────────────────────────────────────────────
   {char:'S',motion:'add the $1M truck as a late unannounced article.',opts:[
     {txt:'Rule it out of order — it wasn\'t noticed on the warrant.',out:'W',msg:'Moderator backs you. Motion tabled. The crowd grumbles but respects procedure.'},
@@ -769,10 +705,10 @@ const WILDCARDS=[
     {txt:'Oppose: lease terms are worse over 10 years — you\'ve done the math.',out:'W',msg:'Your $127K number resonates. The lease substitute fails. Original bond passes on its merits.'},
     {txt:'Abstain — you\'re not sure of the lease math.',out:'L',msg:'Your abstention is read as weakness on your signature issue. The motion passes but fractures your coalition.',flip:'The abstention read as intellectual honesty, not weakness. Voters appreciated that she admitted uncertainty. The lease passed, and her credibility rose with it.'},
   ]},
-  {char:'D',motion:'hold a secret ballot on the election results — arguing the show of hands was unclear.',opts:[
-    {txt:'Support it: a clean secret ballot is harder to dispute.',out:'W',msg:'The secret ballot produces a clear result. Your margin holds up and is harder for Selectman to challenge.'},
-    {txt:'Oppose: the show of hands was clear and a new vote could be manipulated.',out:'L',msg:'Your opposition looks self-interested. Moderator Harte orders the secret ballot anyway. Uncertainty creeps in.',flip:'Your directness defused it. \'She\'s not afraid of a recount.\' The secret ballot came back 2 votes wider in your favor. Confidence is contagious.'},
-    {txt:'Ask Moderator Harte to rule on whether the original count was valid.',out:'W',msg:'Harte reviews his notes and certifies the original count. The motion for a new ballot fails. You win clean.'},
+  {char:'D',motion:'require Clerk Reed to re-tally the written ballots with a bipartisan counting committee — alleging a miscount.',opts:[
+    {txt:'Support it: a transparent re-tally protects your margin from any challenge.',out:'W',msg:'The bipartisan committee re-counts and confirms your lead. Selectman\'s supporters go quiet. Your margin is certified.'},
+    {txt:'Oppose: the clerk\'s official count is already on record — this is just delay.',out:'L',msg:'Your opposition reads as nervous about a recount. Moderator Harte allows it anyway. The wait creates doubt.',flip:'Your calm defused it. "She\'s not worried about the count." The committee finished in ten minutes and came back two votes wider in your favor.'},
+    {txt:'Ask Moderator Harte to rule on whether the original tally followed proper procedure.',out:'W',msg:'Harte consults the warrant and certifies the count. The motion fails on a procedural ruling. You win clean.'},
   ]},
 ]
 
@@ -785,8 +721,7 @@ function showTitle(){
     <div class="hrow"><span class="hlabel">★ Choose Your Character</span></div>
     <p class="sel-intro">Budget season in Newsville, Maine (pop. 2,400). The fire truck question is dividing the town. Pick your player.</p>
     <div class="cg">
-      ${[{c:'M',svg:svgM(100,110),n:'Martha Manager',r:'Town Manager',g:'Cut the property tax rate 5% without gutting services. Keep your job.',ph:['Propose the Budget Warrant','Win the Select Board Vote','Town Meeting']},
-         {c:'S',svg:svgS(100,110),n:'Steve Selectman',r:'Select Board Member',g:'Win re-election. Block the $1M fire truck you believe Newsville can\'t afford.',ph:['Navigate the Public Hearing','Canvass Voters Door-to-Door','Town Meeting Speech']},
+      ${[{c:'S',svg:svgS(100,110),n:'Steve Selectman',r:'Select Board Member',g:'Win re-election. Block the $1M fire truck you believe Newsville can\'t afford.',ph:['Navigate the Public Hearing','Canvass Voters Door-to-Door','Town Meeting Speech']},
          {c:'D',svg:svgD(100,110),n:'Darlene Democracy',r:'Select Board Challenger',g:'Win Selectman\'s seat. Get the new fire truck approved.',ph:['Canvass Selectman\'s Neighborhood','Write Your BDN Letter','Town Meeting Election']},
       ].map(ch=>`<button class="cc" onclick="pickChar('${ch.c}')" style="text-align:left;width:100%;">
         <div class="por">${ch.svg}</div>
@@ -801,14 +736,15 @@ function showTitle(){
 function showLB(){render(`<div class="hrow"><span class="hlabel">Leaderboard</span></div><div class="lb-hed">Top Scores — Newsville Town Meeting</div>${lbRows(getBoard())}<button class="btn ghost" onclick="showTitle()">← Back</button>`);}
 function pickChar(c){
   G.char=c;
+  G._sessionId=Math.random().toString(36).slice(2,10)+Date.now().toString(36);
+  track('game_start',c==='S'?'Selectman':'Democracy');
   const bs=pickBackstory(c);
   G.backstory=bs;
   G.negHeadline=bs.find(b=>b.t==='neg')||null;
   G.bitesFired={};
-  const cn={M:'Martha Manager',S:'Steve Selectman',D:'Darlene Democracy'};
-  const por=c==='M'?svgM(80,88):c==='S'?svgS(80,88):svgD(80,88);
+  const cn={S:'Steve Selectman',D:'Darlene Democracy'};
+  const por=c==='S'?svgS(80,88):svgD(80,88);
   const intro={
-    M:'You\'re three months into budget season. The Annual Town Meeting is coming up fast. Before you start, here\'s the coverage that\'s shaped your political environment.',
     S:'The fire truck fight has been building for over a year. Before the public hearing, here\'s the BDN archive that defines this race.',
     D:'You\'re a challenger running against a nine-year incumbent. The coverage trail tells the story of why you\'re running.'
   };
@@ -824,160 +760,11 @@ function pickChar(c){
       </div>
     </div>
     ${bs.map(b=>clipArchive(b)).join('')}
-    <button class="btn" onclick="${c==='M'?'startM1()':c==='S'?'startS1()':'startD1()'}">Begin Your Campaign →</button>
+    <button class="btn" onclick="${c==='S'?'startS1()':'startD1()'}">Begin Your Campaign →</button>
   `);
 }
 
-// ════════════════════════════════════════
-// MANAGER
-// ════════════════════════════════════════
-function startM1(){
-  G.phase=1;
-  const bite=checkBite('P1');
-  const teaserNews=MG_NEWS.filter(n=>n.t==='pos'||['taxes','legal'].includes(n.kw));
-  const news=pick(teaserNews);
-  G._mgNews=news;
-  render(`
-    <div class="hrow"><span class="hlabel">Martha Manager — Phase 1: Build the Budget</span><span class="hscore">Score: ${G.score}</span></div>
-    ${rm('M',0)}
-    <div style="display:flex;gap:14px;align-items:flex-start;margin-bottom:12px;">
-      <div style="flex-shrink:0">${svgM(72,78)}</div>
-      <p class="story">You're building Newsville's annual budget. Goal: cut the <strong>property tax rate by 5%</strong> (from $10.00 to $9.50 per thousand) without slashing services.</p>
-    </div>
-    ${biteAlert(bite)}
-    <div class="clip ${news.t==='neg'?'neg':''}" style="margin-bottom:12px;">
-      <div class="clip-src">${news.t==='neg'?'⚠ ':''}Bangor Daily News — This Week</div>
-      <div class="clip-hed">${news.hed}</div>
-      <div style="font-family:'Oswald',sans-serif;font-size:9px;letter-spacing:1px;color:var(--muted);margin-bottom:4px;">${news.by}</div>
-      <div class="clip-body">${news.body}</div>
-      ${news.t==='neg'?`<div class="clip-tip">★ This story is circulating. Expect it to come up at the board meeting.</div>`:''}
-    </div>
-    <hr class="r">
-    <p class="story" style="font-weight:600">First decision: does your budget include a line for the fire truck bond?</p>
-    <p class="story" style="font-size:12px;color:var(--muted);">The Select Board is split 3-2 on the truck. Chief Fireman and Democracy are watching. So is Selectman.</p>
-    <div class="choices">
-      <button class="ch" onclick="mTruckChoice(true)">
-        <strong>Include the truck bond</strong> — budget absorbs the $100K/yr debt service<br>
-        <em style="font-size:11px;color:var(--muted);">Risk: Selectman faction will call you a spendthrift. Tax cut math gets harder.</em>
-      </button>
-      <button class="ch" onclick="mTruckChoice(false)">
-        <strong>Exclude the truck bond</strong> — cleaner path to the 5% cut<br>
-        <em style="font-size:11px;color:var(--muted);">Risk: Democracy faction says you're blocking public safety. Chief Fireman is furious.</em>
-      </button>
-    </div>
-  `);
-}
-function mTruckChoice(include){
-  G.mgTruckBudget=include;
-  if(include) G.neg+=1; // fiscal hawks push back
-  const flavor=include
-    ? 'Selectman calls it "a $127,000 interest experiment on the taxpayers\' dime." Chief Fireman shakes your hand in the hallway.'
-    : 'Chief Fireman says the warrant "ignores a public safety crisis." Democracy posts about it. Selectman quietly approves.';
-  render(`
-    <div class="hrow"><span class="hlabel">Phase 1 — Budget Decision</span><span class="hscore">Score: ${G.score}</span></div>
-    ${rm('M',0)}
-    <span class="pill ${include?'warn':'good'}">${include?'Truck Bond Included':'Truck Bond Excluded'}</span>
-    <p class="story">${flavor}</p>
-    <p class="story">Now choose how you fund the rest of the budget to reach the 5% tax cut.</p>
-    <div class="choices">${MG_APP.map(a=>`<button class="ch" onclick="mApp('${a.id}')">${a.l}</button>`).join('')}</div>
-  `);
-}
-function mApp(id){
-  const a=MG_APP.find(x=>x.id===id);
-  G.warrantApproach=a;
-  // Re-pick news relevant to the chosen approach for Phase 2
-  const appNews=MG_NEWS.filter(n=>n.app.includes(a.id));
-  if(appNews.length) G._mgNews=pick(appNews);
-  phaseBonus(100); addSkill(a.pts);
-  if(P(.15))addLuck(pick([25,-25]));
-  render(`
-    <div class="hrow"><span class="hlabel">Phase 1 — Result</span><span class="hscore">Score: ${G.score}</span></div>
-    ${rm('M',0)}
-    <span class="pill good">Warrant Filed</span>
-    <p class="story">${a.desc} The Budget Committee votes to advance your proposal.</p>
-    <p class="story">Next: make your case to the Select Board and win their vote.</p>
-    <button class="btn" onclick="startM2()">Continue to Phase 2 →</button>
-  `);
-}
-function startM2(){
-  G.phase=2;
-  if(P(.10))return mFired();
-  const bite=checkBite('P2');
-  const negEv=G.negHeadline;
-  const app=G.warrantApproach;
-  const hasGoodNews=G._mgNews&&G._mgNews.t==='pos';
-  const hasBadNews=G._mgNews&&G._mgNews.t==='neg';
-  const truckIn=G.mgTruckBudget;
 
-  // Three approaches, each previewing the actual argument, each tied to game context
-  const approaches=[
-    {
-      id:'numbers',
-      lbl:'Lead with the numbers',
-      preview:`"This warrant reaches a 5% mil rate reduction through ${app?app.l.split('—')[0].trim().toLowerCase():'targeted savings and revenue'}. ${hasGoodNews?`The ${G._mgNews.kw} story the BDN ran gives us cover. `:''}Debt service is fully accounted for. No structural surprises. I'm asking for a 3-2 vote on a plan that holds."`,
-      outcomes:[
-        {pts:140,pill:'good',v:'Harlow leans forward. "Show me the bond covenant line." You show him. He nods. Board approves 3-2.'},
-        {pts:105,pill:'good',v:'Solid numbers presentation. Harlow votes yes with one question about reserves. Board approves 3-2.'},
-        {pts:68,pill:'warn',v:'Two members want more detail. Harlow abstains. Warrant advances 2-2-1 — without full board endorsement.'},
-      ]
-    },
-    {
-      id:'trust',
-      lbl:'Appeal to your track record',
-      preview:`"${negEv?`I know the BDN story about ${negEv.kw} is still circulating. `:''}In this office, we have kept every promise we made on the budget. The 5% reduction is real, it's repeatable, and the numbers are right here. I'm asking for your trust — and your vote."`,
-      outcomes:[
-        {pts:145,pill:'good',v:`Harlow: "That's the most honest thing said at this table in years." Board approves 3-2.`},
-        {pts:100,pill:'good',v:'The track record appeal lands with two members. Harlow votes yes, citing your consistency. Board approves 3-2.'},
-        {pts:65,pill:'warn',v:`${negEv?`Two skeptics keep circling back to the ${negEv.kw} story. `:'Two skeptics want data, not biography. '}Harlow abstains. Warrant advances narrowly.`},
-      ]
-    },
-    {
-      id:'tradeoffs',
-      lbl:'Name the tradeoffs directly',
-      preview:`"I want to be honest with this board: ${truckIn?'including the truck bond makes this tight — but the math holds.':'excluding the truck bond is a deliberate choice, and the floor may challenge it.'} Here is where every dollar of the 5% comes from. No surprises at town meeting."`,
-      outcomes:[
-        {pts:150,pill:'good',v:`Harlow: "Finally — a manager who doesn't hide the hard stuff." Board approves 3-2.`},
-        {pts:108,pill:'good',v:'The transparency earns respect. Harlow votes yes. Board approves with one dissent and reservations noted for the record.'},
-        {pts:62,pill:'warn',v:`One member calls it "a pre-emptive apology." ${truckIn?'The truck line draws extra scrutiny.':'The exclusion draws a floor challenge warning.'} Harlow abstains. Warrant advances on a tie.`},
-      ]
-    },
-  ];
-  G._mgApproaches=approaches;
-
-  render(`
-    <div class="hrow"><span class="hlabel">Martha Manager — Phase 2: Board Presentation</span><span class="hscore">Score: ${G.score}</span></div>
-    ${rm('M',1)}
-    <div style="display:flex;gap:14px;align-items:flex-start;margin-bottom:10px;">
-      <div style="flex-shrink:0">${svgM(72,78)}</div>
-      <p class="story">Tuesday night Select Board meeting. Selectman Harlow is the swing vote — he cares about honest numbers and doesn't like surprises. Choose your approach:</p>
-    </div>
-    ${biteAlert(bite)}
-    <div class="choices">${approaches.map((a,i)=>`<button class="ch" onclick="mPresent(${i})"><strong>${a.lbl}</strong><br><em style="font-size:12px;opacity:.8;font-style:italic;">${a.preview}</em></button>`).join('')}</div>
-  `);
-}
-function mPresent(i){
-  const a=G._mgApproaches[i];
-  const roll=P(.40)?0:P(.50)?1:2; // 40% great, 30% ok, 30% rough
-  const o=a.outcomes[roll];
-  G.writingPts=o.pts; addSkill(o.pts); phaseBonus(100);
-  if(P(.15))addLuck(pick([25,-25]));
-  if(o.pts<65){
-    G.eliminated=true;
-    render(`${YOU_LOST}<div class="hrow"><span class="hlabel">Phase 2 — Result</span><span class="hscore">Score: ${G.score}</span></div>
-    <span class="pill bad">Presentation Failed</span>
-    <p class="story">${o.v} Without board support, your budget loses credibility before the meeting starts. The Select Board votes 3-2 not to renew your contract.
-    <p class="story" style="font-size:12px;color:var(--muted);border-top:1px solid #eee;padding-top:8px;margin-top:8px;"><strong>What just happened:</strong> The board presentation is Martha's one chance to sell the budget before town meeting. A weak case — too vague, too defensive, or poorly timed — and the swing vote flips.</p></p>
-    <button class="btn" onclick="showBDNEnd()">See the BDN Front Page →</button>`);
-    return;
-  }
-  render(`
-    <div class="hrow"><span class="hlabel">Phase 2 — Result</span><span class="hscore">Score: ${G.score}</span></div>
-    ${rm('M',1)}
-    <span class="pill ${o.pill}">Board Presentation Complete</span>
-    <p class="story">${o.v}</p>
-    <button class="btn" onclick="startTM()">Proceed to Town Meeting →</button>
-  `);
-}
 function cwc(ta,ci,lim){
   const t=$(ta),c=$(ci);if(!t||!c)return;
   const txt=t.value;
@@ -985,31 +772,19 @@ function cwc(ta,ci,lim){
   c.textContent=`${n} / ${lim} words`;c.className='wc'+(n>lim?' over':'');
   const nm=$('neg-meter');if(!nm)return;
   if(n<8){nm.innerHTML='';return;}
-
-  // Simulate how a skeptical undecided voter is reading this — no rubric exposed
   const l=txt.toLowerCase();
   const opts=G._scoreOpts||{};
-
-  // Signals the voter picks up on
   const addressesPastStory=opts.negKw&&l.includes(opts.negKw);
   const engagesNews=opts.newsKw&&l.includes(opts.newsKw);
   const hasStrategyWord=(opts.stratKws||[]).some(w=>l.includes(w));
   const topicHits=(opts.topicWords||[]).filter(w=>l.includes(w)).length;
-
-  // Negative connotation signals — words that make voters wary
   const attackWords=['against','failed','refuses','corrupt','dishonest','lied','attack','incompetent','scandal','reckless','unfit','disgrace','shame','worst','cover'];
   const anxietyWords=['debt','borrow','cost','tax','spend','risk','dangerous','unsafe','broke','deficit','crisis','emergency'];
   const constructiveWords=['community','together','honest','transparent','protect','serve','responsible','proven','plan','invest','safety','record','forward','trust','earned'];
-
   const attackCount=attackWords.filter(w=>l.includes(w)).length;
-  const anxietyCount=anxietyWords.filter(w=>l.includes(w)).length;
   const constructiveCount=constructiveWords.filter(w=>l.includes(w)).length;
-
-  // Word count signal
   const tooShort=n<40;
   const goodLength=n>=60&&n<=75;
-
-  // Compute overall impression (internal — not shown as number)
   let impression=0;
   if(goodLength)impression+=2; else if(tooShort)impression-=2;
   if(addressesPastStory)impression+=3;
@@ -1018,17 +793,11 @@ function cwc(ta,ci,lim){
   impression+=Math.min(2,topicHits);
   impression+=constructiveCount;
   impression-=attackCount*2;
-  // Anxiety words are neutral for truck/fiscal chars, negative for Martha
-  if(G.char==='M')impression-=anxietyCount;
-
-  // Pick a skeptical voter persona and reaction quote
   const char=G.char;
   const voterName=pick(
     char==='S'?['Ruth M.','Harold P.','Pauline K.']:
-    char==='D'?['Janet O.','Tyler B.','Kim F.']:
-    ['Budget Committee member','Selectman Harlow','undecided voter']
+    ['Janet O.','Tyler B.','Kim F.']
   );
-
   let reaction,icon,borderColor;
   if(tooShort){
     reaction=pick([
@@ -1066,27 +835,17 @@ function cwc(ta,ci,lim){
     ]);
     icon='😬';borderColor='var(--red)';
   }
-
   nm.innerHTML=`<div style="border-left:3px solid ${borderColor};padding:5px 10px;background:#fafaf7;font-size:12px;color:var(--ink);font-style:italic;line-height:1.5;">${icon} ${reaction}</div>`;
 }
-// ── WRITING SCORER ──────────────────────
-// Max 200 pts per piece. Rubric:
-//   60-75 words: +50  |  40-59: +20  |  <40: 0
-//   Backstory neg keyword addressed: +60  (the core challenge)
-//   Current news keyword engaged:    +40
-//   Strategy/approach keywords:      +20 each, max 2
-//   Substantive topic words:         +10 each, max 3
-// Total possible: 50+60+40+40+30 = 220 → capped at 200
 function scoreWriting(txt, opts){
   const n=wc(txt); const l=txt.toLowerCase(); let pts=0; const bd=[];
   if(n>=60&&n<=75){pts+=50;bd.push('Word count 60-75 ✓ +50');}
   else if(n>=40){pts+=20;bd.push(`Word count ${n} (short) +20`);}
   else{bd.push(`Word count ${n} — too short (+0)`);}
   if(opts.negKw&&l.includes(opts.negKw)){
-    // Bonus scales with how much voters remember the story
     const negClip=(G.backstory||[]).find(b=>b.kw===opts.negKw&&b.t==='neg');
     const w=negClip?.weight??1.0;
-    const bonus=Math.round(60*w); // 60 for fresh/serious, 30 for faded old story
+    const bonus=Math.round(60*w);
     pts+=bonus;bd.push(`Addresses past story ("${opts.negKw}") +${bonus}${w<0.8?' (faded story)':''}`);
   } else if(opts.negKw){bd.push(`Missed past story ("${opts.negKw}") — no bonus`);}
   if(opts.newsKw&&l.includes(opts.newsKw)){pts+=40;bd.push(`Engages current news ("${opts.newsKw}") +40`);}
@@ -1112,6 +871,7 @@ function sDeliver(i){
   const o=a.outcomes[roll];
   addSkill(o.pts);G.writingPts=(G.writingPts||0)+o.pts;phaseBonus(100);
   if(P(.15))addLuck(pick([25,-25]));
+  track('speech',`${a.id}|${o.pts}pts`);
   render(`
     <div class="hrow"><span class="hlabel">Phase 3 — Speech Delivered</span><span class="hscore">Score: ${G.score}</span></div>
     ${rm('S',2)}
@@ -1138,16 +898,18 @@ function showDemHighlights(){
       <div class="hbox-who" style="color:var(--red);">Darlene Democracy</div>
       <div class="hbox-txt">${h2.q}<br><em style="font-size:11.5px;color:var(--muted);">${h2.tag}</em></div>
     </div>
-    <button class="btn" onclick="tmElect()" style="margin-top:14px;">Count the Votes →</button>
+    <p class="story" style="font-size:13px;">Town Clerk Louise Reed distributes written ballots. The room goes quiet as voters mark their choices and pass them to the aisles.</p>
+    <button class="btn" onclick="tmElect()" style="margin-top:14px;">Clerk Tallies the Ballots →</button>
   `);
 }
-function sSpeech(){ sDeliver(0); } // legacy stub — replaced by sDeliver
+function sSpeech(){ sDeliver(0); }
 function dLetter(){
   const txt=$('dta')?$('dta').value.trim():'';
   const negKw=(G.backstory||[]).find(b=>b.t==='neg')?.kw||'';
   const {pts,bd}=scoreWriting(txt,{negKw,topicWords:['safety','fire','truck','broke','cost','bond','vote','community','127','endorsement','pump','seventeen','protect']});
   addSkill(pts);G.writingPts=pts;phaseBonus(100);
   if(P(.15))addLuck(pick([25,-25]));
+  track('letter',`${pts}pts|${writingLabel(pts).lbl}`);
   const {lbl,pill}=writingLabel(pts);
   const v=pts>=160?'Reader response explodes. Most-shared local piece this month. Chief Fireman texts you three fire emojis.':pts>=110?'Solid letter. Real reader response. Swing voters say they\'re reconsidering.':pts>=65?'Published. Some response. Fireman seems cautiously hopeful.':'The BDN ran it. Limited reach. Fireman looks worried.';
   render(`
@@ -1159,7 +921,6 @@ function dLetter(){
     <button class="btn" onclick="startTM()">Proceed to Town Meeting →</button>
   `);
 }
-
 // ════════════════════════════════════════
 // SELECTMAN
 // ════════════════════════════════════════
@@ -1200,8 +961,8 @@ function sHearing(id){
 }
 function startS2(){G.phase=2;if(P(.10))return sElim();startDoors('S');}
 function startS3(){G.phase=3;startTM();}
-function mFired(){G.eliminated=true;const f=pick(MG_FIRED);render(`${YOU_LOST}<div class="hrow"><span class="hlabel">Martha Manager</span><span class="hscore">Score: ${G.score}</span></div><div class="clip neg"><div class="clip-src">Bangor Daily News</div><div class="clip-hed">${f.hed}</div><div style="font-family:'Oswald',sans-serif;font-size:9px;letter-spacing:1px;color:var(--muted);margin-bottom:4px;">${f.by}</div><div class="clip-body">${f.why}</div></div><span class="pill bad">Game Over</span><p class="story">Your career in Newsville municipal government ends here.</p><p class="story" style="font-size:12px;color:var(--muted);border-top:1px solid #eee;padding-top:8px;margin-top:8px;"><strong>What just happened:</strong> Before you could file the warrant, the Select Board received word of a concern serious enough to end your tenure. Town managers serve at the board's pleasure — and that pleasure ran out.</p><button class="btn" onclick="showBDNEnd()">See the BDN Front Page →</button>`);}
-function sElim(){G.eliminated=true;const e=pick(SEL_END);render(`${YOU_LOST}<div class="hrow"><span class="hlabel">Steve Selectman</span><span class="hscore">Score: ${G.score}</span></div><div class="clip neg"><div class="clip-src">Bangor Daily News</div><div class="clip-hed">${e.hed}</div><div style="font-family:'Oswald',sans-serif;font-size:9px;letter-spacing:1px;color:var(--muted);margin-bottom:4px;">${e.by}</div><div class="clip-body">${e.why}</div></div><span class="pill bad">Eliminated</span><p class="story">Your path to re-election ends here.</p><p class="story" style="font-size:12px;color:var(--muted);border-top:1px solid #eee;padding-top:8px;margin-top:8px;"><strong>What just happened:</strong> A random event ended your campaign before you could canvass. These early eliminations reflect the unpredictable nature of local politics.</p><button class="btn" onclick="showBDNEnd()">See the BDN Front Page →</button>`);}
+
+function sElim(){G.eliminated=true;const e=pick(SEL_END);render(`${YOU_LOST}<div class="hrow"><span class="hlabel">Steve Selectman</span><span class="hscore">Score: ${G.score}</span></div><div class="clip neg"><div class="clip-src">Bangor Daily News</div><div class="clip-hed">${e.hed}</div><div class="clip-body">${e.why}</div></div><span class="pill bad">Eliminated</span><p class="story">Your path to re-election ends here.</p><p class="story" style="font-size:12px;color:var(--muted);border-top:1px solid #eee;padding-top:8px;margin-top:8px;"><strong>What just happened:</strong> A random event ended your campaign before you could canvass. These early eliminations reflect the unpredictable nature of local politics.</p><button class="btn" onclick="showBDNEnd()">See the BDN Front Page →</button>`);}
 
 // ════════════════════════════════════════
 // DEMOCRACY
@@ -1288,8 +1049,7 @@ function dChooseLetter(i){
     <button class="btn" onclick="startTM()">Proceed to Town Meeting →</button>
   `);
 }
-function dLetter(){ dChooseLetter(0); } // legacy stub
-function dElim(){G.eliminated=true;const e=pick(DEM_END);render(`${YOU_LOST}<div class="hrow"><span class="hlabel">Darlene Democracy</span><span class="hscore">Score: ${G.score}</span></div><div class="clip neg"><div class="clip-src">Bangor Daily News</div><div class="clip-hed">${e.hed}</div><div style="font-family:'Oswald',sans-serif;font-size:9px;letter-spacing:1px;color:var(--muted);margin-bottom:4px;">${e.by}</div><div class="clip-body">${e.why}</div></div><span class="pill bad">Eliminated</span><p class="story">Your campaign ends before reaching town meeting.</p><p class="story" style="font-size:12px;color:var(--muted);border-top:1px solid #eee;padding-top:8px;margin-top:8px;"><strong>What just happened:</strong> A random event ended the campaign before your BDN letter. These early eliminations reflect how volatile local races can be.</p><button class="btn" onclick="showBDNEnd()">See the BDN Front Page →</button>`);}
+function dElim(){G.eliminated=true;const e=pick(DEM_END);render(`${YOU_LOST}<div class="hrow"><span class="hlabel">Darlene Democracy</span><span class="hscore">Score: ${G.score}</span></div><div class="clip neg"><div class="clip-src">Bangor Daily News</div><div class="clip-hed">${e.hed}</div><div class="clip-body">${e.why}</div></div><span class="pill bad">Eliminated</span><p class="story">Your campaign ends before reaching town meeting.</p><p class="story" style="font-size:12px;color:var(--muted);border-top:1px solid #eee;padding-top:8px;margin-top:8px;"><strong>What just happened:</strong> A random event ended the campaign before your BDN letter. These early eliminations reflect how volatile local races can be.</p><button class="btn" onclick="showBDNEnd()">See the BDN Front Page →</button>`);}
 
 
 // Compute dynamic turnout (150–420 registered voters) based on game events
@@ -1358,8 +1118,8 @@ function startTM(){
   for(let i=0;i<blueN;i++)crowd.push('<span class="crowd-person" style="color:#1a3660;">🧑</span>');
   for(let i=0;i<neutN;i++)crowd.push('<span class="crowd-person" style="color:#888;">🧑</span>');
   crowd.sort(()=>Math.random()-.5);
-  const charSvg=G.char==='M'?svgM(56,62):G.char==='S'?svgS(56,62):svgD(56,62);
-  const opponentLabel=G.char==='S'?'Darlene Democracy':G.char==='D'?'Steve Selectman':null;
+  const charSvg=G.char==='S'?svgS(56,62):svgD(56,62);
+  const opponentLabel=G.char==='S'?'Darlene Democracy':'Steve Selectman';
   render(`
     <div id="gymscene" style="position:relative;height:220px;background:#0d0d1a;overflow:hidden;margin:-22px -26px 0;cursor:pointer;" onclick="gymZoom()">
       <div style="position:absolute;top:8px;left:50%;transform:translateX(-50%);background:var(--bdn);color:#fff;font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:2px;padding:3px 16px;white-space:nowrap;z-index:4;">⚑ NEWSVILLE ANNUAL TOWN MEETING ⚑</div>
@@ -1372,8 +1132,8 @@ function startTM(){
     <div id="gyminfo" style="padding:14px 0 0;">
       <div class="hrow"><span class="hlabel">★ Town Meeting Opens</span><span class="hscore">Score: ${G.score}</span></div>
       <p class="story">Saturday, March 15th. Newsville Elementary gymnasium. <strong>${turnout} registered voters in attendance.</strong> ${turnoutContext(turnout)} ${opponentLabel?`You spot <strong style="color:var(--red)">${opponentLabel}</strong> near the podium. `:''}Red-shirt Fireman supporters fill the left bleachers. Blue-sticker Selectman backers anchor the right. Moderator James Harte calls the meeting to order.</p>
-      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px;">${['Watch the Election','Wildcard Motion','Budget & Truck Vote'].map((l,i)=>`<div style="border:1.5px solid #ccc;padding:8px;text-align:center;background:#fff;"><div style="font-family:'Oswald',sans-serif;font-size:9px;letter-spacing:2px;color:var(--bdn);margin-bottom:3px;">PHASE ${i+1}</div><div style="font-size:12px;">${l}</div></div>`).join('')}</div>
-      <button class="btn" onclick="tm1()">${G.char==='M'?'Watch the Election →':'Begin: Deliver Your Speech →'}</button>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px;">${['Written Ballot Election','Wildcard Motion','Budget & Truck Vote'].map((l,i)=>`<div style="border:1.5px solid #ccc;padding:8px;text-align:center;background:#fff;"><div style="font-family:'Oswald',sans-serif;font-size:9px;letter-spacing:2px;color:var(--bdn);margin-bottom:3px;">PHASE ${i+1}</div><div style="font-size:12px;">${l}</div></div>`).join('')}</div>
+      <button class="btn" onclick="tm1()">Begin: Deliver Your Speech →</button>
     </div>
   `);
 }
@@ -1448,13 +1208,13 @@ function tm1(){
       ${biteAlert(bite)}
       <div style="display:flex;gap:14px;align-items:flex-start;margin-bottom:10px;">
         <div style="flex-shrink:0">${svgS(56,62)}</div>
-        <p class="story">Moderator Harte calls your name first. Democracy follows. The room is watching.<br><em>Race negativity: ${G.neg>=5?'HIGH ⚠ — write-in candidate may appear':G.neg>=3?'Moderate — write-in possible':'Low ✓'}</em></p>
+        <p class="story">Moderator Harte calls your name first. Democracy follows. The room is watching. After both speeches, Town Clerk Louise Reed will distribute written ballots — the Select Board race is decided by secret ballot under state law.<br><em>Race negativity: ${G.neg>=5?'HIGH ⚠ — write-in candidate may appear':G.neg>=3?'Moderate — write-in possible':'Low ✓'}</em></p>
       </div>
       ${negEv?`<div class="hint" style="border-left-color:var(--red);background:#fff5f5;">Voters still remember: <strong>"${negEv.hed}"</strong> — your choice should account for it.</div>`:''}
       <div class="choices">${approaches.map((a,i)=>`<button class="ch" onclick="sDeliver(${i})"><strong>${a.lbl}</strong><br><em style="font-size:12px;opacity:.8;font-style:italic;">${a.preview}</em></button>`).join('')}</div>
     `);
   } else {
-    // Martha/Democracy path: show the Select Board election
+    // Democracy path: show the Select Board election
     const sSpk=pick([
       {n:'Charlie Wellman, retired road commissioner',s:'"Nine years of showing up. He knows the debt schedule better than anyone in this room."'},
       {n:'Barbara Frost, former Budget Committee chair',s:'"Debt service on both bonds at once would consume 12% of our budget. Steve Selectman has actually read those bond covenants."'},
@@ -1465,20 +1225,17 @@ function tm1(){
       {n:'Kevin Morse, homeowner Route 218',s:'"My homeowner\'s insurance went up $340 because our fire rating dropped. A new truck essentially pays for itself."'},
       {n:'Sarah Plourde, school board member',s:'"Darlene knocked on every door in three precincts. That\'s not a campaign. That\'s a commitment."'},
     ]);
-    const truckNote=G.char==='M'
-      ? (G.mgTruckBudget
-          ? `<p class="story" style="font-size:12px;background:#fff5f5;border-left:3px solid var(--red);padding:6px 10px;"><strong>Your budget included the truck bond.</strong> If Democracy wins, her supporters may push for additional spending from the floor — the budget math tightens. If Selectman wins, his faction will scrutinize every line, but there's no new spending pressure.</p>`
-          : `<p class="story" style="font-size:12px;background:#fff5f5;border-left:3px solid var(--red);padding:6px 10px;"><strong>Your budget excluded the truck bond.</strong> If Democracy wins, she may move to add it from the floor — threatening your tax cut target. If Selectman wins, the bond stays off the table.</p>`)
-      : '';
+    const truckNote='';
     render(`
       <div style="background:var(--ink);color:#fff;padding:8px;text-align:center;font-family:'Source Serif 4',serif;font-weight:700;font-size:14px;margin:-22px -26px 14px;">⚑ TOWN MEETING — Phase 1: Election ⚑</div>
       <div class="hrow"><span class="hlabel">Select Board Race</span><span class="hscore">Score: ${G.score}</span></div>
       ${biteAlert(bite)}
       ${truckNote}
+      <p class="story" style="font-size:13px;">Both candidates have spoken. Moderator Harte calls on Town Clerk Louise Reed to distribute written ballots — the Select Board race is decided by secret ballot under state law. Voters mark their choices in silence.</p>
       <div class="hbox"><div class="hbox-who">For Selectman: ${sSpk.n}</div><div class="hbox-txt">${sSpk.s}</div></div>
       <div class="hbox"><div class="hbox-who" style="color:var(--red);">For Democracy: ${dSpk.n}</div><div class="hbox-txt">${dSpk.s}</div></div>
       ${tp?`<div class="hbox" style="border-left-color:var(--gold);background:#fffbf0;"><div class="hbox-who" style="color:#8a6000;">⚡ Surprise: Margaret Cote, retired principal</div><div class="hbox-txt">"I'm not on the ballot — but I am registered. I move this meeting elect a write-in. I have no enemies and no agenda." <strong>(Room erupts.)</strong></div></div>`:''}
-      <button class="btn" onclick="tmElect()">Count the Votes →</button>
+      <button class="btn" onclick="tmElect()">Clerk Tallies the Ballots →</button>
     `);
   }
 }
@@ -1497,35 +1254,19 @@ function tmElect(){
   let sP=Math.round(sS/tot*100),dP=Math.round(dS/tot*100),tP=G._tp?Math.max(0,100-sP-dP):0;
   const winner=G._tp&&tP>sP&&tP>dP?'T':sP>dP?'S':'D';
   G.electionWinner=winner;
+  track('election',`${winner==='T'?'Cote_WI':winner==='S'?'Selectman':'Democracy'}|${sP}v${dP}`);
   const loses=(G.char==='S'&&winner!=='S')||(G.char==='D'&&winner!=='D');
-  const marthaNote=G.char==='M'
-    ? (winner==='D'
-        ? (G.mgTruckBudget ? '<p class="story" style="font-size:12px;color:var(--red);">Democracy won. Your budget included the truck bond — but her supporters may now push for additional spending from the floor. Watch the room.</p>'
-                           : '<p class="story" style="font-size:12px;color:var(--red);">Democracy won. Your budget excluded the truck bond — expect a floor amendment to add it back. This threatens your 5% target.</p>')
-        : winner==='S'
-        ? (G.mgTruckBudget ? '<p class="story" style="font-size:12px;color:var(--red);">Selectman won. His fiscal hawks are already eyeing your truck line. Expect scrutiny on every dollar — but no new spending surprises.</p>'
-                           : '<p class="story" style="font-size:12px;color:var(--bdn);">Selectman won. You excluded the truck — he\'s on your side for now. The bond won\'t be a fight tonight.</p>')
-        : '<p class="story" style="font-size:12px;color:#8a6000;">Margaret Cote won. Nobody knows what she\'ll do. Watch the room.</p>')
-    : '';
-  const msg=winner==='T'?`Write-in <strong>Margaret Cote wins</strong> with ${tP}%. Selectman: ${sP}%. Democracy: ${dP}%.`:winner==='S'?`<strong>Steve Selectman re-elected</strong> — ${sP}% to ${dP}%.`:`<strong>Darlene Democracy wins</strong> — ${dP}% to ${sP}%. Fireman's supporters erupt.`;
-
-  // Martha gate: misaligned election outcome eliminates her 55% of the time
-  const marthaElim = G.char==='M' && (
-    (winner==='D' && !G.mgTruckBudget) || // excluded truck, Democracy wins → floor amendment threat
-    (winner==='S' && G.mgTruckBudget)      // included truck, Selectman wins → faction picks it apart
-  ) && P(.35);
+  const msg=winner==='T'?`Clerk Reed hands Moderator Harte the tally sheet. He reads it twice, then adjusts the microphone. <strong>"Write-in Margaret Cote — ${tP}%. Steven Selectman — ${sP}%. Darlene Democracy — ${dP}%."</strong> The room takes a second to process it. Then the Cote section of the bleachers erupts.`:winner==='S'?`Clerk Reed hands Moderator Harte the tally sheet. He scans it and nods before speaking. <strong>"Steven Selectman — ${sP}%. Darlene Democracy — ${dP}%."</strong> The right bleachers rise. Democracy holds still for a long moment.`:`Clerk Reed hands Moderator Harte the tally sheet. He clears his throat. <strong>"Darlene Democracy — ${dP}%. Steven Selectman — ${sP}%."</strong> The left bleachers erupt. Fireman's supporters are on their feet.`;
 
   render(`
     <div style="background:var(--ink);color:#fff;padding:8px;text-align:center;font-family:'Source Serif 4',serif;font-weight:700;font-size:14px;margin:-22px -26px 14px;">⚑ Election Results ⚑</div>
-    <div class="hrow"><span class="hlabel">Select Board Race</span><span class="hscore">Score: ${G.score}</span></div>
+    <div class="hrow"><span class="hlabel">Select Board Race — Written Ballot</span><span class="hscore">Score: ${G.score}</span></div>
+    <p class="story" style="font-size:13px;">Town Clerk Louise Reed collects and counts the written ballots at the table. The room waits.</p>
     <div class="tally"><div class="tb B"><div class="tb-lbl">Selectman</div><div class="tb-num">${sP}%</div></div><div class="tb R"><div class="tb-lbl">Democracy</div><div class="tb-num">${dP}%</div></div>${G._tp?`<div class="tb G"><div class="tb-lbl">Cote W/I</div><div class="tb-num">${tP}%</div></div>`:''}</div>
     <p class="story">${msg}</p>
-    ${marthaNote}
-    ${marthaElim
-      ? `${YOU_LOST}<span class="pill bad">Contract Not Renewed</span><p class="story">${winner==='D'&&!G.mgTruckBudget ? 'You excluded the truck bond. Democracy won. Within thirty minutes she moved to add it from the floor — and it passed. Your tax cut target is gone. The new board does not renew your contract.' : 'You included the truck bond. Selectman won. His faction spent the next two hours forcing cuts to services you had protected — library hours, road maintenance, animal control. The 5% cut held, but services were gutted beyond what the board wanted from your budget. You didn\'t read the room like a good manager should. The new board does not renew your contract.'}</p><button class="btn" onclick="showBDNEnd()">See the BDN Front Page →</button>`
-      : loses
+    ${loses
         ? `${YOU_LOST}<span class="pill bad">You Lose</span><p class="story">The election didn't go your way.</p><p class="story" style="font-size:12px;color:var(--muted);border-top:1px solid #eee;padding-top:8px;margin-top:8px;"><strong>What just happened:</strong> The election depends on your campaign work — canvassing, the hearing or letter, and score momentum. A stronger ground game shifts the odds your way.</p><button class="btn" onclick="showBDNEnd()">See the BDN Front Page →</button>`
-        : `<span class="pill good">${G.char==='M'?'Election Aligned':'You Advance'}</span><button class="btn" onclick="tm2()">Continue →</button>`
+        : `<span class="pill good">You Advance</span><button class="btn" onclick="tm2()">Continue →</button>`
     }
   `);
 }
@@ -1543,7 +1284,8 @@ function tm2(){
 function tmWild(i){
   const opt=G._wc.opts[i];
   const flipped=opt.out==='L'&&opt.flip&&P(.15);
-  if(opt.out==='L'&&!flipped){G.eliminated=true;addS(-50);const elimLabel=G.char==='M'?'Contract Not Renewed':'Eliminated';render(`${YOU_LOST}<div class="hrow"><span class="hlabel">Wildcard — Result</span><span class="hscore">Score: ${G.score}</span></div><span class="pill bad">${elimLabel}</span><p class="story">${opt.msg}</p><button class="btn" onclick="showBDNEnd()">See the BDN Front Page →</button><p class="story" style="font-size:12px;color:var(--muted);border-top:1px solid #eee;padding-top:8px;margin-top:8px;"><strong>What just happened:</strong> Every town meeting has a wildcard floor motion. There's usually one safe answer, one risky play, and one that sounds reasonable but isn't.</p>`);return;}
+  track('wildcard',`opt${i}|${opt.out==='L'&&!flipped?'loss':flipped?'flip':'win'}`);
+  if(opt.out==='L'&&!flipped){G.eliminated=true;addS(-50);const elimLabel='Eliminated';render(`${YOU_LOST}<div class="hrow"><span class="hlabel">Wildcard — Result</span><span class="hscore">Score: ${G.score}</span></div><span class="pill bad">${elimLabel}</span><p class="story">${opt.msg}</p><button class="btn" onclick="showBDNEnd()">See the BDN Front Page →</button><p class="story" style="font-size:12px;color:var(--muted);border-top:1px solid #eee;padding-top:8px;margin-top:8px;"><strong>What just happened:</strong> Every town meeting has a wildcard floor motion. There's usually one safe answer, one risky play, and one that sounds reasonable but isn't.</p>`);return;}
   addSkill(flipped?60:100);
   const pill=flipped?'warn':'good';
   const msg=flipped?opt.flip:opt.msg;
@@ -1556,18 +1298,12 @@ function tm3(){
   if(G.char==='S')fA+=Math.floor((G.writingPts||0)/12);
   if(G.electionWinner==='D')fF+=15;
   if(G.electionWinner==='S')fA+=12;
-  // Martha: budget choice shifts the floor sentiment
-  if(G.char==='M'){
-    if(G.mgTruckBudget)fF+=8;  // including it signals support
-    else fA+=6;                  // excluding it organized opposition
-  }
+
   fF+=R(12);fA+=R(12);
   const fP=Math.round(fF/(fF+fA)*100);
   G.fireTruck=fP>50;
-  // Martha wins if she planned correctly: included truck (handled either way) or excluded and it failed
-  if(G.char==='M'){
-    G.budgetOk = G.mgTruckBudget ? true : !G.fireTruck;
-  }
+  track('truck_vote',`${G.fireTruck?'approved':'rejected'}|${fP}%`);
+
   render(`
     <div style="background:var(--ink);color:#fff;padding:8px;text-align:center;font-family:'Source Serif 4',serif;font-weight:700;font-size:14px;margin:-22px -26px 14px;">⚑ TOWN MEETING — Phase 3: Final Votes ⚑</div>
     <div class="hrow"><span class="hlabel">Fire Truck &amp; Budget</span><span class="hscore">Score: ${G.score}</span></div>
@@ -1579,18 +1315,7 @@ function tm3(){
 }
 function calcEnd(){
   let win=false,msg='';
-  if(G.char==='M'){
-    win=G.budgetOk;
-    if(win){
-      msg=G.mgTruckBudget
-        ? (G.fireTruck
-            ? 'You budgeted for the truck and the town approved it. The 5% tax cut holds. Select Board renews your contract.'
-            : 'You budgeted for the truck and the town voted it down — but your numbers hold either way. The 5% cut lands. Select Board renews your contract.')
-        : 'You excluded the truck and the town agreed. The 5% cut lands clean. Select Board renews your contract.';
-    } else {
-      msg='You excluded the truck bond and the town added it from the floor anyway. The debt service blows your tax cut target. Contract not renewed.';
-    }
-  }else if(G.char==='S'){
+  if(G.char==='S'){
     win=!G.fireTruck&&G.electionWinner==='S';
     msg=win?'You won re-election and blocked the fire truck. BDN: "Selectman Survives, Fire Truck Does Not."':G.fireTruck?'The truck passed despite your opposition.':'You blocked the truck but lost the seat.';
   }else{
@@ -1608,7 +1333,7 @@ function calcEnd(){
 // ════════════════════════════════════════
 function showBDNEnd(){
   const won=G.win&&!G.eliminated;
-  const cn={M:'Martha Manager',S:'Steve Selectman',D:'Darlene Democracy'};
+  const cn={S:'Steve Selectman',D:'Darlene Democracy'};
   const name=cn[G.char]||'';
   const truck=G.fireTruck;
   const eWin=G.electionWinner;
@@ -1633,17 +1358,7 @@ function showBDNEnd(){
     // ── ELIMINATED ──────────────────────────────────────────────────────────
   if(G.eliminated){
     const es=G.elimStory||{};
-    if(G.char==='M'){
-      hed=es.hed||'Select Board Fires Town Manager Before Annual Meeting';
-      deck='Budget dispute ends in forced departure; warrant still heads to voters';
-      lede=es.why
-        ? `${es.why} The annual meeting warrant will go before voters as filed, without Manager's advocacy on the floor.`
-        : `Newsville's Select Board voted to terminate Town Manager Martha Manager's contract this week, days before the annual meeting. The budget she drafted will go before voters without her advocacy.`;
-      col1=negClip
-        ? `The termination came after months of pressure from the BDN's reporting on ${negClip.kw}. Board members said trust had eroded beyond repair.`
-        : `The board cited a breakdown in confidence. "We need a fresh voice going into this budget season," the chair said.`;
-      col2=`"She put in the work," said one budget committee member. "But the timing was never right." Moderator Harte confirmed the annual meeting will proceed as scheduled.`;
-    } else if(G.char==='S'){
+    if(G.char==='S'){
       hed=es.hed||'Selectman Withdraws From Re-Election Bid';
       deck='Seat opens as fire truck vote looms large';
       lede=es.why
@@ -1672,30 +1387,6 @@ function showBDNEnd(){
         : `The campaign ran out of runway. Democracy had made inroads in Selectman's neighborhood but failed to convert enough swing voters before the race slipped away.`;
       col2=`Chief Fireman said he would pursue the truck vote regardless. "The equipment doesn't care who's running." Moderator Harte confirmed the meeting proceeds.`;
     }
-  // ── MARTHA ──────────────────────────────────────────────────────────────
-  } else if(G.char==='M'){
-    if(won){
-      hed='Manager\'s Budget Clears Town Meeting; Tax Rate Cut Secured';
-      deck=approach?`${approach.l.split('—')[0].trim()} approach wins the night; 5% reduction approved`:'5% reduction approved over fire truck debate';
-      lede=`Newsville voters approved the annual budget Saturday, delivering the 5% property tax rate reduction Town Manager Martha Manager had promised. The Select Board is expected to renew her contract.`;
-      col1=approach
-        ? `Manager's ${approach.l.split('—')[0].trim().toLowerCase()} approach gave the Budget Committee the cover it needed. ${wTag==='sharp'?'Her board presentation was precise and responsive to committee concerns, leaving little room for objection.':wTag==='solid'?'Her board presentation was credible if not electrifying, and the numbers held up to scrutiny.':'The presentation was workmanlike. Members said they approved on the merits despite some reservations.'}`
-        : `The budget survived a contentious debate. Voters appeared willing to accept the tradeoffs Manager had outlined.`;
-      col2=posClip
-        ? `The BDN's reporting on ${posClip.hed.toLowerCase().split(';')[0]} gave Manager a credibility cushion that proved durable. ${lTag==='lucky'?'"Sometimes the numbers just land right," one member said.':'"She earned this one," said the Budget Committee chair.'} Moderator Harte adjourned at 9:41 p.m.`
-        : `"She did the math right," said Budget Committee chair. "That's what we asked for." Moderator Harte adjourned at 9:41 p.m.`;
-    } else {
-      hed='Manager\'s Budget Falls Short; 5% Tax Cut Goal Missed';
-      deck=truck?'Fire truck bond approval pushes budget past target':'Proposal fails to secure critical board votes';
-      lede=truck
-        ? `Newsville's $1 million fire truck bond passed Saturday, pushing the town's debt service above the threshold Martha Manager needed to deliver the 5% tax cut she had promised. The Select Board is expected to review her contract.`
-        : `Town Manager Martha Manager's budget failed to win the support needed Saturday to achieve the 5% property tax rate cut she had promised, leaving the Select Board to decide her professional future.`;
-      col1=negClip
-        ? `The night was defined in part by unresolved questions about ${negClip.kw}. Manager's ${wTag==='thin'?'presentation never addressed the BDN\'s reporting on it':wTag==='adequate'?'presentation touched on it but couldn\'t fully put it to rest':'board presentation acknowledged it, though couldn\'t fully overcome the damage'}.`
-        : `The budget math never quite convinced the skeptics. Manager's presentation was ${wTag==='thin'?'not sufficient to overcome voter anxiety':wTag==='adequate'?'adequate but failed to build momentum':'solid, but outside forces proved too much'}.`;
-      col2=`"The numbers didn't add up the way she presented them," said one board member. `+(lTag==='unlucky'?'"And frankly, the timing was terrible — nothing went her way."':'"We\'ll take another look at the warrant language."')+` Moderator Harte adjourned at 9:38 p.m.`;
-    }
-
   // ── SELECTMAN ───────────────────────────────────────────────────────────
   } else if(G.char==='S'){
     if(won){ // re-elected AND truck blocked
@@ -1738,7 +1429,7 @@ function showBDNEnd(){
       lede=`Darlene Democracy won the Select Board seat Saturday and the $1 million fire truck bond passed alongside her — ${doors>=8?'a dominant finish that':'a dual victory that'} ended Steve Selectman's nine-year tenure and reshaped Newsville town hall.`;
       col1=`Democracy's ground game${doors>=2?' — winning '+doors+' of 3 doors in Selectman\'s own neighborhood —':' in Selectman\'s neighborhood'} shifted enough undecided voters to flip both races. ${wTag==='sharp'?'Her BDN letter was the most-forwarded piece of local writing this campaign season.':wTag==='solid'?'Her BDN letter built real reader response and was credited with moving swing voters.':'Chief Fireman\'s emotional testimony throughout the campaign was widely credited with closing the gap.'}`;
       col2=posClip
-        ? `${posClip.by.split('·')[0].trim()}'s coverage of ${posClip.hed.toLowerCase().split(';')[0]} gave Democracy a credibility foundation that weathered Selectman's attacks. Chief Fireman wept openly. "Twenty-two years. This is what it was for." Moderator Harte adjourned at 9:52 p.m.`
+        ? `BDN coverage of ${posClip.hed.toLowerCase().split(';')[0]} gave Democracy a credibility foundation that weathered Selectman's attacks. Chief Fireman wept openly. "Twenty-two years. This is what it was for." Moderator Harte adjourned at 9:52 p.m.`
         : `Chief Fireman wept openly as the truck vote results were announced. "Twenty-two years. This is what it was for." Moderator Harte adjourned at 9:52 p.m.`;
     } else if(eWin==='D' && !truck){ // won seat, truck failed — always a loss
       const selRunsAgain=P(.70); // 70% chance Selectman confirms 2027 run
@@ -1801,7 +1492,7 @@ function showBDNEnd(){
         <div class="bdnfp-section">Newsville Annual Town Meeting</div>
         <div class="bdnfp-hed">${hed}</div>
         <div class="bdnfp-deck">${deck}</div>
-        <div class="bdnfp-byline">${G.char==='M'?'By Kathleen O\'Brien':G.char==='S'?'By Michael Shepherd':'By Penelope Overton'} · Bangor Daily News</div>
+        <div class="bdnfp-byline">Bangor Daily News</div>
         <div class="bdnfp-lede">${lede}</div>
         <div class="bdnfp-score"><div><div class="bdnfp-score-lbl">Your Final Score</div><div style="font-family:'Oswald',sans-serif;font-size:10px;color:var(--muted);letter-spacing:1px;margin-top:2px;">${cn[G.char]||''} · ${won?'Winner ✓':'Did not win'}</div></div><div class="bdnfp-score-num">${G.score}</div></div>
         <div class="bdnfp-cols">
@@ -1815,7 +1506,9 @@ function showBDNEnd(){
     </div>
     <div class="lbform">
       <label>Submit Score to Leaderboard</label>
-      <input type="email" id="lbEmail" placeholder="your@email.com"/>
+      <input type="text" id="lbName" placeholder="Display name (shown publicly)" autocomplete="nickname"/>
+      <input type="email" id="lbEmail" placeholder="your@email.com (kept private)"/>
+      <p style="font-size:11px;color:var(--muted);margin:2px 0 8px;line-height:1.5;">Your email is used only to track your score and will never appear on the leaderboard.</p>
       <button class="btn" onclick="subLB()">Submit Score →</button>
     </div>
     <div id="lb-out"></div>
@@ -1824,10 +1517,14 @@ function showBDNEnd(){
 }
 function subLB(){
   const el=$('lbEmail');const email=el?el.value.trim():'';
+  const nl=$('lbName');const name=(nl?nl.value.trim():'').slice(0,40);
   if(!email||!email.includes('@')){alert('Please enter a valid email.');return;}
-  const b=saveLB(email,G.score,G.char);
+  track('game_end',`score:${G.score}|truck:${G.fireTruck}`);
+  flushTrack(email,name);
+  const b=saveLB(email,name,G.score,G.char);
   const o=$('lb-out');if(o)o.innerHTML=`<div class="lb-hed">Leaderboard</div>${lbRows(b)}`;
   if(el)el.disabled=true;
+  if(nl)nl.disabled=true;
   const btn=document.querySelector('.lbform .btn');if(btn){btn.textContent='✅ Submitted!';btn.disabled=true;}
 }
 if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",showTitle);}else{showTitle();}

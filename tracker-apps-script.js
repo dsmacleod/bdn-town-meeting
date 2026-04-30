@@ -19,6 +19,30 @@ function doGet(e) {
       sheet.setFrozenRows(1);
     }
 
+    // ── READ: return leaderboard ──────────────────────────────────────────────
+    if (e.parameter.action === 'leaderboard') {
+      const data = sheet.getDataRange().getValues();
+      const best = {};
+      for (let i = 1; i < data.length; i++) {
+        const row  = data[i];
+        const email = String(row[3] || '').toLowerCase().trim();
+        const name  = String(row[1] || '').trim();
+        const char  = row[4] === 'Selectman' ? 'S' : row[4] === 'Democracy' ? 'D' : '';
+        const score = Number(row[7]) || 0;
+        if (!email || score <= 0) continue;
+        if (!best[email] || score > best[email].s) {
+          best[email] = { n: name, c: char, s: score };
+        }
+      }
+      const rows = Object.values(best)
+        .sort((a, b) => b.s - a.s)
+        .slice(0, 10);
+      return ContentService
+        .createTextOutput(JSON.stringify({ ok: true, rows }))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+
+    // ── WRITE: record a game result ───────────────────────────────────────────
     const p = e.parameter;
     sheet.appendRow([
       p.ts ? new Date(Number(p.ts)) : new Date(),  // A: Timestamp

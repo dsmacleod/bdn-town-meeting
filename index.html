@@ -259,13 +259,14 @@ function rm(c,a){
   return`<div class="rm">${m[c].map(([n,l],i)=>`<div class="rp ${i===a?'on':i<a?'done':''}"><div class="rp-n">${n}</div><div class="rp-l">${l}</div></div>`).join('')}</div>`;
 }
 // ── TRACKER ──────────────────────────────
-const TRACKER_URL='https://script.google.com/macros/s/AKfycbycWKNtrH4O15KKWp3CxEsUh_liYQNDkbaoZhP0v6n4-gQ0OKpMXiT-2BFUcJnU57sy/exec'; // tracker endpoint
+const TRACKER_URL='https://script.google.com/macros/s/AKfycbz33xZuh1uUHyyAS8I0VwbsYaE0jk5GZuKG4sUX9FyEdjyj6c4DdS2kDz-SfHYLJ6dt/exec; // tracker endpoint
 function track(event,detail){if(!G._trackLog)G._trackLog=[];G._trackLog.push({ts:Date.now(),char:G.char||'',event,detail:String(detail||''),score:G.score});}
 function flushTrack(email,name){if(!TRACKER_URL||!G._trackLog||!G._trackLog.length)return;const sid=G._sessionId||'';const events=G._trackLog.map(r=>r.event).join(', ');const details=G._trackLog.map(r=>r.detail).join(', ');const score=G.score||0;const win=G.win?'Win':'Loss';const p=new URLSearchParams({ts:Date.now(),session:sid,name:name||'',email:email||'',char:G.char||'',events,details,score,win});fetch(`${TRACKER_URL}?${p}`,{mode:'no-cors'}).catch(()=>{});G._trackLog=[];}
 // ─────────────────────────────────────────
 function getBoard(){try{return JSON.parse(localStorage.getItem('bdn3_lb')||'[]');}catch{return[];}}
 function saveLB(email,name,score,char){let b=getBoard();const i=b.findIndex(r=>r.e.toLowerCase()===email.toLowerCase());if(i>=0){if(score>b[i].s){b[i].s=score;b[i].c=char;}if(name)b[i].n=name;}else b.push({e:email,n:name||'',s:score,c:char});b.sort((a,z)=>z.s-a.s);try{localStorage.setItem('bdn3_lb',JSON.stringify(b.slice(0,20)));}catch{}return b;}
 function lbRows(b){if(!b.length)return`<div style="color:var(--muted);font-size:13px;padding:8px 0;font-style:italic;">No scores yet. Be the first!</div>`;const cn={S:'Selectman',D:'Democracy'};return b.slice(0,10).map((r,i)=>`<div class="lbrow"><span class="lbr">#${i+1}</span><span class="lbn">${r.n||r.e.replace(/(.{2}).+(@.*)/,'$1…$2')}</span><span class="lbc">${cn[r.c]||''}</span><span class="lbs">${r.s}</span></div>`).join('');}
+async function fetchServerLB(){try{const r=await fetch(`${TRACKER_URL}?action=leaderboard`);const d=await r.json();if(d.ok&&d.rows&&d.rows.length)return d.rows;}catch(e){}return getBoard();}
 
 // ════════════════════════════════════════
 // SVGs
@@ -766,7 +767,7 @@ function showTitle(){
     </div>
   `);
 }
-function showLB(){render(`<div class="hrow"><span class="hlabel">Leaderboard</span></div><div class="lb-hed">Top Scores — Newsville Town Meeting</div>${lbRows(getBoard())}<button class="btn ghost" onclick="showTitle()">← Back</button>`);}
+async function showLB(){render(`<div class="hrow"><span class="hlabel">Leaderboard</span></div><div class="lb-hed">Top Scores — Newsville Town Meeting</div><div id="lb-live"><em style="color:var(--muted);font-size:13px;">Loading…</em></div><button class="btn ghost" onclick="showTitle()">← Back</button>`);const b=await fetchServerLB();const el=document.getElementById('lb-live');if(el)el.innerHTML=lbRows(b);}
 function pickChar(c){
   G.char=c;
   G._sessionId=Math.random().toString(36).slice(2,10)+Date.now().toString(36);
@@ -1554,11 +1555,12 @@ function subLB(){
   if(!email||!email.includes('@')){alert('Please enter a valid email.');return;}
   track('game_end',`score:${G.score}|truck:${G.fireTruck}`);
   flushTrack(email,name);
-  const b=saveLB(email,name,G.score,G.char);
-  const o=$('lb-out');if(o)o.innerHTML=`<div class="lb-hed">Leaderboard</div>${lbRows(b)}`;
+  saveLB(email,name,G.score,G.char);
+  const o=$('lb-out');if(o)o.innerHTML=`<div class="lb-hed">Leaderboard</div><em style="color:var(--muted);font-size:13px;">Loading…</em>`;
   if(el)el.disabled=true;
   if(nl)nl.disabled=true;
   const btn=document.querySelector('.lbform .btn');if(btn){btn.textContent='✅ Submitted!';btn.disabled=true;}
+  setTimeout(async()=>{const b=await fetchServerLB();if(o)o.innerHTML=`<div class="lb-hed">Leaderboard</div>${lbRows(b)}`;},1500);
 }
 function toggleFS(){
   try{
